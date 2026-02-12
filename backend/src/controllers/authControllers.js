@@ -50,46 +50,46 @@ const register = async(req, res) => {
    
     }catch(error){
         console.error(error)
-        return res.status(500).json({error:"Error del servidor"})//manejo de errores
+        return res.status(500).json({error:"Error del servidor"})//manejo de errores ajenos al cliente
     }
 }
 
 
 //controlador de login
-const login = async(req, res) => {
+const login = async(req, res) => {//extraemos email y password de la peticion
     const {email, password} = req.body
 
     if(!email || !password){
-        return res.status(400).json({error: "Faltan campos por rellenar"})
+        return res.status(400).json({error: "Faltan campos por rellenar"})//comprobamos campos vacios
     }
 
     try{
-        const user = await pool.query(
+        const user = await pool.query(//buscamos usuario coincidente con el email
             "SELECT * FROM usuarios WHERE email = $1",
             [email]
         )
 
-        if(user.rows.length == 0){
+        if(user.rows.length == 0){//comprobacion de que existe usuario con ese email
             return res.status(401).json({error:"Usuario o contraseña incorrecta"})
         }
 
-        const validPassword = await bcrypt.compare(password, user.rows[0].password)
+        const validPassword = await bcrypt.compare(password, user.rows[0].password)//comparamos password hasheado de la peticion con el password hasheado de la bbdd
 
         if(!validPassword){
-            return res.status(401).json({error:"Usuario o contraseña incorrecta"})
+            return res.status(401).json({error:"Usuario o contraseña incorrecta"})//password incorrecto
         }
 
         if(!user.rows[0].verified){
-            return res.status(401).json({error: "Usuario no verificado"})
+            return res.status(401).json({error: "Usuario no verificado"})//combprobacion de que el usuario ha sido verificado antes
         }
 
         const token = jwt.sign(
-            {id:user.rows[0].id, rol_id: user.rows[0].rol_id},
+            {id:user.rows[0].id, rol_id: user.rows[0].rol_id},//creamos token de sesion
             process.env.JWT_SECRET,
             {expiresIn:"1h"}
         )
 
-        return res.status(200).json({
+        return res.status(200).json({//devolvemos token y datos relevantes pero no sensibles
             message: "Login correcto",
             token,
             user:{
@@ -102,7 +102,7 @@ const login = async(req, res) => {
 
     }catch(error){
         console.error(error)
-        return res.status(500).json({error:"Error del servidor"})
+        return res.status(500).json({error:"Error del servidor"})//manejos de errores que no son del cliente
     }
 }
 
@@ -141,22 +141,24 @@ const verifyEmail = async (req, res) => {
 
     }catch(error){
         console.error(error)
-        return res.status(500).json({error: "Error del servidor"})
+        return res.status(500).json({error: "Error del servidor"})//manejo de error del server
     }
 }
 
+
+//contgrolador para rrenviar codigo a usuario no verificado aun
 const resendEmail = async (req, res) => {
-    const {email} = req.body
+    const {email} = req.body//extraemos email de la peticion
 
     try{
 
-        const user = await pool.query(
+        const user = await pool.query(//buscamos usuarios coincidentes con estos campos en la bbdd
             "SELECT * FROM usuarios WHERE email = $1 AND verified = false",
             [email]
         )
 
         if(user.rows.length == 0){
-            return res.status(400).json({error: "Usuario incorrecto o ya verificado"})
+            return res.status(400).json({error: "Usuario incorrecto o ya verificado"})//usuario inexistente
         }
 
         const verificationCode = Math.floor(100000 + Math.random() * 900000)//creacion de codigo nuevo de verificacion
@@ -164,7 +166,7 @@ const resendEmail = async (req, res) => {
         const expiry = new Date(now.getTime() + 15 * 60000)//creacion de nueva fecha de expiracion
 
         await pool.query(
-            "UPDATE usuarios SET verification_code = $1, code_expire_at = $2 WHERE email = $3",
+            "UPDATE usuarios SET verification_code = $1, code_expire_at = $2 WHERE email = $3",//insercion en bbdd de los nuevos datos
             [verificationCode, expiry, email]
         )
 
@@ -179,45 +181,45 @@ const resendEmail = async (req, res) => {
 
         await sgMail.send(msg)//reenviamos email con el codigo
 
-        return res.status(200).json({message: "Ha sido enviado un nuevo codigo de verificacion"})
+        return res.status(200).json({message: "Ha sido enviado un nuevo codigo de verificacion"})//todo ok 
         
 
     }catch(error){
         console.error(error)
-        return res.status(500).json({error: "Error del servidor"})
+        return res.status(500).json({error: "Error del servidor"})//manejo de errores del servidor
     }
 }
 
 
-//controlador para password olvidado
+//controlador para pedir resetear el password
 const requestPasswordReset = async (req, res) => {
-    const {email} = req.body
+    const {email} = req.body//extraccion del mail de la req
 
     if(!email){
-        return res.status(400).json({error: "Faltan campos por rellenar"})
+        return res.status(400).json({error: "Faltan campos por rellenar"})//comprobacion de campos incompletos
     }
 
     try{
 
         const user = await pool.query(
-            "SELECT id FROM usuarios WHERE email = $1",
+            "SELECT id FROM usuarios WHERE email = $1",//busqueda de coincidencias en la bbdd
             [email]
         )
 
         if(user.rows.length == 0){
-            return res.status(200).json({message: "si existe este email, se enviara un codigo"})
+            return res.status(200).json({message: "si existe este email, se enviara un codigo"})//usuario no existe
         }
 
-        const verificationCode = Math.floor(100000 + Math.random() * 900000)//creacion de codigo nuevo de verificacion
+        const verificationCode = Math.floor(100000 + Math.random() * 900000)//creacion  codigo nuevo de verificacion
         const now = new Date()
-        const expiry = new Date(now.getTime() + 15 * 60000)//creacion de nueva fecha de expiracion
+        const expiry = new Date(now.getTime() + 15 * 60000)//creacion de  fecha de expiracion
 
         await pool.query(
-            "UPDATE usuarios SET verification_code = $1, code_expire_at = $2 WHERE email = $3",
+            "UPDATE usuarios SET verification_code = $1, code_expire_at = $2 WHERE email = $3",//insercion de los datos en la bbdd
             [verificationCode, expiry, email]
         )
 
-        const msg = {//creamos email con el nuevo codigo de verificacion
+        const msg = {//creamos email con el  codigo de recuperacion
         to:email,
         from: "julio.cesar.santos.reyes@students.thepower.education",
         subject: "Código de Recuperación",
@@ -226,27 +228,29 @@ const requestPasswordReset = async (req, res) => {
         replyTo: "julio.cesar.santos.reyes@students.thepower.education"
         }
 
-        await sgMail.send(msg)//reenviamos email con el codigo
+        await sgMail.send(msg)//enviamos email con el codigo
 
-        return res.status(200).json({message: "Mensaje de recuperacion enviado"})
+        return res.status(200).json({message: "Mensaje de recuperacion enviado"})//todo ok
 
     }catch(error){
         console.error(error)
-        return res.status(400).json({error: "Error del servidor"})
+        return res.status(400).json({error: "Error del servidor"})//manejo de errores del server
     }
 }
 
+
+//controlador para resetear el password
 const resetPassword = async(req, res) => {
-    const {email, newPassword, recoveryCode} = req.body
+    const {email, newPassword, recoveryCode} = req.body//extraccion de datos necesarios de la request
 
     if(!email || !newPassword || !recoveryCode){
-        return res.status(400).json({error: "Faltan campos por rellenar"})
+        return res.status(400).json({error: "Faltan campos por rellenar"})//comrpobacion de campos incompletos
     }
 
     
     try{
     const user = await pool.query(
-        "SELECT * FROM usuarios WHERE email = $1 AND verification_code = $2",
+        "SELECT * FROM usuarios WHERE email = $1 AND verification_code = $2",//busqueda del usuario coincidente
         [email, recoveryCode]
     )
 
@@ -257,22 +261,22 @@ const resetPassword = async(req, res) => {
     const now = new Date()
 
     if(now > user.rows[0].code_expire_at){
-        return res.status(400).json({error: "Usuario incorrecto o codigo expirado"})
+        return res.status(400).json({error: "Usuario incorrecto o codigo expirado"})// manejo de errores si token expirado
     }
         
-    const salt = await bcrypt.genSalt(10)
-    const hashedNewPassword = await bcrypt.hash(newPassword, salt)
+    const salt = await bcrypt.genSalt(10)//creamos salt para la nueva password
+    const hashedNewPassword = await bcrypt.hash(newPassword, salt)//hasheamos nuevo password
 
     await pool.query(
-        "UPDATE usuarios SET password = $1, verification_code = NULL, code_expire_at = NULL WHERE email = $2",
+        "UPDATE usuarios SET password = $1, verification_code = NULL, code_expire_at = NULL WHERE email = $2",//insertamos datos en la bbdd
         [hashedNewPassword, email]
     )
     
 
-    return res.status(200).json({message: "Cuenta recuperada con exito"})
+    return res.status(200).json({message: "Cuenta recuperada con exito"})//ok
     }catch(error){
         console.error(error)
-       return res.status(500).json({error: "Error del servidor"})
+       return res.status(500).json({error: "Error del servidor"})//manejo de errores del server
     }
 }
 

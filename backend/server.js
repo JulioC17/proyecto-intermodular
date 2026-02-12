@@ -3,6 +3,7 @@ const dotenv = require("dotenv").config()
 const cors = require("cors")
 const roleRoutes = require("./src/routes/roleRoutes")
 const authRoutes = require("./src/routes/authRoutes")
+const empresasRoutes = require("./src/routes/empresasRoutes")
 
 const app = express()
 const PORT = process.env.PORT || 5001
@@ -12,6 +13,7 @@ app.use(cors())
 
 app.use("/roles", roleRoutes)
 app.use("/auth", authRoutes)
+app.use("/company", empresasRoutes)
 
 
 
