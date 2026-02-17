@@ -19,7 +19,8 @@ const isAuth = (req, res, next) => {
         const decoded = jwt.verify(token, process.env.JWT_SECRET)
         req.user = {
             id: decoded.id,
-            rol_id:decoded.rol_id
+            rol_id:decoded.rol_id,
+            firstLogin:decoded.firstLogin || false
         }
         next()
     }catch(err){

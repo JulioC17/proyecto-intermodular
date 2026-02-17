@@ -7,16 +7,19 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY)//api key de servicio de mensajeri
 
 //controlador para el registro de usuarios, el registro solo sera para "propietarios"
 const register = async(req, res) => {
-    const {nombre, apellidos, email, password} = req.body //seleccion de lo que  manda el front
+    const {nombre, apellidos, email, password} = req.body //seleccion de lo que  envia el front
+    
 
     if(!nombre || !apellidos || !email || !password){
         return res.status(400).json({error: "Faltan campos por rellenar"})//comprobacion de campos vacios
     }
 
+    const normalizedEmail = email.toLowerCase().trim()
+
     try{
         const userExists = await pool.query(//buscar si el correo existe ya en la bbdd
-        "SELECT * FROM usuarios WHERE email = $1", 
-        [email]
+        "SELECT id FROM usuarios WHERE email = $1", 
+        [normalizedEmail]
     )
     
     if(userExists.rows.length > 0){
@@ -30,8 +33,8 @@ const register = async(req, res) => {
     const expiry = new Date(now.getTime() + 15 * 60000)//creacion de fecha de expiracion
 
     const newUser = await pool.query(//insertamos todos los datos en la bbdd
-        "INSERT INTO usuarios (nombre, apellidos, email, password, verification_code, code_expire_at, rol_id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
-        [nombre, apellidos, email, hashedPassword, verificationCode, expiry, 1]
+        "INSERT INTO usuarios (nombre, apellidos, email, password, verification_code, code_expire_at, rol_id, password_changed) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
+        [nombre, apellidos, normalizedEmail, hashedPassword, verificationCode, expiry, 1, true]
     )
 
     const msg = {//creamos email con codigo de verificacion
@@ -63,10 +66,12 @@ const login = async(req, res) => {//extraemos email y password de la peticion
         return res.status(400).json({error: "Faltan campos por rellenar"})//comprobamos campos vacios
     }
 
+    const normalizedEmail = email.toLowerCase().trim()
+
     try{
         const user = await pool.query(//buscamos usuario coincidente con el email
             "SELECT * FROM usuarios WHERE email = $1",
-            [email]
+            [normalizedEmail]
         )
 
         if(user.rows.length == 0){//comprobacion de que existe usuario con ese email
@@ -83,8 +88,27 @@ const login = async(req, res) => {//extraemos email y password de la peticion
             return res.status(401).json({error: "Usuario no verificado"})//combprobacion de que el usuario ha sido verificado antes
         }
 
+        if(!user.rows[0].password_changed){
+           
+            const tempToken = jwt.sign(
+            {id:user.rows[0].id, rol_id:user.rows[0].rol_id, firstLogin:true},
+            process.env.JWT_SECRET,
+            {expiresIn:"10m"}
+           )
+           
+           return res.status(200).json({
+            message: "Debes reestablecer tu contraseña",
+            tempToken,
+            user:{
+                id: user.rows[0].id,
+                nombre: user.rows[0].nombre,
+                rol:user.rows[0].rol_id
+            }
+            })
+        }
+
         const token = jwt.sign(
-            {id:user.rows[0].id, rol_id: user.rows[0].rol_id},//creamos token de sesion
+            {id:user.rows[0].id, rol_id: user.rows[0].rol_id, firstLogin:false},//creamos token de sesion
             process.env.JWT_SECRET,
             {expiresIn:"1h"}
         )
