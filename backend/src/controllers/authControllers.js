@@ -7,10 +7,10 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY)//api key de servicio de mensajeri
 
 //controlador para el registro de usuarios, el registro solo sera para "propietarios"
 const register = async(req, res) => {
-    const {nombre, apellidos, email, password} = req.body //seleccion de lo que  envia el front
+    const {nombre, apellidos, email, password, dni, telefono, sueldo} = req.body //seleccion de lo que  envia el front
     
 
-    if(!nombre || !apellidos || !email || !password){
+    if(!nombre || !apellidos || !email || !password || !dni){
         return res.status(400).json({error: "Faltan campos por rellenar"})//comprobacion de campos vacios
     }
 
@@ -33,8 +33,8 @@ const register = async(req, res) => {
     const expiry = new Date(now.getTime() + 15 * 60000)//creacion de fecha de expiracion
 
     const newUser = await pool.query(//insertamos todos los datos en la bbdd
-        "INSERT INTO usuarios (nombre, apellidos, email, password, verification_code, code_expire_at, rol_id, password_changed) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
-        [nombre, apellidos, normalizedEmail, hashedPassword, verificationCode, expiry, 1, true]
+        "INSERT INTO usuarios (nombre, apellidos, email, password, verification_code, code_expire_at, rol_id, password_changed, dni, telefono, sueldo) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)",
+        [nombre, apellidos, normalizedEmail, hashedPassword, verificationCode, expiry, 1, true, dni, telefono, sueldo]
     )
 
     const msg = {//creamos email con codigo de verificacion
@@ -48,7 +48,7 @@ const register = async(req, res) => {
 
     await sgMail.send(msg)//enviamos email con el codigo
 
-    return res.status(201).json({message:" Usuario creado correctamente, revise su email para verificar"})//confirmamos que todo salio ok
+    return res.status(201).json({message:"Usuario creado correctamente, revise su email para verificar"})//confirmamos que todo salio ok
 
    
     }catch(error){
@@ -110,7 +110,7 @@ const login = async(req, res) => {//extraemos email y password de la peticion
         const token = jwt.sign(
             {id:user.rows[0].id, rol_id: user.rows[0].rol_id, firstLogin:false},//creamos token de sesion
             process.env.JWT_SECRET,
-            {expiresIn:"1h"}
+            {expiresIn:"7d"}
         )
 
         return res.status(200).json({//devolvemos token y datos relevantes pero no sensibles
@@ -231,7 +231,7 @@ const requestPasswordReset = async (req, res) => {
         )
 
         if(user.rows.length == 0){
-            return res.status(200).json({message: "si existe este email, se enviara un codigo"})//usuario no existe
+            return res.status(200).json({message: "Si existe este email, se enviara un codigo"})//usuario no existe
         }
 
         const verificationCode = Math.floor(100000 + Math.random() * 900000)//creacion  codigo nuevo de verificacion

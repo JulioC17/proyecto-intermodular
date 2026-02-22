@@ -1,10 +1,11 @@
 const express = require("express")
-const {createCompany, viewCompany, updateCompany, deleteCompany} = require("../controllers/empresasControllers")
+const {createCompany, viewCompany, updateCompany, deleteCompany, changeCompany} = require("../controllers/empresasControllers")
 const isAuth = require("../middleware/isAuth")
 
 const router = express.Router()
 
 router.post("/createCompany", isAuth, createCompany)//ruta para la creacion de empresas
+router.post("/changeCompany/:id_usuario", isAuth, changeCompany)
 
 router.get("/viewCompany", isAuth, viewCompany)//ruta para la lectura y vista de empresas
 
