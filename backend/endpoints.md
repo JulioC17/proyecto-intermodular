@@ -10,7 +10,7 @@ Registra un nuevo usuario propietario
     "apellidos": "Rodriguez",   (obligatorio)
     "email": "juan@gmail.com",  (obligatorio)
     "password": "123456",       (obligatorio)
-    "dni": 1234567A,            (obligatorio)
+    "dni": "1234567A",          (obligatorio)
     "telefono":"1234567890",    (opcional)
     "sueldo": 1200              (opcional)
 }
@@ -240,7 +240,7 @@ Editar datos de una empresa
 
 ----------------------------------------------------------------------------
 
-## DELETE /updateCompany/:id_empresa
+## DELETE /deleteCompany/:id_empresa
 ### Descripcion
 Eliminar una empresa
 
@@ -322,7 +322,7 @@ Forzar al usuario a un cambio de contraseña
 ### token temporal
 ### body (JSON)
 {
-    email:"nuevoPassword"
+    "password":"nuevoPassword"
 }
 
 ### Respuesta OK (200)
@@ -379,7 +379,7 @@ Editar usuarios(solo propietarios o admins)
     nombre: "pedro",            (opcional)
     apellidos: "gonzalo",       (opcional)
     telefono: "46578349",       (opcional)
-    sueldo: "4567.89"           (opcional)
+    sueldo: 4567.89             (opcional)
 }
 
 ### Respuesta Ok (200)

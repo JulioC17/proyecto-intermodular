@@ -5,6 +5,7 @@ const roleRoutes = require("./src/routes/roleRoutes")
 const authRoutes = require("./src/routes/authRoutes")
 const empresasRoutes = require("./src/routes/empresasRoutes")
 const usuariosRoutes = require("./src/routes/usuariosRoutes")
+const turnosRoutes = require("./src/routes/turnosRoutes")
 
 const app = express()
 const PORT = process.env.PORT || 5001
@@ -16,6 +17,7 @@ app.use("/roles", roleRoutes)
 app.use("/auth", authRoutes)
 app.use("/company", empresasRoutes)
 app.use("/users", usuariosRoutes)
+app.use("/turnos", turnosRoutes)
 
 
 
