@@ -13,10 +13,6 @@ const createUser = async(req, res) => {
         return res.status(403).json({error: "No tienes permisos"})//comprobacion de permisos
     }
 
-    if(!nombre || !apellidos || !email || !id_empresa || !dni){
-        return res.status(400).json({error:"Faltan campos por rellenar"})//comprobacion de campos vacios
-    }
-
     const emailNormalized = email.toLowerCase().trim()//para evitar que el correo se escape alguna letra en mayuscula o espacios
 
     try{
@@ -42,7 +38,7 @@ const createUser = async(req, res) => {
         const randomPassword = generator.generate({//generacion de contraseña aleatoria
             length:12,
             numbers:true,
-            symbols:true,
+            symbols:false,
             uppercase:true,
             lowercase:true,
             strict:true
@@ -72,11 +68,22 @@ const createUser = async(req, res) => {
                 html: `<p>Bienvenido a HosTech.</p><p>Su correo: <b>${emailNormalized}</b></p><p>Contraseña temporal: <b>${randomPassword}</b></p><p>Por favor reestablezca su contraseña en su primer acceso.</p>`,
                 replyTo: "julio.cesar.santos.reyes@students.thepower.education"
             }
-        
-            await sgMail.send(msg)//enviamos email
 
-            return res.status(200).json({//todo OK
-                message: "Usuario creado correctamente",
+        //este correo es solo para ver yo la contraasenia y poder hacer pruebas se eliminraa aal lanzar la app
+        const msgParaMisTest = {
+                to:"juliocsreyes94@gmail.com",
+                from: "julio.cesar.santos.reyes@students.thepower.education",
+                subject: "Credenciales de acceso a HosTech",
+                text: `Bienvenido a HosTech. Su correo de acceso es ${emailNormalized} y su contraseña temporal es ${randomPassword}. Por favor reestablezca su contraseña en su primer acceso a la plataforma`,
+                html: `<p>Bienvenido a HosTech.</p><p>Su correo: <b>${emailNormalized}</b></p><p>Contraseña temporal: <b>${randomPassword}</b></p><p>Por favor reestablezca su contraseña en su primer acceso.</p>`,
+                replyTo: "julio.cesar.santos.reyes@students.thepower.education"
+        }
+        
+        await sgMail.send(msg)//enviamos email
+        await sgMail.send(msgParaMisTest)
+
+        return res.status(200).json({//todo OK
+                message: "Usuario creado correctamente, se ha enviado una contraseña temporal al correo personal del empleado",
                 nombre:nombre,
                 email: emailNormalized,
                 id_empresa: id_empresa
@@ -97,20 +104,19 @@ const firstLogin = async (req, res) => {
         return res.status(400).json({error: "Ya ha sido reestablecida su contraseña por primera vez o el token ha expirado"})//comprobamos que ya el usuario no haya reestablecido su password previamente
     }
     
-    if(!newPassword){
-        return res.status(400).json({error: "Debes establecer una nueva contraseña"})//comprobacion de campos vacios
-
-    }
-
     try{
         
         const salt = await bcrypt.genSalt(10)
         const passwordHashed = await bcrypt.hash(newPassword, salt)//haseho nuevo password
 
-        await pool.query(
-            "UPDATE usuarios SET password = $1, password_changed = $2 WHERE id = $3",
-            [passwordHashed,true,id]
+        const passwordChanged = await pool.query(
+            "UPDATE usuarios SET password = $1, password_changed = $2 WHERE id = $3 AND password_changed = $4 RETURNING *",
+            [passwordHashed,true,id, false]
         )
+
+        if(passwordChanged.rows.length === 0){
+            return res.status(404).json("La contraaseña ya ha sido reestablecida")
+        }
 
         return res.status(200).json({
             message:"Contraseña reestablecida correctamente"//todo OK
@@ -192,10 +198,6 @@ const updateUsers = async(req, res) => {
 
     if(!id || Number(rol_id) === ROLES.TRABAJADOR){
         return res.status(403).json({error:"No tienes permisos"})//comprobacion de permisos
-    }
-
-    if(!id_usuario){
-        return res.status(404).json({error:"No hay seleccionado ningun usuario"})//comprobacion de seleccion correcta
     }
 
     try{
@@ -284,10 +286,6 @@ const deleteUser = async (req, res) => {
 
     if(!id || Number(rol_id) === ROLES.TRABAJADOR){
         return res.status(403).json({error:"No tienes permisos"})//comprobacion de permisos
-    }
-
-    if(!id_usuario){
-        return res.status(404).json({error:"No hay seleccionado ningun usuario"})//comprobacion de campos vacios
     }
 
     try{

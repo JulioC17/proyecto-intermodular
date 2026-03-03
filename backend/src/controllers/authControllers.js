@@ -9,11 +9,6 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY)//api key de servicio de mensajeri
 const register = async(req, res) => {
     const {nombre, apellidos, email, password, dni, telefono, sueldo} = req.body //seleccion de lo que  envia el front
     
-
-    if(!nombre || !apellidos || !email || !password || !dni){
-        return res.status(400).json({error: "Faltan campos por rellenar"})//comprobacion de campos vacios
-    }
-
     const normalizedEmail = email.toLowerCase().trim()
 
     try{
@@ -61,10 +56,6 @@ const register = async(req, res) => {
 //controlador de login
 const login = async(req, res) => {//extraemos email y password de la peticion
     const {email, password} = req.body
-
-    if(!email || !password){
-        return res.status(400).json({error: "Faltan campos por rellenar"})//comprobamos campos vacios
-    }
 
     const normalizedEmail = email.toLowerCase().trim()
 
@@ -135,11 +126,6 @@ const login = async(req, res) => {//extraemos email y password de la peticion
 //contorlador para verificar al usuarios por email
 const verifyEmail = async (req, res) => {
     const {email, verificationCode} = req.body//extraemos de la peticion email(vendra del front) y el codigo de verificacion
-
-    if(!email || !verificationCode){
-        return res.status(400).json({error: "Faltan campos por rellenar"})//comprobacion de campos vacios
-    }
-
     try{
     const user = await pool.query(//buscamos al usuario en base a las coincidencias(email, codigo y estado)
         "SELECT * FROM usuarios WHERE email = $1 AND verification_code = $2 AND verified = false",
@@ -153,7 +139,7 @@ const verifyEmail = async (req, res) => {
     const now = new Date()
 
     if(now > user.rows[0].code_expire_at){
-        return res.status(401).json({error: "Codigo de verificacion invalido o expirado"})//comprobacion de que no ha expirado el codigo
+        return res.status(401).json({error: "Codigo invalido o expirado"})//comprobacion de que no ha expirado el codigo
     }
 
     await pool.query(
@@ -219,11 +205,7 @@ const resendEmail = async (req, res) => {
 const requestPasswordReset = async (req, res) => {
     const {email} = req.body//extraccion del mail de la req
 
-    if(!email){
-        return res.status(400).json({error: "Faltan campos por rellenar"})//comprobacion de campos incompletos
-    }
-
-    try{
+     try{
 
         const user = await pool.query(
             "SELECT id FROM usuarios WHERE email = $1",//busqueda de coincidencias en la bbdd
@@ -266,12 +248,6 @@ const requestPasswordReset = async (req, res) => {
 //controlador para resetear el password
 const resetPassword = async(req, res) => {
     const {email, newPassword, recoveryCode} = req.body//extraccion de datos necesarios de la request
-
-    if(!email || !newPassword || !recoveryCode){
-        return res.status(400).json({error: "Faltan campos por rellenar"})//comrpobacion de campos incompletos
-    }
-
-    
     try{
     const user = await pool.query(
         "SELECT * FROM usuarios WHERE email = $1 AND verification_code = $2",//busqueda del usuario coincidente

@@ -6,6 +6,7 @@ const authRoutes = require("./src/routes/authRoutes")
 const empresasRoutes = require("./src/routes/empresasRoutes")
 const usuariosRoutes = require("./src/routes/usuariosRoutes")
 const turnosRoutes = require("./src/routes/turnosRoutes")
+const vacacionesRoutes = require("./src/routes/vacacionesRoutes")
 
 const app = express()
 const PORT = process.env.PORT || 5001
@@ -18,6 +19,7 @@ app.use("/auth", authRoutes)
 app.use("/company", empresasRoutes)
 app.use("/users", usuariosRoutes)
 app.use("/turnos", turnosRoutes)
+app.use("/hollidays", vacacionesRoutes)
 
 
 

@@ -8,10 +8,6 @@ const createCompany = async(req, res) => {
     const {nombre, email,} = req.body //obtenemos nombre y email del front
     const {rol_id} = req.user // obtenemos el ide del rol del token
 
-    if(!nombre){
-        return res.status(400).json({error:"Tu empresa debe tener un Nombre"})// comprobamos que no haya campos vacios
-    }
-
     try{
         if(Number(rol_id) === ROLES.PROPIETARIO){//comprobamos que el rol que esta intentando crear la empresa sea correcta
             
@@ -74,17 +70,25 @@ const viewCompany = async (req, res) => {
 //controlador para modificar empresas
 const updateCompany = async(req, res) => {
     const{id, rol_id} = req.user//obtenmos id y rol del usuario desde el token
-    const {id_empresa, nombre, email} = req.body//obtenemos datos desde el body de la peticion
+    const {nombre, email} = req.body//obtenemos datos desde el body de la peticion
+    const {id_empresa} = req.params
 
-    if(Number(rol_id) !== ROLES.PROPIETARIO || !id || !id_empresa){
+    if(Number(rol_id) !== ROLES.PROPIETARIO || !id){
         return res.status(403).json("No tienes Permisos")//comprobamos que los datos que vienen desde el token y desde el body sean correctos
     }
 
-    if(!nombre && !email){
-        return res.status(400).json({error: "Faltan datos por rellenar"})//comprobamos que no esten vacios email y nombre al mismo tiempo
-    }
-
     try{
+
+        if(!nombre && !email){
+            const noChanges = await pool.query(
+                "SELECT nombre, email FROM empresas WHERE id = $1",
+                [id_empresa]
+            )
+
+            return res.status(200).json({
+                message: `No se ha modificado la empresa ${noChanges.rows[0].nombre}`
+            })
+        }
         
         const checkOwner = await pool.query(
             "SELECT * FROM usuarios_empresas WHERE usuario_id = $1 AND empresa_id = $2",//comprobacion de que las empresas pertenezcan al usuario que las quiere modificar
@@ -128,16 +132,10 @@ const deleteCompany = async(req, res) => {
     const {id, rol_id} = req.user//obtencion de datos desde el token
     const {id_empresa} = req.params//obtencion de datos desde la url
 
-    
-
     if(!id || Number(rol_id) !== ROLES.PROPIETARIO){
         return res.status(400).json({error: "No tienes permisos"})//comrpobacion de permisos
     }
-
-    if(!id_empresa){
-        return res.status(400).json({error: "Faltan campos por rellenar"})//comprobacion de datos existentes en url
-    }
-
+    
     try{
 
         const checkOwner = await pool.query(
@@ -175,24 +173,16 @@ const changeCompany = async (req, res) => {
     if(!id || Number(rol_id) === ROLES.TRABAJADOR){
         return res.status(403).json({error: "No tienes permisos"})//comprobacion de permisos
     }
-    
-    if(!id_usuario){
-        return res.status(404).json({error: "No has seleccionado un trabajador"})//comprobacion de campos necesaior vacios
-    }
-
-    if(!companyTargetId){
-        return res.status(404).json({error: "Especifica a que empresa quieres cambiar al usuario"})//comprobacion de campos vacios
-    }
 
     try{
         await checkOwnerCompany(id, id_usuario)//comprobacion de que el usuario que quiere hacer el cambio pertence a una empresa del usuario que cambia
 
-        const checkTargetCmpanyIsPropertyOfRequester = await pool.query(
+        const checkTargetCompanyIsPropertyOfRequester = await pool.query(
             "SELECT 1 FROM usuarios_empresas WHERE usuario_id =$1 AND empresa_id = $2",
             [id, companyTargetId]
         )
 
-        if(checkTargetCmpanyIsPropertyOfRequester.rows.length === 0 ){
+        if(checkTargetCompanyIsPropertyOfRequester.rows.length === 0 ){
             return res.status(403).json({error: "No tienes permisos"})//comprobacion de que la empresa destino pertenece al que requester
         }
 
