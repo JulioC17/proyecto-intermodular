@@ -4,7 +4,7 @@ const createShiftSchema = Joi.object({
     nombre: Joi.string()
     .required()
     .messages({
-        "string.empty":"Debes establecer un nombre paaraa el turno"
+        "string.empty":"Debes establecer un nombre para el turno"
     }),
 
     hora_inicio : Joi.string()
