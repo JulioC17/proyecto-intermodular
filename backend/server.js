@@ -8,6 +8,7 @@ const usuariosRoutes = require("./src/routes/usuariosRoutes")
 const turnosRoutes = require("./src/routes/turnosRoutes")
 const vacacionesRoutes = require("./src/routes/vacacionesRoutes")
 const fichajesRoutes = require("./src/routes/fichajesRoutes")
+const recetasRoutes = require("./src/routes/recetasRoutes")
 
 const app = express()
 const PORT = process.env.PORT || 5001
@@ -22,6 +23,7 @@ app.use("/users", usuariosRoutes)
 app.use("/turnos", turnosRoutes)
 app.use("/hollidays", vacacionesRoutes)
 app.use("/fichajes", fichajesRoutes)
+app.use("/recetas", recetasRoutes)
 
 
 

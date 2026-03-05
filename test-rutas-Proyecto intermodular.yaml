@@ -1,0 +1,1241 @@
+type: collection.insomnia.rest/5.0
+schema_version: "5.1"
+name: proyecto-intermodular
+meta:
+  id: wrk_ecdc805bc1774ad786de4a5b82d863e2
+  created: 1770648996728
+  modified: 1770648996728
+  description: ""
+collection:
+  - name: rutas de rol
+    meta:
+      id: fld_1ccf2fb518e34fffadb4510fa62e4382
+      created: 1770650625582
+      modified: 1770650625582
+      sortKey: -1770650625583
+      description: ""
+    children:
+      - url: http://localhost:5001/roles
+        name: Insertar Rol
+        meta:
+          id: req_1947669d289141ab9ee1d0111f1f93b1
+          created: 1770650628423
+          modified: 1770659075923
+          isPrivate: false
+          description: ""
+          sortKey: -1770650628423
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"rol": "trabajador"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: rutas de autenticacion
+    meta:
+      id: fld_89a079093e23492f8eb224fbf2fbd3c8
+      created: 1770658932868
+      modified: 1772351268349
+      sortKey: -1770658932868
+      description: ""
+    children:
+      - url: http://localhost:5001/auth/register
+        name: Insertar usuario propietario✅
+        meta:
+          id: req_9184d88461be4acc9f304e77110d4b2e
+          created: 1770658935943
+          modified: 1772174497534
+          isPrivate: false
+          description: ""
+          sortKey: -1770658935943
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"nombre":"alberto",
+            	"apellidos": "Reyes",
+            	"email": "alberto@gmail.com",
+            	"password":"alberto123",
+            	"dni":"123456789"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:5001/auth/verify-email
+        name: verificar codigo de verificacion✅
+        meta:
+          id: req_c84a65ed6fef4ca4864ad503b0e6cf03
+          created: 1770745163454
+          modified: 1772175090179
+          isPrivate: false
+          description: ""
+          sortKey: -1770745163454
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"email":"alberto@gmail.com",
+            	"verificationCode": "594974"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:5001/auth/login
+        name: login✅
+        meta:
+          id: req_48b3f464d4a04a55a220ad5a5d7bfcc2
+          created: 1770749227162
+          modified: 1772610037201
+          isPrivate: false
+          description: ""
+          sortKey: -1770749227162
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"email":"juliocsreyes94@gmail.com",
+            	"password": "julio123"
+            	
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        authentication:
+          type: none
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:5001/auth/resend
+        name: resend email✅
+        meta:
+          id: req_1c21ed20466246c9807eeac2725cc38d
+          created: 1770750185620
+          modified: 1772175804244
+          isPrivate: false
+          description: ""
+          sortKey: -1770750185620
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"email":"alberto@gmail.com"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:5001/auth/requestPasswordReset
+        name: Request password reset✅
+        meta:
+          id: req_49e9d08d0e924bdbb7d01567d7971e00
+          created: 1770756611985
+          modified: 1772176038691
+          isPrivate: false
+          description: ""
+          sortKey: -1770756611985
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"email":"alberto@gmail.com"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:5001/auth/resetPassword
+        name: resetPassword✅
+        meta:
+          id: req_c4cb68f796074fe8aa629a0d5acf9c91
+          created: 1770756761885
+          modified: 1772176453035
+          isPrivate: false
+          description: ""
+          sortKey: -1770756761885
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"email":"alberto@gmail.com",
+            	"newPassword":"julio123",
+            	"recoveryCode":"658795"
+            	
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: CRUD empresas
+    meta:
+      id: fld_65a044107755495cbf44d92025360d76
+      created: 1770794143186
+      modified: 1770794143186
+      sortKey: -1770794143186
+      description: ""
+    children:
+      - url: http://localhost:5001/company/createCompany
+        name: crear empresa✅
+        meta:
+          id: req_8552eedd701c487ab13d88298201df84
+          created: 1770794145545
+          modified: 1772182318610
+          isPrivate: false
+          description: ""
+          sortKey: -1770794145545
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"nombre":"Agustina Risk S.A."
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        authentication:
+          type: bearer
+          token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE4Iiwicm9sX2lkIjoiMSIsImZpcnN0TG9naW4iOmZhbHNlLCJpYXQiOjE3NzIxNzU1OTIsImV4cCI6MTc3Mjc4MDM5Mn0.RiP14-zW4yNwOWACRQZEH3bOBLr0JU595ZSyYTjXDic
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:5001/company/viewCompany
+        name: ver todas las empresas✅
+        meta:
+          id: req_f68fb6a6a63f468d9a5c2afaffad1dbc
+          created: 1770817345510
+          modified: 1772181937879
+          isPrivate: false
+          description: ""
+          sortKey: -1770817345510
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        authentication:
+          type: bearer
+          token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE4Iiwicm9sX2lkIjoiMSIsImZpcnN0TG9naW4iOmZhbHNlLCJpYXQiOjE3NzIxNzU1OTIsImV4cCI6MTc3Mjc4MDM5Mn0.RiP14-zW4yNwOWACRQZEH3bOBLr0JU595ZSyYTjXDic
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:5001/company/updateCompany/9
+        name: editar empresas✅
+        meta:
+          id: req_0af23d3639974f028598683a442582be
+          created: 1770823645505
+          modified: 1772181951821
+          isPrivate: false
+          description: ""
+          sortKey: -1770823645505
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"email":"pollosquinin@gmail.com",
+            	"nombre": "Pollos Quinin"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        authentication:
+          type: bearer
+          token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE4Iiwicm9sX2lkIjoiMSIsImZpcnN0TG9naW4iOmZhbHNlLCJpYXQiOjE3NzIxNzU1OTIsImV4cCI6MTc3Mjc4MDM5Mn0.RiP14-zW4yNwOWACRQZEH3bOBLr0JU595ZSyYTjXDic
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:5001/company/deleteCompany/10
+        name: delete company✅
+        meta:
+          id: req_0b1c84b92d3148f5914baf60bf58befd
+          created: 1770827521416
+          modified: 1772182391956
+          isPrivate: false
+          description: ""
+          sortKey: -1770827521416
+        method: DELETE
+        headers:
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        authentication:
+          type: bearer
+          token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE4Iiwicm9sX2lkIjoiMSIsImZpcnN0TG9naW4iOmZhbHNlLCJpYXQiOjE3NzIxNzU1OTIsImV4cCI6MTc3Mjc4MDM5Mn0.RiP14-zW4yNwOWACRQZEH3bOBLr0JU595ZSyYTjXDic
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:5001/company/changeCompany/24/company
+        name: Cambiar a usuario de empresa✅
+        meta:
+          id: req_d6e0c5043a3d4bc3b71d374a35683dfb
+          created: 1771660206429
+          modified: 1772523035511
+          isPrivate: false
+          description: ""
+          sortKey: -1771660206429
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"companyTargetId": 8
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        authentication:
+          type: bearer
+          token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE0Iiwicm9sX2lkIjoiMSIsImZpcnN0TG9naW4iOmZhbHNlLCJpYXQiOjE3NzIzNDk4MjYsImV4cCI6MTc3Mjk1NDYyNn0.wXf-BSxT9q99DTjeU12hOgmjNIQIQzXziE5aDmZx0uI
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: CRUD usuarios
+    meta:
+      id: fld_1dc756d871304e55b3415f7e50f9c6b7
+      created: 1771312424546
+      modified: 1771312424546
+      sortKey: -1771312424546
+      description: ""
+    children:
+      - url: http://localhost:5001/users/createUser
+        name: Crear usuario trabajdor✅
+        meta:
+          id: req_0752b7673e57400abfb95711f0e51407
+          created: 1771312427378
+          modified: 1772353257241
+          isPrivate: false
+          description: ""
+          sortKey: -1771312427378
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"nombre": "Chema",
+            	"apellidos":"Aznar",
+            	"email":"chema@gmail.com",
+            	"id_empresa": 7,
+            	"dni":"y4545454i",
+            	"sueldo":1900.67
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        authentication:
+          type: bearer
+          token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE0Iiwicm9sX2lkIjoiMSIsImZpcnN0TG9naW4iOmZhbHNlLCJpYXQiOjE3NzIzNDk4MjYsImV4cCI6MTc3Mjk1NDYyNn0.wXf-BSxT9q99DTjeU12hOgmjNIQIQzXziE5aDmZx0uI
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:5001/users/firstLogin
+        name: FirstLogin✅
+        meta:
+          id: req_c09ded9a2eb2490cbb6a0fca96a6cd37
+          created: 1771318170668
+          modified: 1772353869866
+          isPrivate: false
+          description: ""
+          sortKey: -1771318170668
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"newPassword":"chema123"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        authentication:
+          type: bearer
+          token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjI0Iiwicm9sX2lkIjoiMyIsImZpcnN0TG9naW4iOnRydWUsImlhdCI6MTc3MjM1Mzg1MiwiZXhwIjoxNzcyMzU0NDUyfQ.ZNb8_9kyPyAF7_bGa_ZnIWTsvy9CdYAR6c5Ow-4CamQ
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:5001/users/me
+        name: ver perfil de usuario✅
+        meta:
+          id: req_4ecd9d7b0b8a43d6af122797d87f8d87
+          created: 1771393604014
+          modified: 1772354000459
+          isPrivate: false
+          description: ""
+          sortKey: -1771393604014
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        authentication:
+          type: bearer
+          token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE3Iiwicm9sX2lkIjoiMyIsImZpcnN0TG9naW4iOmZhbHNlLCJpYXQiOjE3NzE3NTM1NzAsImV4cCI6MTc3MjM1ODM3MH0.4YWBu1lpv9p-oZ6EbEWjjfHfWTOHXHAAFJZmHpd7ma4
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:5001/users/getAll
+        name: Ver todos los usuarios✅
+        meta:
+          id: req_b9c2a51000d34e558f10f6d9c96416bd
+          created: 1771395119627
+          modified: 1772354008241
+          isPrivate: false
+          description: ""
+          sortKey: -1771395119627
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        authentication:
+          type: bearer
+          token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE0Iiwicm9sX2lkIjoiMSIsImZpcnN0TG9naW4iOmZhbHNlLCJpYXQiOjE3NzE3NTM3NzYsImV4cCI6MTc3MjM1ODU3Nn0.wXiosamlsgWDKyw-XRt9OjJCBLu3KLM1YJ3B1TCc5PQ
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:5001/users/updateUser/21
+        name: Editar usuario✅
+        meta:
+          id: req_5ff5fffa41a9425cada08b68ece2037a
+          created: 1771482417786
+          modified: 1772354917216
+          isPrivate: false
+          description: ""
+          sortKey: -1771482417786
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"nombre": "Patricia",
+            	"sueldo": 2340.78
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        authentication:
+          type: bearer
+          token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE0Iiwicm9sX2lkIjoiMSIsImZpcnN0TG9naW4iOmZhbHNlLCJpYXQiOjE3NzIzNTQ3MjksImV4cCI6MTc3Mjk1OTUyOX0.BTUnnUhVcSKnDL883pDgJQC5yRBL2TKohP0d0VcXF00
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:5001/users/deleteUser/21
+        name: eliminar usuario✅
+        meta:
+          id: req_27f168de37cb4417a1997f6f5b4cc894
+          created: 1771483989538
+          modified: 1772355122197
+          isPrivate: false
+          description: ""
+          sortKey: -1771483989538
+        method: DELETE
+        headers:
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        authentication:
+          type: bearer
+          token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE0Iiwicm9sX2lkIjoiMSIsImZpcnN0TG9naW4iOmZhbHNlLCJpYXQiOjE3NzIzNTQ3MjksImV4cCI6MTc3Mjk1OTUyOX0.BTUnnUhVcSKnDL883pDgJQC5yRBL2TKohP0d0VcXF00
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: CRUD turnos
+    meta:
+      id: fld_7775a2a52d4747499f7f32cdb200d488
+      created: 1771828915580
+      modified: 1771828915580
+      sortKey: -1771828915580
+      description: ""
+    children:
+      - url: http://localhost:5001/turnos/createShift
+        name: Crear turno✅
+        meta:
+          id: req_722b8c13187b436ba2217d66970c6a53
+          created: 1771828917907
+          modified: 1772358030268
+          isPrivate: false
+          description: ""
+          sortKey: -1771828917907
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"nombre": "cabezon",
+            	"hora_inicio":"15:00:00",
+            	"hora_fin":"21:00:00",
+            	"empresa_id": 7
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        authentication:
+          type: bearer
+          token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE0Iiwicm9sX2lkIjoiMSIsImZpcnN0TG9naW4iOmZhbHNlLCJpYXQiOjE3NzIzNTQ3MjksImV4cCI6MTc3Mjk1OTUyOX0.BTUnnUhVcSKnDL883pDgJQC5yRBL2TKohP0d0VcXF00
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:5001/turnos/getShifts/7
+        name: Ver turnos✅
+        meta:
+          id: req_83227b4e4bfa461797372d181a9a0247
+          created: 1771830683438
+          modified: 1772357266586
+          isPrivate: false
+          description: ""
+          sortKey: -1771830683438
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        authentication:
+          type: bearer
+          token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE0Iiwicm9sX2lkIjoiMSIsImZpcnN0TG9naW4iOmZhbHNlLCJpYXQiOjE3NzIzNTQ3MjksImV4cCI6MTc3Mjk1OTUyOX0.BTUnnUhVcSKnDL883pDgJQC5yRBL2TKohP0d0VcXF00
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:5001/turnos/updateShift/8/2
+        name: Modificar turno✅
+        meta:
+          id: req_154618888b8e44968399a8cca949066a
+          created: 1771851313492
+          modified: 1772357795341
+          isPrivate: false
+          description: ""
+          sortKey: -1771851313492
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"hora_inicio":"08:00:00",
+            	"hora_fin":"16:30:00",
+            	"nombre":"tu puta madre"
+            	
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        authentication:
+          type: bearer
+          token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE0Iiwicm9sX2lkIjoiMSIsImZpcnN0TG9naW4iOmZhbHNlLCJpYXQiOjE3NzIzNTQ3MjksImV4cCI6MTc3Mjk1OTUyOX0.BTUnnUhVcSKnDL883pDgJQC5yRBL2TKohP0d0VcXF00
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:5001/turnos/deleteShift/8/2
+        name: eliminar turno✅
+        meta:
+          id: req_5a12f3c25b49405f8fdfde728a0793d4
+          created: 1771863427563
+          modified: 1772358674088
+          isPrivate: false
+          description: ""
+          sortKey: -1771863427563
+        method: DELETE
+        headers:
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        authentication:
+          type: bearer
+          disabled: false
+          token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE0Iiwicm9sX2lkIjoiMSIsImZpcnN0TG9naW4iOmZhbHNlLCJpYXQiOjE3NzIzNTQ3MjksImV4cCI6MTc3Mjk1OTUyOX0.BTUnnUhVcSKnDL883pDgJQC5yRBL2TKohP0d0VcXF00
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:5001/turnos/assign/7/3
+        name: asignar turno a un usuario✅
+        meta:
+          id: req_df008ad22e074354a479387cc26a5c3f
+          created: 1771915641788
+          modified: 1772360347818
+          isPrivate: false
+          description: ""
+          sortKey: -1771915641792
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"usuario_id":24,
+            	"fecha":"2026-03-10"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        authentication:
+          type: bearer
+          token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE0Iiwicm9sX2lkIjoiMSIsImZpcnN0TG9naW4iOmZhbHNlLCJpYXQiOjE3NzIzNTQ3MjksImV4cCI6MTc3Mjk1OTUyOX0.BTUnnUhVcSKnDL883pDgJQC5yRBL2TKohP0d0VcXF00
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:5001/turnos/remove/7/3/24/2026-03-10
+        name: eliminar un turno asigando✅
+        meta:
+          id: req_e4d2fea85bda4028a4732224cc96ba88
+          created: 1771917674917
+          modified: 1772361013869
+          isPrivate: false
+          description: ""
+          sortKey: -1771917674917
+        method: DELETE
+        headers:
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        authentication:
+          type: bearer
+          token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE0Iiwicm9sX2lkIjoiMSIsImZpcnN0TG9naW4iOmZhbHNlLCJpYXQiOjE3NzIzNTQ3MjksImV4cCI6MTc3Mjk1OTUyOX0.BTUnnUhVcSKnDL883pDgJQC5yRBL2TKohP0d0VcXF00
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:5001/turnos/schedule/me
+        name: Ver Horario del usuario✅
+        meta:
+          id: req_22b5d63abf2f47e58f5488f2ea5d9ec5
+          created: 1771923347227
+          modified: 1772357303822
+          isPrivate: false
+          description: ""
+          sortKey: -1771923347227
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        authentication:
+          type: bearer
+          token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE3Iiwicm9sX2lkIjoiMyIsImZpcnN0TG9naW4iOmZhbHNlLCJpYXQiOjE3NzE5MjMzMjYsImV4cCI6MTc3MjUyODEyNn0.ZQNeiGLKGcmhNe0mzy7-biJFp12bJfay-NBOUxY-9f0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: CRUD vacaciones
+    meta:
+      id: fld_626f300450d24079951518e41c7dbc99
+      created: 1772519605782
+      modified: 1772519605782
+      sortKey: -1772519605782
+      description: ""
+    children:
+      - url: http://localhost:5001/hollidays/requestHollidays
+        name: crear solicitud de vacaciones✅
+        meta:
+          id: req_2ec321fd22e44ed79aad35be5a63ef0f
+          created: 1772519608081
+          modified: 1772523088329
+          isPrivate: false
+          description: ""
+          sortKey: -1772519608081
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"fecha_inicio":"2026-09-20",
+            	"fecha_fin":"2026-10-01"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        authentication:
+          type: bearer
+          token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjI0Iiwicm9sX2lkIjoiMyIsImZpcnN0TG9naW4iOmZhbHNlLCJpYXQiOjE3NzI1MjMwNzIsImV4cCI6MTc3MzEyNzg3Mn0.jQVpPorVcoBSwBFW3fEg74fDyn3bUXnaYpv85An_kXg
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:5001/hollidays/getHollidays
+        name: obtener vacaciones personales✅
+        meta:
+          id: req_7e4e9c4a05a04c368c23f18c71bf1059
+          created: 1772520603756
+          modified: 1772523214794
+          isPrivate: false
+          description: ""
+          sortKey: -1772520603756
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        authentication:
+          type: bearer
+          token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjI0Iiwicm9sX2lkIjoiMyIsImZpcnN0TG9naW4iOmZhbHNlLCJpYXQiOjE3NzI1MjMwNzIsImV4cCI6MTc3MzEyNzg3Mn0.jQVpPorVcoBSwBFW3fEg74fDyn3bUXnaYpv85An_kXg
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:5001/hollidays/getAllHollidays
+        name: obtener todas las vacaciones✅
+        meta:
+          id: req_61673462e5ea4a24892890bb7d2624ec
+          created: 1772522783193
+          modified: 1772523228846
+          isPrivate: false
+          description: ""
+          sortKey: -1772522783193
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        authentication:
+          type: bearer
+          token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE0Iiwicm9sX2lkIjoiMSIsImZpcnN0TG9naW4iOmZhbHNlLCJpYXQiOjE3NzI1MjA2OTIsImV4cCI6MTc3MzEyNTQ5Mn0.KOF7FGEfwG9EQIIxFxcCe9LFH3dJYAGmnbPi0_IhpVE
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:5001/hollidays/handdleHollidays/2
+        name: aprobar/denegar vacaciones✅
+        meta:
+          id: req_c861a4f8115340f0a356d7aa236b70c1
+          created: 1772538923812
+          modified: 1772539895679
+          isPrivate: false
+          description: ""
+          sortKey: -1772538923812
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"estado":"hola"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        authentication:
+          type: bearer
+          token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE0Iiwicm9sX2lkIjoiMSIsImZpcnN0TG9naW4iOmZhbHNlLCJpYXQiOjE3NzI1Mzk4MjAsImV4cCI6MTc3MzE0NDYyMH0.OmGfGYWTmpDW8f-jIG6jui0Bj4GUf_MRh8Y7Ugkw-cs
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: CRUD fichajes
+    meta:
+      id: fld_413d0afcd99a4e3a99de598419bc434a
+      created: 1772545323659
+      modified: 1772545323659
+      sortKey: -1772545323659
+      description: ""
+    children:
+      - url: http://localhost:5001/fichajes/checkIn
+        name: crear fichaje✅
+        meta:
+          id: req_47aa5c115d894571a54d3455c596171d
+          created: 1772545325512
+          modified: 1772545833629
+          isPrivate: false
+          description: ""
+          sortKey: -1772545325512
+        method: POST
+        headers:
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        authentication:
+          type: bearer
+          token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjI0Iiwicm9sX2lkIjoiMyIsImZpcnN0TG9naW4iOmZhbHNlLCJpYXQiOjE3NzI1NDU0MTQsImV4cCI6MTc3MzE1MDIxNH0.wcLbbYzlwdWJUGd1R3nNjbpBx-mIdM5Q9z1GwzUlVb4
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:5001/fichajes/checkOut
+        name: crear un desfichaje✅
+        meta:
+          id: req_4b0b8e80119746dc89f4861ca3c4cf89
+          created: 1772546674785
+          modified: 1772605173440
+          isPrivate: false
+          description: ""
+          sortKey: -1772546674785
+        method: PUT
+        headers:
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        authentication:
+          type: bearer
+          token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjI0Iiwicm9sX2lkIjoiMyIsImZpcnN0TG9naW4iOmZhbHNlLCJpYXQiOjE3NzI1NDU0MTQsImV4cCI6MTc3MzE1MDIxNH0.wcLbbYzlwdWJUGd1R3nNjbpBx-mIdM5Q9z1GwzUlVb4
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:5001/fichajes/myWorkedTime
+        name: ver mis fichajes✅
+        meta:
+          id: req_0eb712baca6848fba4a600c899cac0fe
+          created: 1772605539404
+          modified: 1772606117380
+          isPrivate: false
+          description: ""
+          sortKey: -1772605539404
+        method: GET
+        parameters:
+          - name: from
+            value: 2025-10-01
+            description: ""
+            disabled: false
+          - name: to
+            value: 2025-10-31
+            description: ""
+            disabled: false
+        headers:
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        authentication:
+          type: bearer
+          token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjI0Iiwicm9sX2lkIjoiMyIsImZpcnN0TG9naW4iOmZhbHNlLCJpYXQiOjE3NzI1NDU0MTQsImV4cCI6MTc3MzE1MDIxNH0.wcLbbYzlwdWJUGd1R3nNjbpBx-mIdM5Q9z1GwzUlVb4
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:5001/fichajes/getAllWorkedTIme
+        name: obtener todos los fichajes✅
+        meta:
+          id: req_052e00c25c2948a0baa29eb61ddff2e5
+          created: 1772609975874
+          modified: 1772610987643
+          isPrivate: false
+          description: ""
+          sortKey: -1772609975874
+        method: GET
+        parameters:
+          - name: id_empresa
+            value: "7"
+            description: ""
+            disabled: false
+          - name: from
+            value: 2024-08-01
+            description: ""
+            disabled: false
+          - name: to
+            value: 2024-09-30
+            description: ""
+            disabled: false
+        headers:
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        authentication:
+          type: bearer
+          token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE0Iiwicm9sX2lkIjoiMSIsImZpcnN0TG9naW4iOmZhbHNlLCJpYXQiOjE3NzI2MTAwNDAsImV4cCI6MTc3MzIxNDg0MH0.iRE3WcvYVe1P7bQgFqa5JpDWvyjPkOXUdpHee744znQ
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: CRUD recetas
+    meta:
+      id: fld_dce99aad25b34f28bd0054cc5601a4b0
+      created: 1772623137799
+      modified: 1772623137799
+      sortKey: -1772623137799
+      description: ""
+    children:
+      - url: http://localhost:5001/recetas/createRecipe/8
+        name: crear nueva receta✅
+        meta:
+          id: req_ba6deeea1af840d49c4fbe192f19ce30
+          created: 1772623140833
+          modified: 1772625305025
+          isPrivate: false
+          description: ""
+          sortKey: -1772623140833
+        method: POST
+        body:
+          mimeType: application/json
+          text: >-
+            {
+            	"nombre":"Ceviche de atún",
+            	"ingredientes":"Atún cortado, leche de tigre, kikos, cremoso de aguacate, cebolla laminada en hielo, sal negra, hojas de cilantro",
+            	"elaboracion":"Hacer cama de cremoso de aguacate, aliñar atún con la leche de tigre, disponer encima del aguacate, espolvorear con kikos y sal negra, coronaar con la cebolla y las hojaas de cilantro"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        authentication:
+          type: bearer
+          token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE0Iiwicm9sX2lkIjoiMSIsImZpcnN0TG9naW4iOmZhbHNlLCJpYXQiOjE3NzI2MTAwNDAsImV4cCI6MTc3MzIxNDg0MH0.iRE3WcvYVe1P7bQgFqa5JpDWvyjPkOXUdpHee744znQ
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:5001/recetas/getRecipes/8
+        name: obtener recetas✅
+        meta:
+          id: req_23f4c029ece540e4a396d53b424cc810
+          created: 1772625280147
+          modified: 1772627474834
+          isPrivate: false
+          description: ""
+          sortKey: -1772625280147
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        authentication:
+          type: bearer
+          token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE0Iiwicm9sX2lkIjoiMSIsImZpcnN0TG9naW4iOmZhbHNlLCJpYXQiOjE3NzI2MTAwNDAsImV4cCI6MTc3MzIxNDg0MH0.iRE3WcvYVe1P7bQgFqa5JpDWvyjPkOXUdpHee744znQ
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:5001/recetas/updateRecipe/8/10
+        name: actualizar receta✅
+        meta:
+          id: req_9561609d1bc74b0590a904cdf17003c3
+          created: 1772627434072
+          modified: 1772628276197
+          isPrivate: false
+          description: ""
+          sortKey: -1772627434072
+        method: PUT
+        body:
+          mimeType: application/json
+          text: >-
+            {
+
+            "nombre":"Crumble de manzana",
+            	"montaje": "Disponer en la base del plato una lengua de yogurt de lima, crumble encima, espolvorear con gaalleta rota de canela y lima rallada"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        authentication:
+          type: bearer
+          token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE0Iiwicm9sX2lkIjoiMSIsImZpcnN0TG9naW4iOmZhbHNlLCJpYXQiOjE3NzI2MTAwNDAsImV4cCI6MTc3MzIxNDg0MH0.iRE3WcvYVe1P7bQgFqa5JpDWvyjPkOXUdpHee744znQ
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:5001/recetas/deleteRecipe/8/3
+        name: eliminar receta✅
+        meta:
+          id: req_0515de60165a4af8a9af12e1a15f8195
+          created: 1772690782426
+          modified: 1772690955536
+          isPrivate: false
+          description: ""
+          sortKey: -1772690782426
+        method: DELETE
+        headers:
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        authentication:
+          type: bearer
+          token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE0Iiwicm9sX2lkIjoiMSIsImZpcnN0TG9naW4iOmZhbHNlLCJpYXQiOjE3NzI2MTAwNDAsImV4cCI6MTc3MzIxNDg0MH0.iRE3WcvYVe1P7bQgFqa5JpDWvyjPkOXUdpHee744znQ
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_3ec1e687607f517d3d32dab3261a0ff2e36d3181
+    created: 1770648996730
+    modified: 1770648996730
+environments:
+  name: Base Environment
+  meta:
+    id: env_3ec1e687607f517d3d32dab3261a0ff2e36d3181
+    created: 1770648996729
+    modified: 1770648996729
+    isPrivate: false
