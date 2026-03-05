@@ -5,6 +5,8 @@ const sgMail = require("@sendgrid/mail")
 const { checkOwnerCompany } = require("../utils/functions")
 const {ROLES} = require("../utils/roles")
 
+
+//controldor para crear usuario nuevo que no sea PROPIETARIO
 const createUser = async(req, res) => {
     const {id, rol_id} = req.user//obtencion de datos desd el token
     const {nombre, apellidos, email, id_empresa, telefono, sueldo, dni} = req.body//recupracion de datos del body
@@ -96,6 +98,7 @@ const createUser = async(req, res) => {
 
 }
 
+//controlador para que el usuario cambie sus primeras credenciales
 const firstLogin = async (req, res) => {
     const {id, firstLogin} = req.user//recuperamos datos del token temporal
     const {newPassword} = req.body//recuperamos nuevo password
@@ -128,6 +131,7 @@ const firstLogin = async (req, res) => {
     }
 }
 
+//controlador para ver la informacion personal del usuario
 const userProfile = async (req, res) => {
     const {id} = req.user//traemos datos del token
 
@@ -156,6 +160,7 @@ const userProfile = async (req, res) => {
     }
 }
 
+//controlador para que los admisn y props puedn ver la info de sus trabajadores
 const ownersAndAdminsView = async (req, res) => {
     const {id, rol_id} = req.user//recuperacion de datos del token
 
@@ -180,7 +185,10 @@ const ownersAndAdminsView = async (req, res) => {
             [companysID, id]
         )
 
-        return res.status(200).json(findUsers.rows)//devolvemos 1 o mas trabajdores
+        return res.status(200).json({
+            data:findUsers.rows,
+            requester: req.user.nombre
+        })//devolvemos 1 o mas trabajdores
     
     
     }catch(error){
@@ -189,8 +197,7 @@ const ownersAndAdminsView = async (req, res) => {
     }
 }
 
-
-
+//controlador paara modificar informacion de los usuarios
 const updateUsers = async(req, res) => {
     const {id, rol_id} = req.user//treamos fatos del token
     const {email, nombre, apellidos, telefono, sueldo} = req.body//datos para actualizar del body
@@ -280,6 +287,7 @@ const updateUsers = async(req, res) => {
     }
 }
 
+//controlador para la eliminacion de usuarios
 const deleteUser = async (req, res) => {
     const {id, rol_id} = req.user//treamos datos del token
     const {id_usuario} = req.params//traemos datos de la URL

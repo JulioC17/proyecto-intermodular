@@ -1,5 +1,6 @@
 const pool = require("../database/conection")
 
+//controlador para insertar los roles(ya estan predefinidos en la base de datos, en teoria este controlador no se usara nunca)
 const createRole = async (req, res) => {
     const {rol} = req.body
 

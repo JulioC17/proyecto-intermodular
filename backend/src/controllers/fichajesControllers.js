@@ -1,17 +1,18 @@
 const pool = require("../database/conection")
 const {ROLES} = require("../utils/roles")
 
+//Controlador para creacion de fichaje
 const createCheckIn = async (req, res) => {
-    const {id, rol_id} = req.user
+    const {id, rol_id} = req.user//extraemos informacion del token
 
     if(Number(rol_id) === ROLES.PROPIETARIO){
-        return res.status(403).json({error: "Eres el propietario, no necesitas fichar"})
+        return res.status(403).json({error: "Eres el propietario, no necesitas fichar"})//comprobacion de permisos
     }
 
     try{
 
         const selectCompany = await pool.query(
-            "SELECT empresa_id FROM usuarios_empresas WHERE usuario_id = $1",
+            "SELECT empresa_id FROM usuarios_empresas WHERE usuario_id = $1",//comprobacion que el usuario pertence a la empresa en la que quiere fichar
             [id]
         )
 
@@ -20,7 +21,7 @@ const createCheckIn = async (req, res) => {
         }
 
         const userAlreadyCheckIn = await pool.query(
-            "SELECT 1 FROM fichajes WHERE usuario_id = $1 AND hora_inicio IS NOT NULL AND hora_fin IS NULL",
+            "SELECT 1 FROM fichajes WHERE usuario_id = $1 AND hora_inicio IS NOT NULL AND hora_fin IS NULL",//comprobamos que no existan fichajes abiertos
             [id]
         )
 
@@ -28,32 +29,33 @@ const createCheckIn = async (req, res) => {
             return res.status(409).json({error: "Ya estas fichado"})
         }
 
-        const now = new Date()
+        const now = new Date()//nueva fecha para insertar en la base de datos
         const fecha = now
-        const hora = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}:${String(now.getSeconds()).padStart(2, "0")}`
+        const hora = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}:${String(now.getSeconds()).padStart(2, "0")}`//formateo de hora para insertar como horaa de entrada
 
         const checkIn = await pool.query(
-            "INSERT INTO fichajes(hora_inicio, fecha, usuario_id, empresa_id) VALUES($1, $2, $3, $4) RETURNING *",
+            "INSERT INTO fichajes(hora_inicio, fecha, usuario_id, empresa_id) VALUES($1, $2, $3, $4) RETURNING *",//insercion en bbdd
             [hora, fecha, id, selectCompany.rows[0].empresa_id]
         )
 
         return res.status(200).json({
-            message: "Usuario fichado correctamente",
+            message: "Usuario fichado correctamente",//respuesta de todo ok
             data: checkIn.rows[0]
         })
     }catch(error){
         console.error(error)
-        return res.status(500).json({error: "Error del servidor"})
+        return res.status(500).json({error: "Error del servidor"})//manejo de errores
     }
 }
 
+//controlador para creacion de desfichaje
 const createCheckOut = async(req, res) =>{
-    const {id} =req.user
+    const {id} =req.user//sacamos info del token
 
     try{
 
         const findRegister = await pool.query(
-            "SELECT 1 FROM fichajes WHERE usuario_id = $1 AND hora_fin IS NULL",
+            "SELECT 1 FROM fichajes WHERE usuario_id = $1 AND hora_fin IS NULL",//buscamos usuario que quiere desfichar en base a que exista y la hora de salida este vacia
             [id]
         )
 
@@ -62,31 +64,33 @@ const createCheckOut = async(req, res) =>{
         }
 
         const now = new Date()
-        const hora = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}:${String(now.getSeconds()).padStart(2, "0")}`
+        const hora = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}:${String(now.getSeconds()).padStart(2, "0")}`//formateamos hora para insertar su hora de salida
 
 
         const checkOut = await pool.query(
-            "UPDATE fichajes SET hora_fin = $1 WHERE usuario_id = $2 AND hora_fin IS NULL RETURNING *",
+            "UPDATE fichajes SET hora_fin = $1 WHERE usuario_id = $2 AND hora_fin IS NULL RETURNING *",//actualizamos bbdd
             [hora, id]
         )
 
     return res.status(200).json({
-            message: "Has desfichado correctamente",
+            message: "Has desfichado correctamente",//respuestaa todo ok
             data: checkOut.rows[0]
         })
 
     }catch(error){
         console.error(error)
-        return res.status(500).json({error: "Error del servidor"})
+        return res.status(500).json({error: "Error del servidor"})//manejo de errores
     }
 }
 
+//crontolador para obtener horas personales de trabajo
 const getWorkedTime = async (req, res) =>{
-    const {id} = req.user
-    const {from, to} = req.query
+    const {id} = req.user//obtenemos info del token
+    const {from, to} = req.query//query dinamica para obtener un periodo concreto(puede estar o no)
 
     try{
 
+        //variables dinamicas para hacer el GET en base a que vengaan en la request o no
         let query = "SELECT * FROM fichajes WHERE usuario_id = $1"
         let values = [id]
 
@@ -97,27 +101,28 @@ const getWorkedTime = async (req, res) =>{
 
         query += " ORDER BY fecha DESC"
 
-        const consultTime = await pool.query(query, values)
-        return res.status(200).json({data: consultTime.rows})
+        const consultTime = await pool.query(query, values)//consultaa a la bbdd
+        return res.status(200).json({data: consultTime.rows})//respuesta todo ok
 
     }catch(error){
         console.error(error)
-        return res.status(500).json({error:"Error del servidor"})
+        return res.status(500).json({error:"Error del servidor"})//manejo de errores
     }
 }
 
+//controlador para la obtencion de horas de trabajo de todos los usuarios
 const getAllWorkedTime = async (req, res) => {
-    const {id, rol_id} =req.user
-    const {id_empresa, from, to} = req.query
+    const {id, rol_id} =req.user//info del token
+    const {id_empresa, from, to} = req.query//query dinamica en base a la empresa, y periodo de tiempo(puede venir o no)
 
     if(Number(rol_id) === ROLES.TRABAJADOR){
-        return res.status(403).json({error: "No tienes permisos"})
+        return res.status(403).json({error: "No tienes permisos"})//comprobacion de permisos
     }
 
     try{
 
         const getCompanys = await pool.query(
-            "SELECT empresa_id FROM usuarios_empresas WHERE usuario_id = $1",
+            "SELECT empresa_id FROM usuarios_empresas WHERE usuario_id = $1",//comprobacion de que el requester pertenece a la empresa de la que quiere obtener la info
             [id]
         )
 
@@ -125,8 +130,9 @@ const getAllWorkedTime = async (req, res) => {
             return res.status(404).json({error: "No tienes ninguna empresa"})
         }
 
-        const companyArray = getCompanys.rows.map(c => c.empresa_id)
+        const companyArray = getCompanys.rows.map(c => c.empresa_id)//bucle para aislar IDs si el requester tiene mas de una empresa
         
+        //manejo de las queries dinamicas en caso de que vengan proporcionadas en la request
         let query = "SELECT * FROM fichajes"
         let values = [companyArray]
         let countPlaceholders = 1
@@ -158,19 +164,19 @@ const getAllWorkedTime = async (req, res) => {
 
         query += " ORDER BY fecha DESC"
 
-        const getWorkedTimeForWorkers = await pool.query(query, values)
+        const getWorkedTimeForWorkers = await pool.query(query, values)//insercion en bbdd
 
         if(getWorkedTimeForWorkers.rows.length === 0){
-            return res.status(404).json({error: "No hay datos de ninguna de tus empresas aun"})
+            return res.status(404).json({error: "No hay datos de ninguna de tus empresas aun"})//manejo de que no existan datos
         }
         return res.status(200).json({
-            data: getWorkedTimeForWorkers.rows
+            data: getWorkedTimeForWorkers.rows//respesuta todo ok
         })
 
         
     }catch(error){
         console.error(error)
-        return res.status(500).json({error: "Error del servidor"})
+        return res.status(500).json({error: "Error del servidor"})//maenjo de errores
     }
 }
 

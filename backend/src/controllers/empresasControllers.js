@@ -165,6 +165,7 @@ const deleteCompany = async(req, res) => {
     }
 }
 
+//controlador para cambiar a usuario TRABAJDOR de empresa
 const changeCompany = async (req, res) => {
     const {id, rol_id} = req.user //obtencion de datos del token
     const {id_usuario} = req.params//obtencion del id del usuario por parametros

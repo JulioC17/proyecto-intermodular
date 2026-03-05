@@ -6,11 +6,11 @@ const {getWorkedTimeSchemaQuery, getAllWorkedTimeSchemaQuery} = require("../sche
 
 const router = express.Router()
 
-router.post("/checkIn", isAuth, createCheckIn)
+router.post("/checkIn", isAuth, createCheckIn)//ruta para fichar
 
-router.get("/myWorkedTime", isAuth, validateSchema(getWorkedTimeSchemaQuery, "query"), getWorkedTime)
-router.get("/getAllWorkedTime", isAuth, validateSchema(getAllWorkedTimeSchemaQuery, "query"), getAllWorkedTime)
+router.get("/myWorkedTime", isAuth, validateSchema(getWorkedTimeSchemaQuery, "query"), getWorkedTime)//ruta para ver horas de trabajo personales
+router.get("/getAllWorkedTime", isAuth, validateSchema(getAllWorkedTimeSchemaQuery, "query"), getAllWorkedTime)//ruta para ver todas las horas de trabajo de todos los trabajdores de le empresa
 
-router.put("/checkOut", isAuth, createCheckOut)
+router.put("/checkOut", isAuth, createCheckOut)//ruta para desfichar
 
 module.exports = router

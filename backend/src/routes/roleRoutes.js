@@ -3,6 +3,6 @@ const {createRole} = require("../controllers/roleControllers")
 
 const router = express.Router()
 
-router.post("/", createRole)
+router.post("/", createRole)//ruta para la creacion de roles
 
 module.exports = router

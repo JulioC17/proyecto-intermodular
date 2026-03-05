@@ -1,19 +1,20 @@
 const pool = require("../database/conection")
 const {ROLES} = require("../utils/roles")
 
+//contorlador para la creacion de receta
 const createRecipe = async (req, res) => {
-    const {id, rol_id} = req.user
-    const {nombre, ingredientes, elaboracion, montaje} = req.body
+    const {id, rol_id} = req.user//ontencion de info del token
+    const {nombre, ingredientes, elaboracion, montaje} = req.body//datos que insertaremos en la bbdd
     const {empresa_id} =req.params
 
     if(Number(rol_id) === ROLES.TRABAJADOR){
-        return res.status(403).json({error: "No tienes permisos"})
+        return res.status(403).json({error: "No tienes permisos"})//comprobacion de permisos
     }
 
     try{
 
         const checkCompany = await pool.query(
-            "SELECT 1 FROM usuarios_empresas WHERE usuario_id = $1 AND empresa_id = $2",
+            "SELECT 1 FROM usuarios_empresas WHERE usuario_id = $1 AND empresa_id = $2",//comprobacion de uqe la empresa a la que se le asociara la receta pertenece al requester
             [id, empresa_id]
         )
 
@@ -22,30 +23,31 @@ const createRecipe = async (req, res) => {
         }
 
         const createdRecipe = await pool.query(
-            "INSERT INTO recetas(nombre, ingredientes, elaboracion, montaje, empresa_id) VALUES($1, $2, $3, $4, $5) RETURNING *",
+            "INSERT INTO recetas(nombre, ingredientes, elaboracion, montaje, empresa_id) VALUES($1, $2, $3, $4, $5) RETURNING *",//iinsercion de la receta en la bbdd
             [nombre, ingredientes, elaboracion, montaje, empresa_id]
         )
 
         return res.status(201).json({
-            message: "Receta creada con éxito",
+            message: "Receta creada con éxito",//respuesta todo ok
             receta: createdRecipe.rows[0]
         })
 
     }catch(error){
         console.error(error)
-        return res.status(500).json({error:"Error del servidor"})
+        return res.status(500).json({error:"Error del servidor"})//maanejo de errores
     }
 }
 
+//controlador para visualizar las recetas
 const getRecipes = async (req, res) => {
-    const {id} = req.user
-    const {empresa_id} = req.params
-    const {words} = req.query
+    const {id} = req.user//info del token
+    const {empresa_id} = req.params//empresa de la cual queremos visualizar las recetas
+    const {words} = req.query//query dinamica para filtrar por concatenacion de letras
 
     try{
 
         const checkCompany = await pool.query(
-            "SELECT 1 FROM usuarios_empresas WHERE usuario_id = $1 AND empresa_id = $2",
+            "SELECT 1 FROM usuarios_empresas WHERE usuario_id = $1 AND empresa_id = $2",//comprobacion de que el usuario pertence a la empresa de la cual quiere ver las recetas
             [id, empresa_id]
         )
 
@@ -53,6 +55,7 @@ const getRecipes = async (req, res) => {
             return res.status(403).json({error: "No puedes leer información de esta empresa"})
         }
 
+        //query dinamica paara buscar por palabras clave en el nombre de la receta
         let query = "SELECT nombre, ingredientes, elaboracion, montaje FROM recetas WHERE empresa_id = $1"
         let values = [empresa_id]
 
@@ -68,32 +71,33 @@ const getRecipes = async (req, res) => {
             return res.status(404).json({error: "No hay recetas"})
         }
 
-        return res.status(200).json({data: viewRecipes.rows})
+        return res.status(200).json({data: viewRecipes.rows})//respuesta todo ok
 
 
     }catch(error){
         console.error(error)
-        return res.status(500).json({error: "Error del servidor"})
+        return res.status(500).json({error: "Error del servidor"})//manejo de errores
     }
 }
 
+//controlador para modificar recetas
 const updateRecipes = async (req, res) => {
-    const {id, rol_id} = req.user
-    const {nombre, ingredientes, elaboracion, montaje} = req.body
-    const {empresa_id, receta_id} =req.params
+    const {id, rol_id} = req.user//obtencion de info del token
+    const {nombre, ingredientes, elaboracion, montaje} = req.body//datos posibles para actualizar
+    const {empresa_id, receta_id} =req.params//empresa y receta que se modificara
 
     if(Number(rol_id) === ROLES.TRABAJADOR){
-        return res.status(403).json({error: "No tienes permisos"})
+        return res.status(403).json({error: "No tienes permisos"})//comprobacion de permisos
     }
 
     try{
 
         if(!nombre && !ingredientes && !elaboracion && !montaje){
-            return res.status(200).json({message: "No se han hecho modificaciones"})
+            return res.status(200).json({message: "No se han hecho modificaciones"})//comprobacion de que todos los campos no vengan vacios al mismo tiempo, de ser asi se devolvera respuesta automatica "no se hicieron modificaciones"
         }
 
         const checkCompany = await pool.query(
-            "SELECT 1 FROM usuarios_empresas WHERE usuario_id = $1 AND empresa_id = $2",
+            "SELECT 1 FROM usuarios_empresas WHERE usuario_id = $1 AND empresa_id = $2",//comprobacion de que la empresa pertence al requester
             [id, empresa_id]
         )
 
@@ -102,7 +106,7 @@ const updateRecipes = async (req, res) => {
         }
 
         const checkRecipe = await pool.query(
-            "SELECT 1 FROM recetas WHERE id = $1 AND empresa_id = $2",
+            "SELECT 1 FROM recetas WHERE id = $1 AND empresa_id = $2",//comprobacion de que la receta pertenece a la empresa
             [receta_id, empresa_id]
         )
 
@@ -110,6 +114,7 @@ const updateRecipes = async (req, res) => {
             return res.status(403).json({error: "No puedes hacer modificaciones de esta receta"})
         }
 
+        //variables dinamicas para cambiar solo el/los campos que quiera el usuario
         let query = []
         let values = []
         let countPlaceholders = 1
@@ -140,32 +145,33 @@ const updateRecipes = async (req, res) => {
         values.push(receta_id)
         const finalQuery = `UPDATE recetas SET ${query.join(", ")} WHERE id = $${countPlaceholders} RETURNING *`
 
-        const updatedRecipe = await pool.query(finalQuery, values)
+        const updatedRecipe = await pool.query(finalQuery, values)//actualizacion de la bbdd
 
         return res.status(200).json({
-            message: "Receta modificada correctamente",
+            message: "Receta modificada correctamente",//respuesta todo ok
             receta: updatedRecipe.rows[0]
         })
         
 
     }catch(error){
         console.error(error)
-        return res.status(500).json({error: "Error del servidor"})
+        return res.status(500).json({error: "Error del servidor"})//manejo de errores
     }
 }
 
+//controlador para eliminar recetas
 const deleteRecipes = async(req, res) => {
-    const {id, rol_id} = req.user
-    const {empresa_id, receta_id} =req.params
+    const {id, rol_id} = req.user//info del token
+    const {empresa_id, receta_id} =req.params//parametros necesarios para hacer la eliminacion
 
     if(Number(rol_id) === ROLES.TRABAJADOR){
-        return res.status(403).json({error: "No tienes permisos"})
+        return res.status(403).json({error: "No tienes permisos"})//comprobacion de permisos
     }
 
     try{
 
         const checkCompany = await pool.query(
-            "SELECT 1 FROM usuarios_empresas WHERE usuario_id = $1 AND empresa_id = $2",
+            "SELECT 1 FROM usuarios_empresas WHERE usuario_id = $1 AND empresa_id = $2",//comprobacion de que la empresa pertence al requester
             [id, empresa_id]
         )
 
@@ -174,7 +180,7 @@ const deleteRecipes = async(req, res) => {
         }
 
         const checkRecipe = await pool.query(
-            "SELECT 1 FROM recetas WHERE id = $1 AND empresa_id = $2",
+            "SELECT 1 FROM recetas WHERE id = $1 AND empresa_id = $2",//comprobacion de que la receta pertence a la empresa
             [receta_id, empresa_id]
         )
 
@@ -183,18 +189,18 @@ const deleteRecipes = async(req, res) => {
         }
 
         const deletedRecipe = await pool.query(
-            "DELETE FROM recetas WHERE id = $1 AND empresa_id = $2 RETURNING *",
+            "DELETE FROM recetas WHERE id = $1 AND empresa_id = $2 RETURNING *",//eliminacion de la bbdd
             [receta_id, empresa_id]
         )
 
         return res.status(200).json({
-            message: "Receta eliminada correctamente",
+            message: "Receta eliminada correctamente",//respuesta todo ok
             data: deletedRecipe.rows[0]
         })
 
     }catch(error){
         console.error(error)
-        return res.status(500).json({error: "Error en el servidor"})
+        return res.status(500).json({error: "Error en el servidor"})//manejo de errores
     }
 }
 

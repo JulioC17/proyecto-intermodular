@@ -12,7 +12,7 @@ const isAuth = (req, res, next) => {
     const token = authHeader.split(' ')[1]
 
     if(!token){
-        return res.status(401).json({error: "tokenn mal formado"})
+        return res.status(401).json({error: "token mal formado"})
     }
 
     try{
@@ -20,7 +20,8 @@ const isAuth = (req, res, next) => {
         req.user = {
             id: decoded.id,
             rol_id:decoded.rol_id,
-            firstLogin:decoded.firstLogin || false
+            firstLogin:decoded.firstLogin || false,
+            nombre: decoded.nombre
         }
         next()
     }catch(err){

@@ -99,7 +99,12 @@ const login = async(req, res) => {//extraemos email y password de la peticion
         }
 
         const token = jwt.sign(
-            {id:user.rows[0].id, rol_id: user.rows[0].rol_id, firstLogin:false},//creamos token de sesion
+            {
+                id:user.rows[0].id, 
+                rol_id: user.rows[0].rol_id, 
+                nombre: user.rows[0].nombre,
+                firstLogin:false
+            },
             process.env.JWT_SECRET,
             {expiresIn:"7d"}
         )
