@@ -171,7 +171,7 @@ const changeCompany = async (req, res) => {
     const {id_usuario} = req.params//obtencion del id del usuario por parametros
     const {companyTargetId} = req.body//empresa de destino del usuario
 
-    if(!id || Number(rol_id) === ROLES.TRABAJADOR){
+    if(Number(rol_id) !== ROLES.PROPIETARIO){
         return res.status(403).json({error: "No tienes permisos"})//comprobacion de permisos
     }
 
@@ -201,10 +201,14 @@ const changeCompany = async (req, res) => {
         }
 
        
-         await pool.query(
+         const results = await pool.query(
             "UPDATE usuarios_empresas SET empresa_id = $1 WHERE usuario_id = $2", //hacer la query para hacer la modificacion de empresa
             [companyTargetId, id_usuario]
         )
+
+        if(results.rowCount === 0){
+            return res.status(409).json({error: "El usuario no pertenece a ninguna empresa"})
+        }
 
         return res.status(200).json({
         message: "Cambio de empresa del usuario correcto"//todo ok
@@ -212,6 +216,8 @@ const changeCompany = async (req, res) => {
 
 
     }catch(error){
+
+        console.error(error)
         if(error.message === "SELF_ACTION_NOT_ALLOWED"){
             return res.status(403).json({error: "No puedes cambiar tu propio usuario"})//cambio de empresa a si mismo
         }

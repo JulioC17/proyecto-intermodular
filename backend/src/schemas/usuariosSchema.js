@@ -43,7 +43,7 @@ const createUserSchema = Joi.object({
        .messages({
         "number.empty": "Debes seleccionaar una empresa",
         "any.required": "Deber seleccionar una empresa",
-        "number.integer": "El id de laa empresa debe ser un numero entero"
+        "number.integer": "El id de la empresa debe ser un numero entero"
        }),
    
        telefono: Joi.string()
