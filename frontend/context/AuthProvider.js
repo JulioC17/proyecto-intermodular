@@ -17,8 +17,9 @@ export const AuthProvider = ({ children }) => {
                 if(storedToken){
                     setToken(storedToken)
                 }
+            
             }catch(error){
-                console.error("Error cargando auth", error)
+                console.error(error)
             }finally{
                 setLoading(false)
             }
