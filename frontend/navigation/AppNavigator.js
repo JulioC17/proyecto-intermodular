@@ -6,7 +6,7 @@ import { useContext } from "react";
 
 import Landing from "../screens/landing";
 import RegisterScreen from "../screens/registerScreen";
-
+import LoginScreen from "../screens/LoginScreen";
 const Stack = createNativeStackNavigator()
 
 
@@ -20,6 +20,7 @@ export default function AppNavigator() {
             <Stack.Navigator>
                 <Stack.Screen name = "Landing" component={Landing} options={{headerShown:false}}/>
                 <Stack.Screen name = "Register" component={RegisterScreen} options= {{headerShown:false}}/>
+                <Stack.Screen name = "Login" component={LoginScreen} options = {{headerShown:false}}/>
                
                   
 

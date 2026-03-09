@@ -12,4 +12,6 @@ router.post("/resend", validateSchema(resendEmailSchema) , resendEmail)//ruta pa
 router.post("/requestPasswordReset", validateSchema(requestPasswordResetSchema),requestPasswordReset)//ruta para pedir codigo de recuperacion de cuenta
 router.post("/resetPassword", validateSchema(resetPasswordSchema),resetPassword)//ruta para la ejecucion de la recuperacion de la cuenta
 
+
+
 module.exports = router

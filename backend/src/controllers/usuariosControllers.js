@@ -10,6 +10,7 @@ const {ROLES} = require("../utils/roles")
 const createUser = async(req, res) => {
     const {id, rol_id} = req.user//obtencion de datos desd el token
     const {nombre, apellidos, email, id_empresa, telefono, sueldo, dni} = req.body//recupracion de datos del body
+    
          
     if(!id || Number(rol_id) == ROLES.TRABAJADOR){
         return res.status(403).json({error: "No tienes permisos"})//comprobacion de permisos
@@ -90,6 +91,8 @@ const createUser = async(req, res) => {
                 email: emailNormalized,
                 id_empresa: id_empresa
             })
+
+            
 
     }catch(error){
         console.error(error)

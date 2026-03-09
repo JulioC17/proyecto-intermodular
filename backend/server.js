@@ -25,6 +25,10 @@ app.use("/hollidays", vacacionesRoutes)
 app.use("/fichajes", fichajesRoutes)
 app.use("/recetas", recetasRoutes)
 
+app.get("/ping", (req, res) => {
+    res.json({success:true, message: "Bcakend conectado correctamente"})//endpoint para testear conexion con el front
+})
+
 
 
 app.use((req, res) => {

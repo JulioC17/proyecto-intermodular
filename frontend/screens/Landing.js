@@ -21,10 +21,10 @@ useEffect(() => {
       />
 
       <TouchableOpacity style={styles.registerBtn} onPress={() => navigation.navigate("Register") }>
-        <Text style={styles.btnTextRegister}>Regístrate ahora</Text>
+        <Text style={styles.btnTextRegister}>Regístrate</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.loginBtn}>
+      <TouchableOpacity style={styles.loginBtn} onPress={() => navigation.navigate("Login")}>
         <Text style={styles.btnTextLogin}>Login</Text>
       </TouchableOpacity>
 
@@ -50,14 +50,49 @@ const styles = StyleSheet.create({
     btnTextRegister: {
         fontFamily: FONTS.regular,
         fontSize: SIZES.large,
-        color: colorPalette.naranjaClaro
+        color: colorPalette.blanco,
+        fontWeight:"bold"
         
     },
     btnTextLogin: {
         fontFamily: FONTS.regular,
         fontSize: SIZES.large,
-        color: colorPalette.azulOscuro
+        color: colorPalette.blanco,
+        fontWeight:"bold"
         
+    },
+    registerBtn:{
+      width:250,
+      borderWidth:2,
+      borderColor:colorPalette.azulOscuro,
+      padding:10,
+      borderRadius:8,
+      backgroundColor:colorPalette.azulClaro,
+      shadowColor:"#000",
+      shadowOpacity:0.6,
+      shadowOffset:{width: 0, height: 2},
+      elevation:5,
+      zIndex:1000,
+      justifyContent:"center",
+      alignItems:"center",
+      margin:5
+    },
+    loginBtn:{
+      width:250,
+      borderWidth:2,
+      borderColor:colorPalette.rojo,
+      padding:10,
+      borderRadius:8,
+      backgroundColor:colorPalette.naranjaClaro,
+      shadowColor:"#000",
+      shadowOpacity:0.6,
+      shadowOffset:{width: 0, height: 2},
+      elevation:5,
+      zIndex:1000,
+      justifyContent:"center",
+      alignItems:"center",
+      margin:5
+
     }
 
 
