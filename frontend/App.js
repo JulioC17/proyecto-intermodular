@@ -5,8 +5,20 @@ import { AuthProvider } from './context/AuthProvider';
 import { AlertProvider } from './context/AlertProvider';
 import AppNavigator from "./navigation/AppNavigator"
 import { AlertModal } from './components/ResModal';
+import { useFonts } from 'expo-font';
 
 export default function App() {
+  const [fontsLoaded] = useFonts({
+    OutfitRegular: require("./assets/Outfit/static/Outfit-Regular.ttf"),
+    OutfitMedium: require("./assets/Outfit/static/Outfit-Medium.ttf"),
+    OutfitBold: require("./assets/Outfit/static/Outfit-Bold.ttf"),
+    OutfitExtraBold: require("./assets/Outfit/static/Outfit-ExtraBold.ttf")
+  });
+
+  if (!fontsLoaded) {
+    return null;
+}
+
   return (
     <AlertProvider>
         <AuthProvider>

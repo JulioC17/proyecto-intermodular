@@ -1,17 +1,20 @@
-import React, {useState, useContext} from "react";
+import React, {useState, useContext, useEffect} from "react";
 import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, StatusBar, ActivityIndicator } from "react-native";
 import {SafeAreaView} from "react-native-safe-area-context"
 import { useNavigation } from "@react-navigation/native";
 import colorPalette from "../constant/colorPalette";
 import { FONTS, SIZES } from "../constant/typography";
-import {LinearGradient} from "expo-linear-gradient";
 import { api } from "../services/api";
 import {Ionicons} from "@expo/vector-icons"
 import { AlertContext } from "../context/AlertProvider";
+import { AuthContext } from "../context/AuthProvider";
+import { LinearGradient } from "expo-linear-gradient";
+import Button from "../components/Button";
 
 export default function RegisterScreen (){
     const navigation = useNavigation()
     const {showModal} = useContext(AlertContext)
+    const {setVerifyEmail} = useContext(AuthContext)
     
     const [loading, setLoading] = useState(false)
     const [nombre, setNombre] = useState("")
@@ -38,7 +41,8 @@ export default function RegisterScreen (){
             })
             
             showModal(response.data.message, "success")
-            navigation.navigate("Login")
+            setVerifyEmail(email)
+            navigation.navigate("Verify")
             
         }catch(error){
             
@@ -67,7 +71,10 @@ export default function RegisterScreen (){
             >
                 <ScrollView contentContainerStyle = {styles.generalView}>
 
-                    <Image source={require("../assets/nombreLogo.png")} style = {styles.imagenLogo}/>
+                    <LinearGradient style={styles.brandView} colors = {[colorPalette.azulOscuro, colorPalette.azulClaro]} start = {{x:0, y:0}} end = {{x:1, y:0}}>
+                        <Text style={styles.hostech}>HOSTECH</Text>
+                        <Text style={styles.createAcount}>Crea tu cuenta</Text>
+                    </LinearGradient>
 
                     <View style = {styles.formView}>
                         <TextInput 
@@ -134,23 +141,31 @@ export default function RegisterScreen (){
                             ]}  
                             onChangeText={ text => setDni(text)}>
                         </TextInput>
+                </View>
 
-                    </View>
-
-                    
-                    <TouchableOpacity 
-                    style = {styles.registerBtn} 
-                    onPress={() => handleRegister(nombre, apellidos, email, password, dni)}
-                    disabled = {loading}
-                    >
-                        {loading ? <ActivityIndicator color = "#fff"/> : <Text style={styles.registerBtnText}>Registrarme</Text>}
-                    </TouchableOpacity>
-                    
-
-                    <Text style ={styles.firstWords}>
-                        Ya tengo una cuenta.{" "}
-                            <Text onPress={() => navigation.navigate("Login")} style = {styles.link}>Ir a Login</Text>
+                <View style={styles.btnFooter}>
+                    <Button
+                        text={
+                            loading ? <ActivityIndicator color = "#fff"/> : <Text>Registrarme</Text>
+                        }
+                        backgroundColor={colorPalette.azulOscuro}
+                        width={320}
+                        height={60}
+                        colorText={colorPalette.blanco}
+                        fontSize={20}
+                        disabled={loading}
+                        action={() => handleRegister(nombre, apellidos, email, password, dni)}
+                        />
+                    <Text style={styles.inicio}>Ya tengo una cuenta.
+                        <Text style={styles.loginText}
+                        onPress={() => navigation.navigate("Login")}
+                        > Login</Text>
                     </Text>
+
+                </View>
+
+                    
+                    
 
                 </ScrollView>
             </KeyboardAvoidingView>
@@ -161,94 +176,98 @@ export default function RegisterScreen (){
 
 const styles = StyleSheet.create({
     generalView: {
-        justifyContent:"center",
+        flex:1,
+        justifyContent:"space-between",
         alignItems: "center",
         marginBottom:40
     },
-
-    imagenLogo:{
-        resizeMode:"contain",
-        width:250
+    brandView:{
+        width:"100%",
+        justifyContent:"center",
+        alignItems:"center",
+        height:120
     },
 
+    hostech:{
+        fontSize:28,
+        fontFamily:"OutfitExtraBold",
+        color:colorPalette.blanco
+    },
+
+    createAcount:{
+        fontSize:16,
+        fontFamily:"OutfitRegular",
+        color:colorPalette.blanco
+    },
     formView:{
-        gap:20,
-        margin:20
+        gap:25,
+        margin:20,
+        flex:5,
+        justifyContent:"center",
+        alignItems:"center"
     },
 
     input:{
-        borderWidth:1,
-        width:250,
-        borderRadius:5,
-        //borderColor: colorPalette.gris,
-        fontFamily: FONTS.regular,
-        fontSize: SIZES.medium
-    },
-
-    registerBtn:{
-       width:150,
-      borderWidth:2,
-      borderColor:colorPalette.azulOscuro,
-      padding:10,
-      borderRadius:8,
-      backgroundColor:colorPalette.azulClaro,
-      shadowColor:"#000",
-      shadowOpacity:0.6,
-      shadowOffset:{width: 0, height: 2},
-      elevation:5,
-      zIndex:1000,
-      justifyContent:"center",
-      alignItems:"center",
-      margin:5
+        borderWidth:2,
+        width:320,
+        padding:10,
+        borderRadius:10,
+        height:50,
+        borderColor:colorPalette.gris_transparente,
+        fontFamily:"OutfitRegular",
+        fontSize:16,
     },
 
     disabledBtn:{
         opacity:0.6
     },
 
-    registerBtnText:{
-        fontFamily:FONTS.bold,
-        fontSize:SIZES.large,
-        color:"#ffffff",
-        fontWeight: "bold"
-    },
-
-    firstWords:{
-        fontFamily: FONTS.regular,
-        fontSize: SIZES.large,
-        margin:10
-
-    },
-
-    link:{
-        fontFamily:FONTS.regular,
-        fontSize:SIZES.large,
-        color: colorPalette.naranjaClaro,
-        fontWeight:"bold"
-    },
-
-    inputFocused:{
-        borderWidth:1,
-        borderColor:colorPalette.naranjaClaro
+   inputFocused:{
+        borderWidth:2,
+        borderColor:colorPalette.azulOscuro
 
     },
 
     passwordView: {
         flexDirection:"row",
         alignItems: "center",
-        justifyContent:"space-between",
-        borderWidth:1,
-        borderRadius:5,
-        //borderColor: colorPalette.gris,
-        paddingRight:5
+        justifyContent:"space-around",
+        borderWidth:2,
+        paddingRight:15,
+        paddingLeft:10,
+        borderRadius:10,
+        height:50,
+        borderColor:colorPalette.gris_transparente,
+        width:320,
     },
     passwordInput:{
         flex:1,
-        height:"100%"
+        height:"100%",
+        fontFamily:"OutfitRegular",
+        fontSize:16,
+        
     },
     passwordViewFocused:{
-        borderWidth:1,
-        borderColor:colorPalette.naranjaClaro
+        borderWidth:2,
+        borderColor:colorPalette.azulOscuro
+    },
+
+    btnFooter:{
+        justifyContent:"center",
+        alignItems:"center",
+        gap:20
+    },
+    inicio:{
+        fontFamily:"OutfitBold",
+        fontSize:16,
+        color:colorPalette.gris
+    },
+    loginText:{
+         fontFamily:"OutfitBold",
+        fontSize:18,
+        color:colorPalette.azulOscuro
     }
+    
 
 })
+

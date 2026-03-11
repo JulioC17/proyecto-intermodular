@@ -7,11 +7,14 @@ import { useContext } from "react";
 import Landing from "../screens/landing";
 import RegisterScreen from "../screens/registerScreen";
 import LoginScreen from "../screens/LoginScreen";
+import VerifyEmail from "../screens/verifyEmailScreen";
+
 const Stack = createNativeStackNavigator()
 
 
 export default function AppNavigator() {
     const {loading, token} = useContext(AuthContext)
+    
     if(loading) return null
 
     return(
@@ -20,6 +23,7 @@ export default function AppNavigator() {
             <Stack.Navigator>
                 <Stack.Screen name = "Landing" component={Landing} options={{headerShown:false}}/>
                 <Stack.Screen name = "Register" component={RegisterScreen} options= {{headerShown:false}}/>
+                <Stack.Screen name = "Verify" component={VerifyEmail} options={{headerShown:false}}/>
                 <Stack.Screen name = "Login" component={LoginScreen} options = {{headerShown:false}}/>
                
                   
@@ -29,3 +33,4 @@ export default function AppNavigator() {
         </NavigationContainer>
     )
 }
+

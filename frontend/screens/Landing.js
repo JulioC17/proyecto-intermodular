@@ -5,6 +5,9 @@ import { FONTS, SIZES } from "../constant/typography";
 import { useNavigation } from "@react-navigation/native";
 import { testConection } from "../services/testConection";
 import { useEffect } from "react";
+import {LinearGradient} from "expo-linear-gradient"
+import Curva from "../components/curva";
+import Button from "../components/Button";
 
 export default function Landing() {
   const navigation = useNavigation()
@@ -14,19 +17,46 @@ useEffect(() => {
 
   return (
     <View style={styles.container}>
+      
+      <LinearGradient  colors = {[colorPalette.azulOscuro, colorPalette.azulClaro]} start = {{x:0, y:0}} end = {{x:1, y:0}} style ={styles.topView}>
+        <Text style = {styles.welcome}>Bienvenido a</Text>
+        <Text style ={styles.hostech}>HOSTECH</Text>
 
-      <Image
-        source={require("../assets/logoHT.png")}
-        style={styles.logo}
-      />
+        <Curva/>
+      </LinearGradient>
 
-      <TouchableOpacity style={styles.registerBtn} onPress={() => navigation.navigate("Register") }>
-        <Text style={styles.btnTextRegister}>Regístrate</Text>
-      </TouchableOpacity>
+      
 
-      <TouchableOpacity style={styles.loginBtn} onPress={() => navigation.navigate("Login")}>
-        <Text style={styles.btnTextLogin}>Login</Text>
-      </TouchableOpacity>
+       <View style={styles.bottomView}>
+        <Text style={styles.slogan}>Gestión profesional y control total para tu negocio de hostelería.</Text>
+        
+        <View style={styles.buttonsView}>
+          <Button
+            backgroundColor={colorPalette.azulOscuro}
+            width={320}
+            height={60}
+            text={"Regístrate"}
+            colorText={colorPalette.blanco}
+            fontSize={20}
+            action={() => navigation.navigate("Register")}
+          />
+
+          <Button
+            backgroundColor={colorPalette.blanco}
+            borderColor={colorPalette.azulOscuro}
+            width={320}
+            height={60}
+            text={"Login"}
+            colorText={colorPalette.azulOscuro}
+            fontSize={20}
+            action={() => navigation.navigate("Verify")}
+          />
+        </View>
+        
+        <View style={styles.footerView}>
+        <Text style={styles.footer}>© 2026 HOSTECH Hospitality System </Text>
+        </View>
+      </View>
 
     </View>
   );
@@ -35,65 +65,61 @@ useEffect(() => {
 const styles = StyleSheet.create({
     container:{
         flex:1,
-        padding: 30,
-        backgroundColor: colorPalette.blanco,
         alignItems:"center",
         justifyContent: "center"
     },
+    topView:{
+      flex:1,
+      width:"100%",
+      height:"50%",
+      alignItems:"center",
+      justifyContent:"center",
+
+
+    },
+    bottomView:{
+      flex:1,
+      backgroundColor:colorPalette.blanco,
+      padding: 10,
+      alignItems:"center",
+      justifyContent:"space-around",
+    },
+
+    welcome:{
+      color:colorPalette.blanco,
+      fontFamily:"OutfitRegular",
+      fontSize:20
+    },
     
-    logo:{
-        resizeMode: "contain",
-        height:300,
-        width:300
+    hostech:{
+      color:colorPalette.blanco,
+      fontFamily:"OutfitExtraBold",
+      fontSize:50,
+    }, 
+
+    slogan:{
+      color:colorPalette.gris,
+      fontFamily:"OutfitBold",
+      fontSize:18,
+      textAlign:"center"
     },
 
-    btnTextRegister: {
-        fontFamily: FONTS.regular,
-        fontSize: SIZES.large,
-        color: colorPalette.blanco,
-        fontWeight:"bold"
-        
+    buttonsView:{
+      gap:15
     },
-    btnTextLogin: {
-        fontFamily: FONTS.regular,
-        fontSize: SIZES.large,
-        color: colorPalette.blanco,
-        fontWeight:"bold"
-        
-    },
-    registerBtn:{
-      width:250,
-      borderWidth:2,
-      borderColor:colorPalette.azulOscuro,
-      padding:10,
-      borderRadius:8,
-      backgroundColor:colorPalette.azulClaro,
-      shadowColor:"#000",
-      shadowOpacity:0.6,
-      shadowOffset:{width: 0, height: 2},
-      elevation:5,
-      zIndex:1000,
-      justifyContent:"center",
-      alignItems:"center",
-      margin:5
-    },
-    loginBtn:{
-      width:250,
-      borderWidth:2,
-      borderColor:colorPalette.rojo,
-      padding:10,
-      borderRadius:8,
-      backgroundColor:colorPalette.naranjaClaro,
-      shadowColor:"#000",
-      shadowOpacity:0.6,
-      shadowOffset:{width: 0, height: 2},
-      elevation:5,
-      zIndex:1000,
-      justifyContent:"center",
-      alignItems:"center",
-      margin:5
 
-    }
+    footerView:{
+      borderTopWidth:1,
+      borderColor:colorPalette.gris_transparente,
+      width:350,
+      marginBottom:10,
+      padding:5
+     },
 
-
+     footer:{
+      fontFamily:"OutfitBold",
+      color:colorPalette.gris,
+      textAlign:"center"
+     }
+    
 })

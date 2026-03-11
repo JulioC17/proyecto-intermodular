@@ -68,7 +68,7 @@ const emailVerificationSchema = Joi.object({
     .length(6)
     .required()
     .messages({
-        "string.empty": "Numero de verificacion no puede estar vacio no puede estar vacio",
+        "string.empty": "Número de verificacion no puede estar vacio",
         "string.length": "Numero de verificacion debe tener 6 caracteres"
     })
 })
