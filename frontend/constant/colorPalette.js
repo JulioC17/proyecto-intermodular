@@ -6,7 +6,8 @@ const colorPalette = {
     gris: "#959595",
     gris_transparente: "#9595953a",
     negro: "#121212",
-    blanco: "#f4f7f9"
+    blanco: "#f4f7f9",
+    azulClaroTrasnparente: "#39a6f339",
 }
 
 export default colorPalette

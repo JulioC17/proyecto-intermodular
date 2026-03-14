@@ -115,6 +115,8 @@ const login = async(req, res) => {//extraemos email y password de la peticion
             user:{
                 id: user.rows[0].id,
                 nombre: user.rows[0].nombre,
+                apellidos: user.rows[0].apellidos,
+                email: user.rows[0].email,
                 rol:user.rows[0].rol_id
             }
         })

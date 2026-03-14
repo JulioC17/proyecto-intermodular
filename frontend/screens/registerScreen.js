@@ -10,6 +10,7 @@ import { AlertContext } from "../context/AlertProvider";
 import { AuthContext } from "../context/AuthProvider";
 import { LinearGradient } from "expo-linear-gradient";
 import Button from "../components/Button";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function RegisterScreen (){
     const navigation = useNavigation()
@@ -42,6 +43,7 @@ export default function RegisterScreen (){
             
             showModal(response.data.message, "success")
             setVerifyEmail(email)
+            await AsyncStorage.setItem("pendingEmail", email)
             navigation.navigate("Verify")
             
         }catch(error){
@@ -72,7 +74,10 @@ export default function RegisterScreen (){
                 <ScrollView contentContainerStyle = {styles.generalView}>
 
                     <LinearGradient style={styles.brandView} colors = {[colorPalette.azulOscuro, colorPalette.azulClaro]} start = {{x:0, y:0}} end = {{x:1, y:0}}>
-                        <Text style={styles.hostech}>HOSTECH</Text>
+                        <Text 
+                        style={styles.hostech}
+                        onPress={() => navigation.navigate("Landing")}
+                        >HOSTECH</Text>
                         <Text style={styles.createAcount}>Crea tu cuenta</Text>
                     </LinearGradient>
 
@@ -177,7 +182,6 @@ export default function RegisterScreen (){
 const styles = StyleSheet.create({
     generalView: {
         flex:1,
-        justifyContent:"space-between",
         alignItems: "center",
         marginBottom:40
     },
@@ -185,7 +189,7 @@ const styles = StyleSheet.create({
         width:"100%",
         justifyContent:"center",
         alignItems:"center",
-        height:120
+        height:150
     },
 
     hostech:{
@@ -200,11 +204,11 @@ const styles = StyleSheet.create({
         color:colorPalette.blanco
     },
     formView:{
-        gap:25,
-        margin:20,
-        flex:5,
+        gap:35,
+        margin:20,        
         justifyContent:"center",
-        alignItems:"center"
+        alignItems:"center",
+        flex:4
     },
 
     input:{
@@ -255,7 +259,8 @@ const styles = StyleSheet.create({
     btnFooter:{
         justifyContent:"center",
         alignItems:"center",
-        gap:20
+        gap:20,
+        flex:1
     },
     inicio:{
         fontFamily:"OutfitBold",

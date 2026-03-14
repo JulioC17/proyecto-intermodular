@@ -10,17 +10,18 @@ import { AuthContext } from "../context/AuthProvider";
 import { LinearGradient } from "expo-linear-gradient";
 import Button from "../components/Button";
 import {Ionicons} from "@expo/vector-icons"
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 export default function VerifyEmail(){
     const navigation = useNavigation()
-    const {verifyEmail} = useContext(AuthContext)
+    const {verifyEmail, setVerifyEmail} = useContext(AuthContext)
     const [code, setCode] = useState(["", "", "", "", "", ""])
     const [loading, setLoading] = useState(false)
     const {showModal} = useContext(AlertContext)
     const [focused, setFocused] = useState(null)
 
-    const handleCode = async (email, code) =>{
+     const handleCode = async (email, code) =>{
         try{
 
             setLoading(true)
@@ -31,6 +32,8 @@ export default function VerifyEmail(){
 
             showModal(response.data.message, "success")
             setCode(["", "", "", "", "", ""])
+            await AsyncStorage.removeItem("pendingEmail")
+            setVerifyEmail(null)
             navigation.navigate("Login")
 
 
@@ -177,7 +180,7 @@ const styles = StyleSheet.create({
         marginBottom:40
     },
     brandView:{
-        height:120,
+        height:150,
         width:"100%",
         justifyContent:"center",
         alignItems:"center"
@@ -243,7 +246,7 @@ const styles = StyleSheet.create({
     inputFocused:{
         borderWidth:2,
         borderColor: colorPalette.azulOscuro
-    }
+    },
 
    
 })

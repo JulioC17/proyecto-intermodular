@@ -145,7 +145,7 @@ const userProfile = async (req, res) => {
     try{
 
         const results = await pool.query(
-            "SELECT usuarios.nombre, usuarios.apellidos, usuarios.email, usuarios.telefono, usuarios.dni, usuarios.sueldo, roles.rol FROM usuarios JOIN roles ON usuarios.rol_id = roles.id WHERE usuarios.id=$1",
+            "SELECT usuarios.nombre, usuarios.id AS usuario_id, usuarios.apellidos, usuarios.email, usuarios.telefono, usuarios.dni, usuarios.sueldo, roles.rol, empresas.nombre AS empresa, empresas.id AS empresa_id FROM usuarios JOIN roles ON usuarios.rol_id = roles.id JOIN usuarios_empresas ON usuarios.id = usuarios_empresas.usuario_id JOIN empresas ON usuarios_empresas.empresa_id = empresas.id WHERE usuarios.id=$1",
             [id]
         )
 

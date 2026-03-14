@@ -1,19 +1,37 @@
 import React from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet} from "react-native";
 import colorPalette from "../constant/colorPalette"
-import { FONTS, SIZES } from "../constant/typography";
 import { useNavigation } from "@react-navigation/native";
-import { testConection } from "../services/testConection";
 import { useEffect } from "react";
 import {LinearGradient} from "expo-linear-gradient"
 import Curva from "../components/curva";
 import Button from "../components/Button";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthProvider";
 
 export default function Landing() {
   const navigation = useNavigation()
-useEffect(() => {
-  testConection()
-},[])
+  const {token, user} = useContext(AuthContext)
+  
+  useEffect(() => {
+    const checkEmail = async () => {
+      const pendingEmail = await AsyncStorage.getItem("pendingEmail")
+      if(pendingEmail){
+        navigation.navigate("Verify")
+      }
+  }
+
+  checkEmail()
+
+  },[])
+
+  useEffect(() => {
+    if(token && user){
+      navigation.navigate("Dashboard")
+      
+    }
+  }, [])
 
   return (
     <View style={styles.container}>
@@ -49,7 +67,7 @@ useEffect(() => {
             text={"Login"}
             colorText={colorPalette.azulOscuro}
             fontSize={20}
-            action={() => navigation.navigate("Verify")}
+            action={() => navigation.navigate("Login")}
           />
         </View>
         
