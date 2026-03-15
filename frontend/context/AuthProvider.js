@@ -51,8 +51,6 @@ export const AuthProvider = ({ children }) => {
 
         try{
 
-            setLoading(true)
-
             const response = await api.get("/users/me", {
                 headers: {Authorization : `Bearer ${userToken}`}
             })
@@ -71,10 +69,7 @@ export const AuthProvider = ({ children }) => {
             }else{
                 showModal("Error interno del servidor", "error")
             }
-        }finally{
-            setLoading(false)
-        }
-    }
+    }}
 
     const logout = async () => {
         setUser(null)

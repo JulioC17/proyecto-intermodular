@@ -1,7 +1,7 @@
-import React, {useState, useContext, useEffect} from "react";
+import React, {useState, useContext} from "react";
 import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, StatusBar, ActivityIndicator } from "react-native";
 import {SafeAreaView} from "react-native-safe-area-context"
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import colorPalette from "../constant/colorPalette";
 import { FONTS, SIZES } from "../constant/typography";
 import { api } from "../services/api";
@@ -12,39 +12,60 @@ import { LinearGradient } from "expo-linear-gradient";
 import Button from "../components/Button";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function RegisterScreen (){
+export default function AddCompany (){
     const navigation = useNavigation()
+    const route = useRoute()
     const {showModal} = useContext(AlertContext)
     const {setVerifyEmail} = useContext(AuthContext)
+    const baseUser = route.params?.usuario
     
+    const [company, setCompany] = useState("")
+    const [companyEmail, setCompanyEmail] = useState("")
     const [loading, setLoading] = useState(false)
-    const [nombre, setNombre] = useState("")
-    const [apellidos, setApellidos]= useState("")
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
-    const [dni, setDni] = useState("")
-    const [showPassword, setShowPassword] = useState(false)
 
     const [focusedInput, setFocusedInput] = useState(null)
 
-    const goToCompanyScreen = () => {
-        if(!nombre || !apellidos || !email || !password || !dni){
-            showModal("Faltan campos por rellenar", "error")
-            return
-        }
+    const handleRegister = async () => {
 
-        navigation.navigate("AddCompany", {
-            usuario:{
-                nombre: nombre,
-                apellidos: apellidos,
-                email: email,
-                password: password,
-                dni: dni
+        if(!company){
+            return showModal("El nombre de la empresa es obligatorio", "error")
+        }
+        
+        try{
+
+            setLoading(true)
+            
+            const response = await api.post("/auth/register", {
+                usuario: baseUser,
+                empresa:{
+                    nombre:company,
+                    email:companyEmail
+                }
+            })
+            
+            showModal(response.data.message, "success")
+            setVerifyEmail(baseUser.email)
+            await AsyncStorage.setItem("pendingEmail", baseUser.email)
+            navigation.navigate("Verify")
+            
+        }catch(error){
+            
+            const data = error.response?.data
+            if(data?.errors){
+                showModal(data.errors.join("\n"), "error")
+                
+            }else if(data?.error){
+                showModal(data.error, "error")
+                
+            }else{
+                showModal("Error interno del servidor", "error")
             }
-        })
+        }finally{
+            setLoading(false)
+        }
     }
 
-   return(
+    return(
         
         <SafeAreaView style={{ flex: 1 }}>
             <KeyboardAvoidingView 
@@ -59,80 +80,41 @@ export default function RegisterScreen (){
                         style={styles.hostech}
                         onPress={() => navigation.navigate("Landing")}
                         >HOSTECH</Text>
-                        <Text style={styles.createAcount}>Vamos a Conocernos...</Text>
+                        <Text style={styles.createAcount}>...ahora crea tu Primera empresa</Text>
                     </LinearGradient>
 
                     <View style = {styles.formView}>
                         <TextInput 
-                            placeholder="Nombre" 
-                            value={nombre}
-                            onFocus={() => setFocusedInput("nombre")}
+                            placeholder="Empresa" 
+                            value={company}
+                            onFocus={() => setFocusedInput("company")}
                             onBlur={() => setFocusedInput(null)}
                             style = {[
                                 styles.input,
-                                focusedInput === "nombre" && styles.inputFocused    
+                                focusedInput === "company" && styles.inputFocused    
                             ]} 
-                            onChangeText={ text => setNombre(text)}>
+                            onChangeText={ text => setCompany(text)}>
                         </TextInput>
                         
-                        <TextInput 
-                            placeholder="Apellidos" 
-                            value={apellidos}
-                            onFocus={() => setFocusedInput("apellidos")}
-                            onBlur={() => setFocusedInput(null)}
-                            style = {[
-                                styles.input,
-                                focusedInput === "apellidos" && styles.inputFocused    
-                            ]} 
-                            onChangeText={ text => setApellidos(text)}>
-                        </TextInput>
+                        
                         
                         <TextInput 
                             placeholder="Email"
                             keyboardType="email-address"
                             autoCapitalize="none"
-                            value={email} 
+                            value={companyEmail} 
                             onFocus={() => setFocusedInput("email")}
                             onBlur={() => setFocusedInput(null)}
                             style = {[
                                 styles.input,
                                 focusedInput === "email" && styles.inputFocused    
                             ]}  
-                            onChangeText={ text => setEmail(text)}>
+                            onChangeText={ text => setCompanyEmail(text)}>
                         </TextInput>
-                        
-                        <View style = {[styles.passwordView, focusedInput === "password" && styles.passwordViewFocused]}>
-                            <TextInput 
-                                placeholder="Password"
-                                value={password} 
-                                secureTextEntry={!showPassword ? true : false}
-                                onFocus={() => setFocusedInput("password")}
-                                onBlur={() => setFocusedInput(null)}
-                                style = {styles.passwordInput}  
-                                onChangeText={ text => setPassword(text)}>
-                            </TextInput>
-                            <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                                <Ionicons name = {showPassword ? "eye-off" : "eye"} size={22} color = "#666"/>
-                            </TouchableOpacity>
-                        </View>
-                        
-                        <TextInput 
-                            placeholder="DNI" 
-                            value={dni}
-                            onFocus={() => setFocusedInput("dni")}
-                            onBlur={() => setFocusedInput(null)}
-                            style = {[
-                                styles.input,
-                                focusedInput === "dni" && styles.inputFocused    
-                            ]}  
-                            onChangeText={ text => setDni(text)}>
-                        </TextInput>
-                </View>
 
-                <View style={styles.btnFooter}>
-                    <Button
+                         <Button
                         text={
-                            loading ? <ActivityIndicator color = "#fff"/> : <Text>Siguiente</Text>
+                            loading ? <ActivityIndicator color = "#fff"/> : <Text>Registrarme</Text>
                         }
                         backgroundColor={colorPalette.azulOscuro}
                         width={320}
@@ -140,7 +122,7 @@ export default function RegisterScreen (){
                         colorText={colorPalette.blanco}
                         fontSize={20}
                         disabled={loading}
-                        action={() => goToCompanyScreen()}
+                        action={() => handleRegister()}
                         />
                     <Text style={styles.inicio}>Ya tengo una cuenta.
                         <Text style={styles.loginText}
@@ -148,10 +130,16 @@ export default function RegisterScreen (){
                         > Login</Text>
                     </Text>
 
-                </View>
-
-                    
-                    
+                    <Text 
+                    style={styles.back}
+                    onPress={() => navigation.goBack()}
+                    >
+                    <Ionicons name = "arrow-back" color={colorPalette.azulOscuro} size = {18}/>
+                        Volver al registro
+                    </Text>
+                                           
+                        
+                    </View>
 
                 </ScrollView>
             </KeyboardAvoidingView>
@@ -213,36 +201,6 @@ const styles = StyleSheet.create({
 
     },
 
-    passwordView: {
-        flexDirection:"row",
-        alignItems: "center",
-        justifyContent:"space-around",
-        borderWidth:2,
-        paddingRight:15,
-        paddingLeft:10,
-        borderRadius:10,
-        height:50,
-        borderColor:colorPalette.gris_transparente,
-        width:320,
-    },
-    passwordInput:{
-        flex:1,
-        height:"100%",
-        fontFamily:"OutfitRegular",
-        fontSize:16,
-        
-    },
-    passwordViewFocused:{
-        borderWidth:2,
-        borderColor:colorPalette.azulOscuro
-    },
-
-    btnFooter:{
-        justifyContent:"center",
-        alignItems:"center",
-        gap:20,
-        flex:1
-    },
     inicio:{
         fontFamily:"OutfitBold",
         fontSize:16,
@@ -252,8 +210,12 @@ const styles = StyleSheet.create({
          fontFamily:"OutfitBold",
         fontSize:18,
         color:colorPalette.azulOscuro
-    }
+    },
+    back:{
+         fontFamily:"OutfitBold",
+        fontSize:16,
+        color:colorPalette.azulOscuro,
+    },
     
 
 })
-

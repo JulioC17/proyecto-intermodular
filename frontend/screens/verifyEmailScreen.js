@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
         marginBottom:40
     },
     brandView:{
-        height:150,
+        height:120,
         width:"100%",
         justifyContent:"center",
         alignItems:"center"

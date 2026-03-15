@@ -32,10 +32,8 @@ export default function Login (){
                "password": password
             })
 
-            showModal(response.data.message, "success")
             await login(response.data.token)
-            setEmail("")
-            setPassword("")
+            showModal(response.data.message, "success")
             navigation.navigate("Dashboard")
 
 
@@ -52,6 +50,8 @@ export default function Login (){
                 showModal("Error interno del servidor", "error")
             }
         }finally{
+            setEmail("")
+            setPassword("")
             setLoading(false)
         }
     }

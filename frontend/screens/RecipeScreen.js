@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from "react";
-import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform,FlatList} from "react-native";
+import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform,FlatList, Alert} from "react-native";
 import {SafeAreaView} from "react-native-safe-area-context"
 import { useNavigation } from "@react-navigation/native";
 import colorPalette from "../constant/colorPalette";
@@ -18,6 +18,8 @@ export default function Recipes(){
     const navigation = useNavigation()
     const [search, setSearch] = useState("")
     const [focusedInput, setFocusedInput] = useState("")
+    const [deleteRecipe, setDeleteRecipe] = useState("")
+    const [loading, setLoading] = useState(false)
     
     useEffect(() => {
         const getRecipes = async () =>{
@@ -35,6 +37,7 @@ export default function Recipes(){
                 })
 
                 setRecipes(response.data.data)
+                
 
             }catch(error){
             const data = error.response?.data
@@ -54,7 +57,47 @@ export default function Recipes(){
     }, [search, user, token, recipes])
 
     
+    const handleDeleteRecipe = async (id) => {
+        try{
 
+            setLoading(true)
+
+            const response = await api.delete(`recetas/deleteRecipe/${Number(user.empresa_id)}/${id}`,{
+                headers: {Authorization: `Bearer ${token}`}
+            }
+        )
+            const newRecipes = recipes.filter((r) => r.id !== id)
+            setRecipes(newRecipes)
+            showModal(response.data.message, "success")
+
+            
+        }catch(error){
+            const data = error.response?.data
+            if(data?.errors){
+                showModal(data.errors.join("\n"), "error")
+                
+            }else if(data?.error){
+                showModal(data.error, "error")
+                
+            }else{
+                showModal("Error interno del servidor", "error")
+            }
+            }finally{
+                setLoading(false)
+            }
+    }
+
+    const goToEditRecipe = (nombre, ingredientes, elaboracion, montaje, id) => {
+        navigation.navigate("EditRecipe", {
+            receta:{
+                nombre: nombre,
+                ingredientes: ingredientes,
+                elaboracion:elaboracion,
+                montaje:montaje,
+                id:id
+            }
+        })
+    }
     
 
     return(
@@ -120,15 +163,67 @@ export default function Recipes(){
                         data={recipes}
                         keyExtractor={(item, index) => index.toString()}
                         renderItem={({item}) => (
-                            <TouchableOpacity 
+                            
+                            <TouchableOpacity
                                 style = {styles.listBtn}
                                 onPress={() => {
-                                    setRecipe(item)
-                                    navigation.navigate("RecipeDescription")
+                                setRecipe(item)
+                                navigation.navigate("RecipeDescription")
                                 }}
                                 >
-                                <Text style={styles.listText}>{item.nombre}</Text>
+                                    <Text 
+                                    style={styles.listText}
+                                    numberOfLines={1}
+                                    ellipsizeMode="tail"
+                                    >{item.nombre}</Text>
+                                
+                                {(user.rol === "administrador" || user.rol === "propietario") &&
+                                <View style = {styles.deleteAndSaveBtn}>
+                                <TouchableOpacity 
+                                style = {styles.editBtn}
+                                onPress={() => goToEditRecipe(item.nombre, item.ingredientes, item.elaboracion, item.montaje, item.id)}
+                                >
+                                    <Ionicons
+                                    name = "pencil-outline"
+                                    size = {24}
+                                    color = {colorPalette.azulOscuro}
+                                    
+                                    />
+                                </TouchableOpacity>
+
+                                <TouchableOpacity 
+                                style = {styles.deleteBtn}
+                                onPress = {() => {
+                                        Alert.alert(
+                                            "Eliminar Receta",
+                                            "¿Seguro que quieres eliminar esta receta?",
+                                            [{
+                                                text:"Cancelar",
+                                                style:"cancel"
+                                            },{
+                                                text:"Aceptar",
+                                                onPress: () => {
+                                                    handleDeleteRecipe(item.id)
+                                                    setSearch("")
+                                                }
+                                            }]
+                                        )
+                                    }}
+                                >
+                                    <Ionicons
+                                    name = "trash-outline"
+                                    size = {24}
+                                    color = "#e60101"
+                                    />
+                                </TouchableOpacity>
+                                </View>
+                                }
+                                
                             </TouchableOpacity>
+
+                            
+                            
+                            
                         )}
                         />
                     </View>
@@ -186,16 +281,21 @@ const styles = StyleSheet.create({
 
     listBtn:{
         width:350,
-        margin:5,
-        padding:10,
+        margin:10,
+        padding:8,
         borderBottomWidth:1,
-        borderColor:colorPalette.gris_transparente
+        borderColor:colorPalette.gris_transparente,
+        flexDirection:"row",
+        alignItems:"center",
+        justifyContent:"space-between"
     },
 
     listText:{
         fontFamily:"OutfitBold",
         fontSize:18,
-        color:colorPalette.negro
+        color:colorPalette.negro,
+        flex:1,
+        margin:3
     },
     searchView:{
         padding:5,
@@ -216,9 +316,31 @@ const styles = StyleSheet.create({
         borderColor:colorPalette.azulOscuro,
         fontFamily:"OutfitRegular",
         fontSize:16
+    },
+    deleteAndSaveBtn:{
+        flexDirection:"row",
+        justifyContent:"center",
+        alignItems:"center",
+        gap:10
+    },
+
+    editBtn:{
+        borderWidth:1,
+        borderColor:colorPalette.azulOscuro,
+        borderRadius:5,
+        padding:3
+    },
+
+    deleteBtn:{
+        borderWidth:1,
+        borderColor:"#e60101",
+        borderRadius:5,
+        padding:3
     }
 
 
     
 
 })
+
+//goToEditRecipe(item.nombre, item.ingredientes, item.elaboracion, item.montaje, item.id)

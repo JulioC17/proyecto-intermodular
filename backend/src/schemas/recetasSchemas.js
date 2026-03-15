@@ -33,6 +33,7 @@ const createRecipeSchema = Joi.object({
 
     montaje: Joi.string()
     .optional()
+    .allow("")
     .max(250)
     .trim()
     .messages({
@@ -102,6 +103,7 @@ const updateRecipesSchema = Joi.object({
 
     montaje: Joi.string()
     .optional()
+    .allow("")
     .max(250)
     .trim()
     .messages({

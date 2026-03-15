@@ -7,7 +7,9 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY)//api key de servicio de mensajeri
 
 //controlador para el registro de usuarios, el registro solo sera para "propietarios"
 const register = async(req, res) => {
-    const {nombre, apellidos, email, password, dni, telefono, sueldo} = req.body //seleccion de lo que  envia el front
+    const {usuario, empresa} = req.body
+    const {nombre, apellidos, email, password, dni, telefono, sueldo} = usuario
+    const {nombre: empresaNombre, email:empresaEmail} = empresa //seleccion de lo que  envia el front
     
     const normalizedEmail = email.toLowerCase().trim()
 
@@ -27,13 +29,28 @@ const register = async(req, res) => {
     const now = new Date()
     const expiry = new Date(now.getTime() + 15 * 60000)//creacion de fecha de expiracion
 
+    await pool.query("BEGIN")
+
     const newUser = await pool.query(//insertamos todos los datos en la bbdd
-        "INSERT INTO usuarios (nombre, apellidos, email, password, verification_code, code_expire_at, rol_id, password_changed, dni, telefono, sueldo) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)",
+        "INSERT INTO usuarios (nombre, apellidos, email, password, verification_code, code_expire_at, rol_id, password_changed, dni, telefono, sueldo) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id",
         [nombre, apellidos, normalizedEmail, hashedPassword, verificationCode, expiry, 1, true, dni, telefono, sueldo]
     )
 
+    const newCompany = await pool.query(
+        "INSERT INTO empresas(nombre, email) VALUES ($1, $2) RETURNING id",
+        [empresaNombre, empresaEmail || null]
+    )
+
+    const date = new Date()
+    await pool.query(
+        "INSERT INTO usuarios_empresas(usuario_id, empresa_id, init_date) VALUES($1, $2, $3)",
+        [newUser.rows[0].id, newCompany.rows[0].id, date]
+    )
+
+    await pool.query("COMMIT")
+
     const msg = {//creamos email con codigo de verificacion
-        to:email,
+        to:normalizedEmail,
         from: "julio.cesar.santos.reyes@students.thepower.education",
         subject: "Código de Verificación",
         text: `Tu codigo de verificación es: ${verificationCode}`,
@@ -47,6 +64,7 @@ const register = async(req, res) => {
 
    
     }catch(error){
+        await pool.query("ROLLBACK")
         console.error(error)
         return res.status(500).json({error:"Error del servidor"})//manejo de errores ajenos al cliente
     }
@@ -133,10 +151,13 @@ const login = async(req, res) => {//extraemos email y password de la peticion
 //contorlador para verificar al usuarios por email
 const verifyEmail = async (req, res) => {
     const {email, verificationCode} = req.body//extraemos de la peticion email(vendra del front) y el codigo de verificacion
+
+    const normalizedEmail = email.toLowerCase().trim()
+
     try{
     const user = await pool.query(//buscamos al usuario en base a las coincidencias(email, codigo y estado)
         "SELECT * FROM usuarios WHERE email = $1 AND verification_code = $2 AND verified = false",
-        [email, verificationCode]
+        [normalizedEmail, verificationCode]
     )
 
     if(user.rows.length == 0){
@@ -151,7 +172,7 @@ const verifyEmail = async (req, res) => {
 
     await pool.query(
         "UPDATE usuarios SET verified=true, verification_code = NULL, code_expire_at = NULL  WHERE email = $1",//actualizamod el estado de verificacion, y limpiamos campos innecesarios
-        [email]
+        [normalizedEmail]
     )
 
     return res.status(200).json({message: "Usuario verificado correctamente"})//check
@@ -167,11 +188,13 @@ const verifyEmail = async (req, res) => {
 const resendEmail = async (req, res) => {
     const {email} = req.body//extraemos email de la peticion
 
+    const normalizedEmail = email.toLowerCase().trim()
+
     try{
 
         const user = await pool.query(//buscamos usuarios coincidentes con estos campos en la bbdd
             "SELECT * FROM usuarios WHERE email = $1 AND verified = false",
-            [email]
+            [normalizedEmail]
         )
 
         if(user.rows.length == 0){
@@ -184,11 +207,11 @@ const resendEmail = async (req, res) => {
 
         await pool.query(
             "UPDATE usuarios SET verification_code = $1, code_expire_at = $2 WHERE email = $3",//insercion en bbdd de los nuevos datos
-            [verificationCode, expiry, email]
+            [verificationCode, expiry, normalizedEmail]
         )
 
         const msg = {//creamos email con el nuevo codigo de verificacion
-        to:email,
+        to:normalizedEmail,
         from: "julio.cesar.santos.reyes@students.thepower.education",
         subject: "Código de Verificación",
         text: `Tu codigo de verificación es: ${verificationCode}`,
@@ -212,11 +235,13 @@ const resendEmail = async (req, res) => {
 const requestPasswordReset = async (req, res) => {
     const {email} = req.body//extraccion del mail de la req
 
+    const normalizedEmail = email.toLowerCase().trim()
+
      try{
 
         const user = await pool.query(
             "SELECT id FROM usuarios WHERE email = $1",//busqueda de coincidencias en la bbdd
-            [email]
+            [normalizedEmail]
         )
 
         if(user.rows.length == 0){
@@ -229,11 +254,11 @@ const requestPasswordReset = async (req, res) => {
 
         await pool.query(
             "UPDATE usuarios SET verification_code = $1, code_expire_at = $2 WHERE email = $3",//insercion de los datos en la bbdd
-            [verificationCode, expiry, email]
+            [verificationCode, expiry, normalizedEmail]
         )
 
         const msg = {//creamos email con el  codigo de recuperacion
-        to:email,
+        to:normalizedEmail,
         from: "julio.cesar.santos.reyes@students.thepower.education",
         subject: "Código de Recuperación",
         text: `Tu codigo de recuperación es: ${verificationCode}`,
@@ -255,10 +280,12 @@ const requestPasswordReset = async (req, res) => {
 //controlador para resetear el password
 const resetPassword = async(req, res) => {
     const {email, newPassword, recoveryCode} = req.body//extraccion de datos necesarios de la request
+
+    const normalizedEmail = email.toLowerCase().trim()
     try{
     const user = await pool.query(
         "SELECT * FROM usuarios WHERE email = $1 AND verification_code = $2",//busqueda del usuario coincidente
-        [email, recoveryCode]
+        [normalizedEmail, recoveryCode]
     )
 
     if(user.rows.length === 0){
@@ -276,7 +303,7 @@ const resetPassword = async(req, res) => {
 
     await pool.query(
         "UPDATE usuarios SET password = $1, verification_code = NULL, code_expire_at = NULL WHERE email = $2",//insertamos datos en la bbdd
-        [hashedNewPassword, email]
+        [hashedNewPassword, normalizedEmail]
     )
     
 

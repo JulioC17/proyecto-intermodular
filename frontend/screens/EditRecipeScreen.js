@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
 import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator} from "react-native";
 import {SafeAreaView} from "react-native-safe-area-context"
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import colorPalette from "../constant/colorPalette";
 import {LinearGradient} from "expo-linear-gradient";
 import { api } from "../services/api";
@@ -11,9 +11,12 @@ import { AuthContext } from "../context/AuthProvider";
 import DashboardWorker from "../components/DashboardWorker";
 import Button from "../components/Button";
 
-export default function AddRecipe(){
+export default function EditRecipe(){
     const {user, token} = useContext(AuthContext)
-    const {showModal} = useContext(AlertContext) 
+    const {showModal} = useContext(AlertContext)
+    const route = useRoute() 
+    const baseRecipe = route.params?.receta
+
     const navigation = useNavigation()
     const [nombre, setNombre] = useState("")
     const [ingredientes, setIngredientes] = useState("")
@@ -22,26 +25,32 @@ export default function AddRecipe(){
     const [inputFocused, setInputFocused] = useState("")
     const [loading, setLoading] = useState(false)
 
-    const handleAddRecipe = async (nombre, ingredientes, elaboracion, montaje) => {
-        try{
+   useEffect(() => {
+        setNombre(baseRecipe.nombre)
+        setIngredientes(baseRecipe.ingredientes),
+        setElaboracion(baseRecipe.elaboracion),
+        setMontaje(baseRecipe.montaje || "")
+   }, [])
 
-            setLoading(true)
+   const editRecipe = async () => {
+    
+    try{
 
-            const response = await api.post(`/recetas/createRecipe/${Number(user.empresa_id)}`,{
-                "nombre": nombre,
-                "ingredientes": ingredientes,
-                "elaboracion": elaboracion,
-                "montaje": montaje
-            },{ headers : {Authorization: `Bearer ${token}`}})
+        setLoading(true)
+
+        const response = await api.put(`recetas/updateRecipe/${Number(user.empresa_id)}/${baseRecipe.id}`,{
+            "nombre":nombre,
+            "ingredientes": ingredientes,
+            "elaboracion": elaboracion,
+            "montaje": montaje
+        }, {
+            headers : {Authorization : `Bearer ${token}`}
+        })
 
         showModal(response.data.message, "success")
-        setNombre("")
-        setIngredientes("")
-        setElaboracion("")
-        setMontaje("")
         navigation.goBack()
 
-        }catch(error){
+    }catch(error){
             
             const data = error.response?.data
             if(data?.errors){
@@ -56,7 +65,7 @@ export default function AddRecipe(){
         }finally{
             setLoading(false)
         }
-    }
+   }
 
     return(
         <SafeAreaView style = {{flex:1}}>
@@ -85,7 +94,7 @@ export default function AddRecipe(){
 
                     <View style ={styles.titleAndSection}>
                         <Text style={styles.hostech}>{user.empresa}</Text>
-                        <Text style={styles.welcome}>Agrega una Receta</Text>
+                        <Text style={styles.welcome}>Editar Receta</Text>
                     </View>
                 </LinearGradient>
 
@@ -150,7 +159,7 @@ export default function AddRecipe(){
                             }
                             colorText={colorPalette.blanco}
                             fontSize={20}
-                            action={() => handleAddRecipe(nombre, ingredientes, elaboracion, montaje)}
+                            action={() => editRecipe()}
 
                         />
                     </View>

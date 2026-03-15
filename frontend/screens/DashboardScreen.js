@@ -31,6 +31,7 @@ export default function Dashboard(){
         return "Buenos Días"
     }
 
+
     return(
         <SafeAreaView style = {{flex:1}}>
             <KeyboardAvoidingView
@@ -41,8 +42,8 @@ export default function Dashboard(){
                 <ScrollView contentContainerStyle = {styles.generalView}>
                    
                    <LinearGradient style={styles.brandView} colors = {[colorPalette.azulOscuro, colorPalette.azulClaro]} start = {{x:0, y:0}} end = {{x:1, y:0}}>
-                        <Text style={styles.hostech}>{user.empresa}</Text>
-                        <Text style={styles.welcome}>{`${sayHello()} ${user.nombre}`}</Text>
+                        <Text style={styles.hostech}>{user?.empresa || "HOSTECH"}</Text>
+                        <Text style={styles.welcome}>{`${sayHello()} ${user?.nombre}`}</Text>
                     </LinearGradient>
 
                     <View style = {styles.cardSection}>

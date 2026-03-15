@@ -56,7 +56,7 @@ const getRecipes = async (req, res) => {
         }
 
         //query dinamica paara buscar por palabras clave en el nombre de la receta
-        let query = "SELECT nombre, ingredientes, elaboracion, montaje FROM recetas WHERE empresa_id = $1"
+        let query = "SELECT nombre, ingredientes, elaboracion, montaje, id FROM recetas WHERE empresa_id = $1"
         let values = [empresa_id]
 
         if(words){

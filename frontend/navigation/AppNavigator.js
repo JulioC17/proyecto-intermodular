@@ -15,6 +15,8 @@ import Dashboard from "../screens/DashboardScreen";
 import Recipes from "../screens/RecipeScreen";
 import RecipeDescription from "../screens/RecipeDescriptionScreen";
 import AddRecipe from "../screens/AddRecipeScreen";
+import AddCompany from "../screens/AddCompanyScreen";
+import EditRecipe from "../screens/EditRecipeScreen";
 
 
 const Stack = createNativeStackNavigator()
@@ -40,12 +42,14 @@ export default function AppNavigator() {
                 
                 <Stack.Screen name = "Landing" component={Landing} options={{headerShown:false}}/>
                 <Stack.Screen name = "Register" component={RegisterScreen} options= {{headerShown:false}}/>
+                <Stack.Screen name = "AddCompany" component={AddCompany} options= {{headerShown:false}}/>
                 <Stack.Screen name = "Verify" component={VerifyEmail} options={{headerShown:false}}/>
                 <Stack.Screen name = "Login" component={LoginScreen} options = {{headerShown:false}}/>
                 <Stack.Screen name = "Dashboard" component={Dashboard} options={{headerShown:false}}/>
                 <Stack.Screen name = "Recipes" component = {Recipes} options = {{headerShown:false}}/>
                 <Stack.Screen name = "RecipeDescription" component = {RecipeDescription} options = {{headerShown:false}}/>
                 <Stack.Screen name = "AddRecipe" component = {AddRecipe} options = {{headerShown:false}}/>
+                <Stack.Screen name = "EditRecipe" component = {EditRecipe} options = {{headerShown:false}}/>
             </Stack.Navigator>
 
         </NavigationContainer>

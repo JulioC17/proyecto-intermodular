@@ -4,9 +4,8 @@ import {SafeAreaView} from "react-native-safe-area-context"
 import { useNavigation } from "@react-navigation/native";
 import colorPalette from "../constant/colorPalette";
 import {LinearGradient} from "expo-linear-gradient";
-import { api } from "../services/api";
-import { AlertContext } from "../context/AlertProvider";
 import { AuthContext } from "../context/AuthProvider";
+import {Ionicons} from "@expo/vector-icons"
 
 export default function RecipeDescription(){
     const navigation = useNavigation()
@@ -23,10 +22,14 @@ export default function RecipeDescription(){
                      <TouchableOpacity 
                         style={styles.btnView}
                         onPress={() => {
-                            setRecipe(null)
-                            navigation.goBack()}}
+                        setRecipe(null)
+                        navigation.goBack()}}
                     >
-                        <Text style = {styles.back}>Atrás</Text>
+                        <Ionicons 
+                            name = "arrow-back"
+                            size= {26}
+                            color = {colorPalette.blanco}
+                        />
                     </TouchableOpacity>
                    
                    <LinearGradient style={styles.brandView} colors = {[colorPalette.azulOscuro, colorPalette.azulClaro]} start = {{x:0, y:0}} end = {{x:1, y:0}}>
@@ -88,9 +91,10 @@ const styles = StyleSheet.create({
     },
 
     welcome:{
-        fontSize:22,
+        fontSize:18,
         fontFamily:"OutfitRegular",
-        color:colorPalette.blanco
+        color:colorPalette.blanco, 
+        textAlign:"center"
     },
 
     btnView:{
@@ -98,7 +102,7 @@ const styles = StyleSheet.create({
         width:45,
         height:30,
         top:30,
-        left:10,
+        left:20,
         zIndex:999
     },
 
@@ -119,7 +123,8 @@ const styles = StyleSheet.create({
 
     description:{
         flex:3,
-        margin:15
+        margin:15,
+        width:350
     },
     title:{
         fontFamily:"OutfitBold",
