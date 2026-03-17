@@ -14,7 +14,7 @@ export default function DashboardWorker(){
     const navigation = useNavigation()
 
     return(
-        <ScrollView style = {styles.generalView}>
+        <ScrollView >
             <DashboardCards
             icono = "time-outline"
             section= "Fichar"
@@ -31,6 +31,7 @@ export default function DashboardWorker(){
             icono = "airplane-outline"
             section= "Vacaciones"
             description="Solicitudes y Estados"
+            action={() => navigation.navigate("Vacaciones")}
             />
 
             <DashboardCards
@@ -50,6 +51,4 @@ export default function DashboardWorker(){
     )
 }
 
-const styles = StyleSheet.create({
-    
-})
+

@@ -87,6 +87,16 @@ export default function AddRecipe(){
                         <Text style={styles.hostech}>{user.empresa}</Text>
                         <Text style={styles.welcome}>Agrega una Receta</Text>
                     </View>
+
+                    <TouchableOpacity 
+                    style={styles.addBtn} 
+                    onPress={() => handleAddRecipe(nombre, ingredientes, elaboracion, montaje)}>
+                        <Ionicons 
+                            name = "save-outline"
+                            size= {26}
+                            color = {colorPalette.blanco}
+                        /> 
+                    </TouchableOpacity>
                 </LinearGradient>
 
                 <View style = {styles.inputsViewGeneral}>
@@ -138,27 +148,13 @@ export default function AddRecipe(){
                         onFocus={() => setInputFocused("montaje")}
                         />
                     </View>
-
-                    { nombre && ingredientes && elaboracion && 
-                    <View style ={styles.btnSave}>
-                        <Button
-                            backgroundColor={colorPalette.azulOscuro}
-                            width={320}
-                            height={60}
-                            text={loading ? 
-                                <ActivityIndicator color="#fff" size="small"/> : "Guardar Receta"
-                            }
-                            colorText={colorPalette.blanco}
-                            fontSize={20}
-                            action={() => handleAddRecipe(nombre, ingredientes, elaboracion, montaje)}
-
-                        />
-                    </View>
-                    }
                 </View>
 
                         </ScrollView>
                     </KeyboardAvoidingView>
+                    {loading && <View style = {styles.spinner}>
+                        <ActivityIndicator color = {colorPalette.azulOscuro} size="large"/>
+                </View>}
         </SafeAreaView>
     )
 }
@@ -225,12 +221,17 @@ const styles = StyleSheet.create({
         fontSize:18,
         borderColor:colorPalette.azulOscuro
     },
-    btnView:{
-         position:"absolute",
-        left:20
-    },
-    btnSave:{
-        margin:20
+
+    spinner:{
+        position:"absolute",
+        top:0,
+        bottom:0,
+        left:0,
+        right:0,
+        backgroundColor:"rgba(255, 255, 255, 0.7)",
+        justifyContent:"center",
+        alignItems:"center",
+        zIndex:10
     }
 
 

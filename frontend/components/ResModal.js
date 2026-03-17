@@ -12,7 +12,7 @@ export function AlertModal(){
    const {modal, hideModal} = useContext(AlertContext)
     
     useEffect(() => {
-        const duration = modal.type === "success" ? 2500 : 3000
+        const duration = modal.type === "success" ? 1000 : 3000
         if(modal.visible) {
             slideAnim.setValue(-150)
             Animated.timing(slideAnim,{

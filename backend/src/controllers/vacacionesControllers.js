@@ -42,7 +42,7 @@ const getProfileHollidays = async (req, res) => {
     
     try{
         const getHollidays = await pool.query(
-        "SELECT * FROM vacaciones WHERE usuario_id = $1 ORDER BY fecha_inicio",//consulta en la bbdd
+        "SELECT v.id, v.fecha_inicio, v.fecha_fin, v.estado, u.nombre, u.apellidos FROM vacaciones v JOIN usuarios u ON u.id = v.usuario_id WHERE usuario_id = $1 ORDER BY fecha_inicio",//consulta en la bbdd
         [id]
     )
 
@@ -80,7 +80,7 @@ const getHollidaysForAdminsAndOwners = async (req, res) => {
         const companysID = companysRows.rows.map(ci => ci.empresa_id)//manejo de vaarias empresas mediante un bucle
 
         const getAllHollidays = await pool.query(
-            "SELECT v.fecha_inicio, v.fecha_fin, v.estado, v.fecha_solicitud, u.nombre, e.nombre AS empresa FROM vacaciones v JOIN usuarios u ON u.id = v.usuario_id JOIN usuarios_empresas ue ON ue.usuario_id = u.id JOIN empresas e ON e.id = ue.empresa_id WHERE e.id = ANY($1) ORDER by v.fecha_inicio",//consulta en la bbdd
+            "SELECT v.id, v.fecha_inicio, v.fecha_fin, v.estado, v.fecha_solicitud, u.nombre, u.apellidos, e.nombre AS empresa FROM vacaciones v JOIN usuarios u ON u.id = v.usuario_id JOIN usuarios_empresas ue ON ue.usuario_id = u.id JOIN empresas e ON e.id = ue.empresa_id WHERE e.id = ANY($1) ORDER by v.fecha_inicio",//consulta en la bbdd
             [companysID]
         )
 
@@ -126,6 +126,22 @@ const handdleHollidays = async (req, res) => {
         if(checkOwnerWorkersParty.rows.length === 0){
             return res.status(403).json({error: "El usuario no tiene vacaciones pendientes"})
         }
+
+        if(estado === true){
+
+            const hollidays = await pool.query(
+            "SELECT * FROM vacaciones WHERE id = $1",
+            [vacaciones_id]
+        )
+
+        const checkSameHollidays = await pool.query(
+            "SELECT 1 FROM vacaciones WHERE fecha_inicio <= $1 AND fecha_fin >= $2 AND usuario_id = $3 AND estado = $4",
+            [hollidays.rows[0].fecha_fin, hollidays.rows[0].fecha_inicio, hollidays.rows[0].usuario_id, true]
+        )
+
+        if(checkSameHollidays.rows.length > 0){
+            return res.status(409).json({error:"El usuario ya tiene vacaciones aprobadas durante estas fechas"})
+        }}
 
         const updateHollidays = await pool.query(
             "UPDATE vacaciones SET estado = $1 WHERE id = $2",//cambio de estado de las vacaciones

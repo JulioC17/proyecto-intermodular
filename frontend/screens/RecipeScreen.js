@@ -1,7 +1,7 @@
-import React, {useContext, useEffect, useState} from "react";
-import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform,FlatList, Alert} from "react-native";
+import React, {useCallback, useContext, useEffect, useState} from "react";
+import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform,FlatList, Alert, ActivityIndicator} from "react-native";
 import {SafeAreaView} from "react-native-safe-area-context"
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation , useFocusEffect} from "@react-navigation/native";
 import colorPalette from "../constant/colorPalette";
 import {LinearGradient} from "expo-linear-gradient";
 import { api } from "../services/api";
@@ -21,10 +21,12 @@ export default function Recipes(){
     const [deleteRecipe, setDeleteRecipe] = useState("")
     const [loading, setLoading] = useState(false)
     
-    useEffect(() => {
+    useFocusEffect(
+        useCallback(() => {
         const getRecipes = async () =>{
             try{
 
+                setLoading(true)
 
                 let find = `/recetas/getRecipes/${Number(user.empresa_id)}`
 
@@ -50,12 +52,14 @@ export default function Recipes(){
             }else{
                 showModal("Error interno del servidor", "error")
             }
+            }finally{
+                setLoading(false)
             }
         }
 
         getRecipes()
-    }, [search, user, token, recipes])
-
+    }, [search, user, token])
+    )
     
     const handleDeleteRecipe = async (id) => {
         try{
@@ -163,6 +167,8 @@ export default function Recipes(){
                         data={recipes}
                         keyExtractor={(item, index) => index.toString()}
                         renderItem={({item}) => (
+
+                            
                             
                             <TouchableOpacity
                                 style = {styles.listBtn}
@@ -231,6 +237,9 @@ export default function Recipes(){
                 </View>
             
             </KeyboardAvoidingView>
+            {loading && <View style = {styles.spinner}>
+                        <ActivityIndicator color = {colorPalette.azulOscuro} size="large"/>
+                </View>}
         </SafeAreaView>
     )
 }
@@ -240,7 +249,7 @@ const styles = StyleSheet.create({
         flex:1,
         justifyContent:"space-between",
         alignItems: "center",
-        marginBottom:40
+        marginBottom:40,
     },
 
     brandView:{
@@ -276,23 +285,24 @@ const styles = StyleSheet.create({
 
     listView:{
         justifyContent:"center",
-        alignItems:"center"
+        alignItems:"center",
+        
     },
 
     listBtn:{
         width:350,
         margin:10,
-        padding:8,
+        padding:5,
         borderBottomWidth:1,
         borderColor:colorPalette.gris_transparente,
         flexDirection:"row",
         alignItems:"center",
-        justifyContent:"space-between"
+        justifyContent:"space-between",
     },
 
     listText:{
         fontFamily:"OutfitBold",
-        fontSize:18,
+        fontSize:16,
         color:colorPalette.negro,
         flex:1,
         margin:3
@@ -321,14 +331,14 @@ const styles = StyleSheet.create({
         flexDirection:"row",
         justifyContent:"center",
         alignItems:"center",
-        gap:10
+        gap:10,
     },
 
     editBtn:{
         borderWidth:1,
         borderColor:colorPalette.azulOscuro,
         borderRadius:5,
-        padding:3
+        padding:3,
     },
 
     deleteBtn:{
@@ -336,6 +346,18 @@ const styles = StyleSheet.create({
         borderColor:"#e60101",
         borderRadius:5,
         padding:3
+    },  
+
+    spinner:{
+        position:"absolute",
+        top:0,
+        bottom:0,
+        left:0,
+        right:0,
+        backgroundColor:"rgba(255, 255, 255, 0.7)",
+        justifyContent:"center",
+        alignItems:"center",
+        zIndex:10
     }
 
 

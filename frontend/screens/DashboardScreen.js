@@ -10,6 +10,7 @@ import {Ionicons} from "@expo/vector-icons"
 import Button from "../components/Button";
 import { AuthContext } from "../context/AuthProvider";
 import DashboardWorker from "../components/DashboardWorker";
+import DashboardAdmins from "../components/DashboardAdmins";
 
 
 export default function Dashboard(){
@@ -47,7 +48,7 @@ export default function Dashboard(){
                     </LinearGradient>
 
                     <View style = {styles.cardSection}>
-                        <DashboardWorker/>
+                       { user.rol === "administrador" ? <DashboardAdmins/>:<DashboardWorker/>}
                         <TouchableOpacity 
                         style={{borderWidth:2, backgroundColor:"#d3d3d3", height:100}}
                         onPress={() => {
