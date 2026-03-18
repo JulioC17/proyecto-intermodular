@@ -317,12 +317,13 @@ const removeShiftFromUser = async(req, res) => {
 //controlador para que el usuario TRABAJDOR pueda consultar sus turnos
 const getShiftForUser = async(req, res) => {
     const {id} = req.user//obtencion de info del token
+    const {weekStart, weekEnds} = req.query
 
     try{
 
         const getSchedule = await pool.query(//obtencion de horarios del usuario
-            "SELECT ut.fecha, t.nombre, t.hora_inicio, t.hora_fin FROM usuarios_turnos ut JOIN turnos t ON ut.turno_id = t.id WHERE usuario_id = $1",
-            [id]
+            "SELECT ut.fecha, t.nombre, t.hora_inicio, t.hora_fin FROM usuarios_turnos ut JOIN turnos t ON ut.turno_id = t.id WHERE usuario_id = $1 AND ut.fecha BETWEEN $2 AND $3",
+            [id, weekStart, weekEnds]
         )
 
         if(getSchedule.rows.length === 0){
@@ -339,4 +340,49 @@ const getShiftForUser = async(req, res) => {
     }
 }
 
-module.exports = {createShift, getShifts, updateShift, deleteShift, assignShiftToUser, removeShiftFromUser, getShiftForUser}
+const getShiftsForAdmins = async (req, res) => {
+    const {rol_id, id} = req.user
+    const {weekStart, weekEnds} = req.query
+    const {empresa_id} = req.params
+
+    if(!id || Number(rol_id) === ROLES.TRABAJADOR){
+        return res.status(403).json({error: "No tienes permisos"})//comprobacion de permisos
+    }
+
+    try{
+
+        const getCompanysOfRequester = await pool.query(
+        "SELECT 1 FROM usuarios_empresas WHERE usuario_id = $1 AND empresa_id = $2",//comprobacion de pertencencia entree el requester y la empresa
+        [id, Number(empresa_id)]
+        )
+
+        if(getCompanysOfRequester.rows.length === 0){
+        return res.status(404).json({error: "No puedes trabajar con datos de esta empresa"})
+        }
+
+        const watchSchedule = await pool.query(
+            "SELECT u.nombre, u.apellidos, t.nombre AS turno, t.hora_inicio, t.hora_fin, e.nombre AS empresa, ut.fecha FROM turnos t JOIN empresas e ON e.id = t.empresa_id JOIN usuarios_turnos ut ON t.id = ut.turno_id JOIN usuarios u ON ut.usuario_id = u.id WHERE t.empresa_id = $1 AND ut.fecha BETWEEN $2 AND $3 ORDER BY ut.fecha ASC",
+            [Number(empresa_id), weekStart, weekEnds]
+        )
+
+        if(watchSchedule.rows.length === 0){
+            return res.status(200).json({
+                message:"No hay datos",
+                data:[]
+            })
+        }
+
+        return res.status(200).json({
+            message:"Horario Recuperado con éxito",
+            data: watchSchedule.rows
+        })
+
+
+    }catch(error){
+        console.error(error)
+        return res.status(500).json({error: "Error del Servidor"})
+    }
+
+}
+
+module.exports = {createShift, getShifts, updateShift, deleteShift, assignShiftToUser, removeShiftFromUser, getShiftForUser, getShiftsForAdmins}

@@ -171,4 +171,47 @@ const removeShiftFromUserSchema = Joi.object({
 
 })
 
-module.exports = {createShiftSchema, getShiftSchemaParams, updateShiftSchema, updateShiftSchemaParams, deleteShiftSchemaParams, assignShiftToUserSchema, assignShiftToUserSchemaParams, removeShiftFromUserSchema}
+const getShiftForUserSchemaParams = Joi.object({
+    weekStart:Joi.date()
+    .required()
+    .messages({
+        "date.base":"La fecha de inicio tiene que ser valida",
+        "any.required":"La fecha de inicio es obligatoria"
+    }),
+
+    weekEnds:Joi.date()
+    .required()
+    .messages({
+        "date.base":"La fecha de fin tiene que ser valida",
+        "any.required":"La fecha de fin es obligatoria"
+    })
+})
+
+const getShiftsForAdminsParams = Joi.object({
+    empresa_id:Joi.number()
+    .required()
+    .integer()
+    .messages({
+        "any.required":"Debes seleccionar una empresa",
+        "number.integer": "El id de la empresa debe ser un numero entero"
+    }),
+})
+
+const getShiftsForAdminsQuery = Joi.object({
+    weekStart:Joi.date()
+    .required()
+    .messages({
+        "date.base":"La fecha de inicio tiene que ser valida",
+        "any.required":"La fecha de inicio es obligatoria"
+    }),
+
+    weekEnds:Joi.date()
+    .required()
+    .messages({
+        "date.base":"La fecha de fin tiene que ser valida",
+        "any.required":"La fecha de fin es obligatoria"
+    })
+})
+
+module.exports = {createShiftSchema, getShiftSchemaParams, updateShiftSchema, updateShiftSchemaParams, deleteShiftSchemaParams, assignShiftToUserSchema, assignShiftToUserSchemaParams, removeShiftFromUserSchema, getShiftForUserSchemaParams, getShiftsForAdminsParams, getShiftsForAdminsQuery}
+
