@@ -190,7 +190,7 @@ export default function Recipes(){
                                 onPress={() => goToEditRecipe(item.nombre, item.ingredientes, item.elaboracion, item.montaje, item.id)}
                                 >
                                     <Ionicons
-                                    name = "pencil-outline"
+                                    name = "options-outline"
                                     size = {24}
                                     color = {colorPalette.azulOscuro}
                                     
@@ -237,7 +237,8 @@ export default function Recipes(){
                 </View>
             
             </KeyboardAvoidingView>
-            {loading && <View style = {styles.spinner}>
+            {loading && 
+                <View style = {styles.spinner}>
                         <ActivityIndicator color = {colorPalette.azulOscuro} size="large"/>
                 </View>}
         </SafeAreaView>
@@ -331,20 +332,14 @@ const styles = StyleSheet.create({
         flexDirection:"row",
         justifyContent:"center",
         alignItems:"center",
-        gap:10,
+        gap:5,
     },
 
     editBtn:{
-        borderWidth:1,
-        borderColor:colorPalette.azulOscuro,
-        borderRadius:5,
         padding:3,
     },
 
     deleteBtn:{
-        borderWidth:1,
-        borderColor:"#e60101",
-        borderRadius:5,
         padding:3
     },  
 

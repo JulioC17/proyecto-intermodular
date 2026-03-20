@@ -25,7 +25,7 @@ export default function Dashboard(){
     }
 
     if(now.getHours() > 12){
-        return "Buenos Tardes"
+        return "Buenas Tardes"
     }
 
     if(now.getHours() > 6)

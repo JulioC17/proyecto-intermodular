@@ -19,6 +19,7 @@ import AddCompany from "../screens/AddCompanyScreen";
 import EditRecipe from "../screens/EditRecipeScreen";
 import Vacaciones from "../screens/VacacionesScreen";
 import RequestForHollidays from "../screens/RequestForHollidays";
+import Turnos from "../screens/TurnosScreen";
 
 
 const Stack = createNativeStackNavigator()
@@ -54,6 +55,7 @@ export default function AppNavigator() {
                 <Stack.Screen name = "EditRecipe" component = {EditRecipe} options = {{headerShown:false}}/>
                 <Stack.Screen name = "Vacaciones" component = {Vacaciones} options = {{headerShown:false}}/>
                 <Stack.Screen name = "RequestForHollidays" component = {RequestForHollidays} options = {{headerShown:false}}/>
+                <Stack.Screen name = "Turnos" component = {Turnos} options = {{headerShown:false}}/>
             </Stack.Navigator>
 
         </NavigationContainer>

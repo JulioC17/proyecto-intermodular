@@ -236,10 +236,12 @@ return(
                             )
                             }
                             ListEmptyComponent={(
-                                <View style = {styles.emptyView}>
+                                <View style = {{flex:1, justifyContent:"center", alignItems:"center"}}>
                                     <Text style = {styles.emptyText}>No hay información disponible aquí</Text>
                                 </View>
                             )}
+
+                            contentContainerStyle={{flexGrow:1}}
                         />
 
                     </View>
@@ -397,15 +399,7 @@ const styles = StyleSheet.create({
         fontSize:18,
         color:colorPalette.blanco
     },
-    emptyView:{
-        flex:1,
-        justifyContent:"center",
-        alignItems:"center",
-        marginTop:35,
-        borderBottomWidth:1,
-        borderColor:colorPalette.gris_transparente,
-        padding:5
-    },
+    
 
     emptyText:{
         fontFamily:"OutfitBold",

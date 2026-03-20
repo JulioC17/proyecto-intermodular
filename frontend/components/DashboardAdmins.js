@@ -25,6 +25,7 @@ export default function DashboardAdmins(){
                     icono = "calendar-outline"
                     section= "Turnos"
                     description="Horarios y Asignaciones"
+                    action={() => navigation.navigate("Turnos")}
                     />
         
                     <DashboardCards
