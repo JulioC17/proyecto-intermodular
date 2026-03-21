@@ -219,7 +219,7 @@ export default function Recipes(){
                                     <Ionicons
                                     name = "trash-outline"
                                     size = {24}
-                                    color = "#e60101"
+                                    color = "#dd0000"
                                     />
                                 </TouchableOpacity>
                                 </View>

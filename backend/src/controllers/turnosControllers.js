@@ -57,7 +57,7 @@ const getShifts = async (req, res) => {
         }
 
         const shifts = await pool.query(//consulta de turnos en la bbdd
-            "SELECT t.nombre, t.hora_inicio, t.hora_fin, e.nombre AS empresa FROM turnos t JOIN empresas e ON e.id = t.empresa_id WHERE t.empresa_id = $1",
+            "SELECT t.id, t.nombre, t.hora_inicio, t.hora_fin, e.nombre AS empresa, e.id AS empresa_id FROM turnos t JOIN empresas e ON e.id = t.empresa_id WHERE t.empresa_id = $1",
             [Number(empresa_id)]
         )
 
@@ -344,10 +344,6 @@ const getShiftsForAdmins = async (req, res) => {
     const {rol_id, id} = req.user
     const {weekStart, weekEnds} = req.query
     const {empresa_id} = req.params
-
-    if(!id || Number(rol_id) === ROLES.TRABAJADOR){
-        return res.status(403).json({error: "No tienes permisos"})//comprobacion de permisos
-    }
 
     try{
 

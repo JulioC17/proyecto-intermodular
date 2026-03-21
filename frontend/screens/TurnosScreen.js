@@ -94,7 +94,6 @@ useEffect(() => {
                 })
                 
                 setSchedule(simplifySchedule(response.data.schedule))
-                showModal(response.data.message, "success")
             
             }else if(focusBtn === "general"){
                 const response = await api.get(`/turnos/scheduleWeek/${user.empresa_id}?weekStart=${weekStartFormat}&weekEnds=${weekEndsFormat}`, {
@@ -102,16 +101,15 @@ useEffect(() => {
                 })
                 
                 setSchedule(simplifySchedule(response.data.schedule))
-                showModal(response.data.message, "success")
             }
                 
         }catch(error){
             const data = error.response?.data
             if(data?.errors){
-                showModal(data.errors.join("\n"), "error" )
+                console.log(data.errors.join("\n"), "error" )
                         
             }else if(data?.error){
-                showModal(data.error, "error")
+                console.log(data.error, "error")
                         
             }else{
                 showModal("Error interno del servidor", "error")
@@ -150,13 +148,13 @@ return(
 
                     <View style ={styles.titleAndSection}>
                         <Text style={styles.hostech}>{"HOSTECH"}</Text>
-                        <Text style={styles.welcome}>Mi Horario</Text>
+                        <Text style={styles.welcome}>Horarios</Text>
                     </View>
 
                     { (user.rol === "administrador" || user.rol === "propietario") && 
                     <TouchableOpacity 
                     style={styles.btnView} 
-                    onPress ={() => console.log(JSON.stringify(schedule))}>
+                    onPress ={() => navigation.navigate("SchedulesConfig")}>
                         <Ionicons 
                             name = "settings-outline"
                             size= {28}
@@ -245,7 +243,7 @@ return(
                         <View style = {styles. cardSubView}>
                            {item.turnos.map((t, i) => {
                             return (
-                                <View style={styles.shiftView}>
+                                <View style={styles.shiftView} key={i}>
                                     <Text style = {styles.tittle}>{t.usuario}</Text>
                                     <View style = {styles.hoursView}>
                                         <Text style = {styles.checkIn}>De {t.hora_inicio.slice(0, 5)} a {t.hora_fin.slice(0, 5)}</Text>
@@ -395,7 +393,8 @@ const styles = StyleSheet.create({
     nextAndPastView:{
         flexDirection:"row",
         gap:20,
-        padding:5
+        padding:5,
+        marginTop:5
     },
 
     nextView:{

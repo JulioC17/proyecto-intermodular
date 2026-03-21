@@ -55,6 +55,8 @@ export const AuthProvider = ({ children }) => {
                 headers: {Authorization : `Bearer ${userToken}`}
             })
 
+            response.data.user.nombre[0].toUpperCase()
+            
             setUser(response.data.user)
             await AsyncStorage.setItem("user", JSON.stringify(response.data.user))
 
