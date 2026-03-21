@@ -57,7 +57,7 @@ const getShifts = async (req, res) => {
         }
 
         const shifts = await pool.query(//consulta de turnos en la bbdd
-            "SELECT t.id, t.nombre, t.hora_inicio, t.hora_fin, e.nombre AS empresa, e.id AS empresa_id FROM turnos t JOIN empresas e ON e.id = t.empresa_id WHERE t.empresa_id = $1",
+            "SELECT t.id, t.nombre, t.hora_inicio, t.hora_fin, e.nombre AS empresa, e.id AS empresa_id FROM turnos t JOIN empresas e ON e.id = t.empresa_id WHERE t.empresa_id = $1 AND t.active = TRUE",
             [Number(empresa_id)]
         )
 
@@ -96,7 +96,7 @@ const updateShift = async (req, res) => {
         }
 
         const checkShift = await pool.query(
-            "SELECT 1 FROM turnos WHERE id = $1 AND empresa_id = $2",//comprobacion de existencia del turno
+            "SELECT 1 FROM turnos WHERE id = $1 AND empresa_id = $2 AND active = TRUE",//comprobacion de existencia del turno
             [Number(turno_id), Number(empresa_id)]
         ) 
 
@@ -159,7 +159,7 @@ const deleteShift = async (req, res) => {
 
     try{
         const checkShift = await pool.query(
-            "SELECT 1 FROM turnos WHERE id = $1 AND empresa_id = $2",//comprobacion de que existencia del turno
+            "SELECT 1 FROM turnos WHERE id = $1 AND empresa_id = $2 AND active = TRUE",//comprobacion de que existencia del turno
             [Number(turno_id), Number(empresa_id)]
         ) 
 
@@ -177,7 +177,7 @@ const deleteShift = async (req, res) => {
         }
 
         const shiftDeleted = await pool.query(
-            "DELETE FROM turnos WHERE id = $1 AND empresa_id = $2 RETURNING *",//eliminacion del turno de la bbd
+            "UPDATE turnos SET active = FALSE WHERE id = $1 AND empresa_id = $2 RETURNING *",//eliminacion del turno de la bbd
             [turno_id, empresa_id]
         )
 
@@ -205,7 +205,7 @@ const assignShiftToUser = async(req, res) => {
     try{
 
         const checkShift = await pool.query(
-            "SELECT 1 FROM turnos WHERE id = $1 AND empresa_id = $2",//comprobacion de la existencia del turno
+            "SELECT 1 FROM turnos WHERE id = $1 AND empresa_id = $2 AND active = TRUE",//comprobacion de la existencia del turno
             [Number(turno_id), Number(empresa_id)]
         ) 
 

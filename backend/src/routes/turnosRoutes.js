@@ -14,8 +14,8 @@ router.get("/schedule/me", isAuth, validateSchema(getShiftForUserSchemaParams, "
 router.get("/scheduleWeek/:empresa_id", isAuth, validateSchema(getShiftsForAdminsParams, "params"), validateSchema(getShiftsForAdminsQuery, "query"), getShiftsForAdmins)
 
 router.put("/updateShift/:empresa_id/:turno_id", isAuth, validateSchema(updateShiftSchemaParams, "params"),validateSchema(updateShiftSchema),updateShift)//ruta para modificar turnos
+router.put("/deleteShift/:empresa_id/:turno_id", isAuth, validateSchema(deleteShiftSchemaParams, "params"),deleteShift)//ruta para eliminar turnos
 
-router.delete("/deleteShift/:empresa_id/:turno_id", isAuth, validateSchema(deleteShiftSchemaParams, "params"),deleteShift)//ruta para eliminar turnos
 router.delete("/remove/:empresa_id/:turno_id/:usuario_id/:fecha", validateSchema(removeShiftFromUserSchema),isAuth, removeShiftFromUser)//ruta para desasignar turnos
 
 module.exports = router
