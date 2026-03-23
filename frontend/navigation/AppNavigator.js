@@ -22,6 +22,7 @@ import RequestForHollidays from "../screens/RequestForHollidays";
 import Turnos from "../screens/TurnosScreen";
 import SchedulesConfig from "../screens/SchedulesConfig";
 import CrudShifts from "../screens/CrudShiftsScreen";
+import Timer from "../screens/TimerScreen";
 
 
 const Stack = createNativeStackNavigator()
@@ -60,6 +61,8 @@ export default function AppNavigator() {
                 <Stack.Screen name = "Turnos" component = {Turnos} options = {{headerShown:false}}/>
                 <Stack.Screen name = "SchedulesConfig" component = {SchedulesConfig} options = {{headerShown:false}}/>
                 <Stack.Screen name = "CrudShifts" component = {CrudShifts} options = {{headerShown:false}}/>
+                <Stack.Screen name = "Timer" component = {Timer} options = {{headerShown:false}}/>
+            
             </Stack.Navigator>
 
         </NavigationContainer>

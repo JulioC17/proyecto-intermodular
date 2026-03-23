@@ -180,5 +180,21 @@ const getAllWorkedTime = async (req, res) => {
     }
 }
 
+const getActualTimeOfWork = async (req, res) => {
+    const {id} = req.user//obtenemos info del token
 
-module.exports = {createCheckIn, createCheckOut, getWorkedTime, getAllWorkedTime}
+    try{
+
+        const consultTime = await pool.query(
+            "SELECT * FROM fichajes WHERE usuario_id = $1 AND hora_fin IS NULL", 
+            [id])//consultaa a la bbdd
+        return res.status(200).json({data: consultTime.rows[0]})//respuesta todo ok
+
+    }catch(error){
+        console.error(error)
+        return res.status(500).json({error:"Error del servidor"})//manejo de errores
+    }
+}
+
+
+module.exports = {createCheckIn, createCheckOut, getWorkedTime, getAllWorkedTime, getActualTimeOfWork}

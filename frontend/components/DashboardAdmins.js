@@ -20,6 +20,7 @@ export default function DashboardAdmins(){
                     icono = "time-outline"
                     section= "Fichar"
                     description="Entrada/Salida"
+                    action={() => navigation.navigate("Timer")}
                     />
                     
                     <DashboardCards
