@@ -174,7 +174,7 @@ export default function EditRecipe(){
 
 const styles = StyleSheet.create({
     generalView: {
-        flex:1,
+        flexGrow:1,
         justifyContent:"space-between",
         alignItems: "center",
         marginBottom:40

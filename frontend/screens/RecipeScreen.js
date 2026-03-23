@@ -57,7 +57,19 @@ export default function Recipes(){
             }
         }
 
-        getRecipes()
+        if(!search.trim()){
+            getRecipes()
+        }else{
+            const timer = setTimeout(()=> {
+            getRecipes()
+        },500)
+
+        return () => clearTimeout(timer)
+        }
+
+        
+
+        
     }, [search, user, token])
     )
     

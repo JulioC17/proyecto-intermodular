@@ -122,7 +122,7 @@ const assignShiftToUserSchema = Joi.object({
     .required()
     .min("now")
     .messages({
-        "date.min": "No puedes signar fechas pasadas",
+        "date.min": "No puedes asignar fechas pasadas",
         "any.required": "La fecha es obligatoria"
     }),
 

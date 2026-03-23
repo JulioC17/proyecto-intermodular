@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from "react";
-import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator} from "react-native";
+import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator, Alert} from "react-native";
 import {SafeAreaView} from "react-native-safe-area-context"
 import { useNavigation } from "@react-navigation/native";
 import colorPalette from "../constant/colorPalette";
@@ -75,7 +75,18 @@ export default function AddRecipe(){
 
                     <TouchableOpacity 
                     style={styles.btnView} 
-                    onPress={() => navigation.goBack()}>
+                    onPress={() => {
+                        if(nombre || ingredientes || elaboracion || montaje){
+                            Alert.alert(
+                                "Confirmación",
+                                "Si va atrás ahora perderá los datos que estaba escribiendo",
+                                [{text: "Cancelar", style: "cancel"},{text: "Ir Atrás", style: "default", onPress: () => navigation.goBack()}]
+                            )
+                            return
+                        }
+
+                        navigation.goBack()
+                    }}>
                         <Ionicons 
                             name = "arrow-back"
                             size= {26}
@@ -87,16 +98,6 @@ export default function AddRecipe(){
                         <Text style={styles.hostech}>{user.empresa}</Text>
                         <Text style={styles.welcome}>Agrega una Receta</Text>
                     </View>
-
-                    <TouchableOpacity 
-                    style={styles.addBtn} 
-                    onPress={() => handleAddRecipe(nombre, ingredientes, elaboracion, montaje)}>
-                        <Ionicons 
-                            name = "save-outline"
-                            size= {26}
-                            color = {colorPalette.blanco}
-                        /> 
-                    </TouchableOpacity>
                 </LinearGradient>
 
                 <View style = {styles.inputsViewGeneral}>
@@ -148,20 +149,29 @@ export default function AddRecipe(){
                         onFocus={() => setInputFocused("montaje")}
                         />
                     </View>
+
+                    <Button
+                        backgroundColor={colorPalette.azulOscuro}
+                        width={320}
+                        height={60}
+                        borderColor={colorPalette.azulOscuro}
+                        text={loading ? <ActivityIndicator size="small" color={colorPalette.blanco}/> : "Guardar Receta"}
+                        colorText={colorPalette.blanco}
+                        fontSize={20}
+                        action={() => handleAddRecipe(nombre, ingredientes, elaboracion, montaje)}
+                        disabled={loading}
+                    />
                 </View>
 
                         </ScrollView>
                     </KeyboardAvoidingView>
-                    {loading && <View style = {styles.spinner}>
-                        <ActivityIndicator color = {colorPalette.azulOscuro} size="large"/>
-                </View>}
         </SafeAreaView>
     )
 }
 
 const styles = StyleSheet.create({
     generalView: {
-        flex:1,
+        flexGrow:1,
         justifyContent:"space-between",
         alignItems: "center",
         marginBottom:40
@@ -222,17 +232,9 @@ const styles = StyleSheet.create({
         borderColor:colorPalette.azulOscuro
     },
 
-    spinner:{
+    btnView:{
         position:"absolute",
-        top:0,
-        bottom:0,
-        left:0,
-        right:0,
-        backgroundColor:"rgba(255, 255, 255, 0.7)",
-        justifyContent:"center",
-        alignItems:"center",
-        zIndex:10
+        left:20
     }
-
 
 })

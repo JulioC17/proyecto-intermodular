@@ -184,8 +184,8 @@ const ownersAndAdminsView = async (req, res) => {
         const companysID = companysRows.rows.map(ci => ci.empresa_id)//traemos 1 o mas empresas del usuario requester
 
         const findUsers = await pool.query(
-            "SELECT DISTINCT u.nombre, u.apellidos, u.email, u.telefono, u.dni, u.sueldo, e.nombre AS empresa, r.rol AS rol FROM  usuarios_empresas ue JOIN usuarios u ON ue.usuario_id = u.id JOIN roles r ON u.rol_id = r.id JOIN empresas e ON ue.empresa_id = e.id WHERE ue.empresa_id = ANY($1) AND u.id <> $2",
-            [companysID, id]
+            "SELECT DISTINCT u.id, u.nombre, u.apellidos, u.email, u.telefono, u.dni, u.sueldo, e.nombre AS empresa, r.rol AS rol FROM  usuarios_empresas ue JOIN usuarios u ON ue.usuario_id = u.id JOIN roles r ON u.rol_id = r.id JOIN empresas e ON ue.empresa_id = e.id WHERE ue.empresa_id = ANY($1)",
+            [companysID]
         )
 
         return res.status(200).json({

@@ -357,7 +357,7 @@ const getShiftsForAdmins = async (req, res) => {
         }
 
         const watchSchedule = await pool.query(
-            "SELECT u.nombre AS usuario, ut.fecha::text AS fecha, t.nombre, t.hora_inicio, t.hora_fin FROM usuarios_turnos ut JOIN turnos t ON ut.turno_id = t.id JOIN usuarios u ON u.id = ut.usuario_id WHERE t.empresa_id = $1 AND ut.fecha BETWEEN $2 AND $3 ORDER BY ut.fecha, t.hora_inicio",
+            "SELECT u.id AS usuario_id, u.nombre AS usuario, ut.fecha::text AS fecha, t.nombre, t.hora_inicio, t.hora_fin, t.id AS turno_id FROM usuarios_turnos ut JOIN turnos t ON ut.turno_id = t.id JOIN usuarios u ON u.id = ut.usuario_id WHERE t.empresa_id = $1 AND ut.fecha BETWEEN $2 AND $3 ORDER BY ut.fecha, t.hora_inicio",
             [Number(empresa_id), weekStart, weekEnds]
         )
 

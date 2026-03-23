@@ -12,6 +12,7 @@ import { AuthContext } from "../context/AuthProvider";
 import DashboardWorker from "../components/DashboardWorker";
 import DashboardAdmins from "../components/DashboardAdmins";
 import DateTimePicker from "@react-native-community/datetimepicker"
+import Checkbox from "expo-checkbox"
 
 export default function CrudShifts(){
     const {user, token} = useContext(AuthContext)
@@ -26,6 +27,7 @@ export default function CrudShifts(){
     const [showPicker, setShowPicker] = useState(false)
     const [inHour, setInHour] = useState("toca para modificar")
     const [outHour, setOutHour] = useState("toca para modificar")
+    const [restDay, setRestDay] = useState(false)
 
 
     
@@ -62,7 +64,7 @@ export default function CrudShifts(){
         try{
             
             setLoading(true)
-            const response = await api.delete(`/turnos/deleteShift/${Number(empresa_id)}/${shift_id}`,{
+            const response = await api.put(`/turnos/deleteShift/${Number(empresa_id)}/${shift_id}`,{},{
                 headers: {Authorization: `Bearer ${token}`}
             })
 
@@ -91,8 +93,8 @@ export default function CrudShifts(){
 
             const response = await api.post("/turnos/createShift",{
                 "nombre":shiftName,
-                "hora_inicio": inHour,
-                "hora_fin": outHour,
+                "hora_inicio": restDay ? "00:00:00" : inHour,
+                "hora_fin": restDay ? "23:59:00" : outHour,
                 "empresa_id": Number(user.empresa_id)
             },{headers: {Authorization: `Bearer ${token}`}})
 
@@ -117,7 +119,7 @@ export default function CrudShifts(){
     
     return(
         <SafeAreaView style = {{flex:1}}>
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={{ flex: 1, backgroundColor: "#ffffff"}}
@@ -143,41 +145,52 @@ export default function CrudShifts(){
             </LinearGradient>
             
             <View style = {styles.listView}>
+                <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <View style = {styles.editShifts}>
                     <View style = {styles.newShiftName}>
                         <Text style = {styles.newShiftNameText}>Nombre del Turno</Text>
                         <TextInput 
                         style = {[styles.newShiftNameinput, isFocused === "inputName" && styles.isFocused]}
-                        placeholder="ej: Turno Tardes"
+                        placeholder={restDay ? "ej: Día de Descanso" : "ej: Turno de Mañana"}
                         onChangeText={(text) => setShiftName(text)}
                         onFocus={() => setIsFocused("inputName")}
                         onBlur={() => setIsFocused("")}
                         value={shiftName}
                         />
+                        <View style = {styles.checkView}>
+                            <Checkbox
+                            value ={restDay}
+                            onValueChange={setRestDay}
+
+                            />
+                            <Text>Día de descanso</Text>
+                        </View>
                     </View>
                     <View style = {[styles.newShiftHours]}>
                         <View style = {styles.hours}>
                             <Text style = {styles.newShiftHoursIn}>Desde</Text>
                             <TouchableOpacity
-                            style = {[styles.newShiftHoursInInput, isFocused === "inputIn" && styles.isFocused]}
+                            style = {[styles.newShiftHoursInInput, isFocused === "inputIn" && styles.isFocused, restDay && styles.disabled]}
                             onPress={() => {
                                 setIsFocused("inputIn")
                                 setShowPicker(true)
                             }}
+                            disabled = {restDay}
                             >
-                                <Text style = {styles.hora}>{inHour}</Text>
+                                <Text style = {styles.hora}>{restDay ? "Descanso" : inHour}</Text>
                             </TouchableOpacity>
                         </View>
                         <View style = {styles.hours}> 
                             <Text style = {styles.newShiftHoursOut}>Hasta</Text>
                             <TouchableOpacity
-                            style = {[styles.newShiftHoursInInput, isFocused === "inputOut" && styles.isFocused]}
+                            style = {[styles.newShiftHoursInInput, isFocused === "inputOut" && styles.isFocused, restDay && styles.disabled]}
                             onPress={() => {
                                 setIsFocused("inputOut")
                                 setShowPicker(true)
                             }}
+                            disabled = {restDay}
                             >
-                                <Text style = {styles.hora}>{outHour}</Text>
+                                <Text style = {styles.hora}>{restDay ? "Descanso" : outHour}</Text>
                             </TouchableOpacity>
                             </View>
                         </View>
@@ -199,7 +212,7 @@ export default function CrudShifts(){
 
                         />
                 </View>
-
+                </TouchableWithoutFeedback>        
                 
                 {loading && <View style = {styles.spinnerView}><ActivityIndicator size="large" color={colorPalette.azulOscuro}/></View>}
                 {!loading && <FlatList
@@ -209,20 +222,13 @@ export default function CrudShifts(){
                 ListHeaderComponent={<Text style= {styles.Shifts}>Turnos Configurados</Text>}
                 renderItem={({item}) => (
                     <View>
-                        <View style = {styles.shiftCard}>
+                        <View style = {[styles.shiftCard]}>
                         <View style = {styles.descriptionView}>
                             <Text style = {styles.shiftName}>{item.nombre}</Text>
                             <Text style = {styles.checkIn}>De {item.hora_inicio.slice(0, 5)} a {item.hora_fin.slice(0, 5)}</Text>
                         </View>
 
                         <View style = {styles.btnView}>
-                            <TouchableOpacity style = {styles.editBtn}>
-                                <Ionicons
-                                name = "options-outline"
-                                color = {colorPalette.azulOscuro}
-                                size = {28}
-                                />
-                            </TouchableOpacity>
                             <TouchableOpacity 
                             style = {styles.deleteBtn}
                             onPress={() => {
@@ -281,7 +287,6 @@ export default function CrudShifts(){
                 />
             )}
             </KeyboardAvoidingView>
-            </TouchableWithoutFeedback>
             </SafeAreaView>
     )
 }
@@ -340,7 +345,6 @@ const styles = StyleSheet.create({
     listView:{
         flex:1,
         width:350,
-        justifyContent:"center",
         alignItems:"center"
     },
 
@@ -461,6 +465,20 @@ const styles = StyleSheet.create({
    emptyText:{
     fontFamily:"OutfitBold",
     fontSize:18
+   },
+
+   checkView:{
+    flexDirection:"row",
+    gap:10,
+    justifyContent:"flex-start",
+    width:310,
+    margin:5
+   },
+
+   disabled:{
+    backgroundColor:colorPalette.gris_transparente,
+    borderWidth:1,
+    borderColor:colorPalette.azulOscuro
    }
 
 

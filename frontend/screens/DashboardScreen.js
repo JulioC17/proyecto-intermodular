@@ -20,7 +20,7 @@ export default function Dashboard(){
     const sayHello = () => {
     const now = new Date()
 
-    if(now.getHours() > 20 || now.getHours() < 6){
+    if(now.getHours() > 20){
         return "Buenas Noches"
     }
 
@@ -28,7 +28,7 @@ export default function Dashboard(){
         return "Buenas Tardes"
     }
 
-    if(now.getHours() > 6)
+    if(now.getHours() > 0)
         return "Buenos Días"
     }
 

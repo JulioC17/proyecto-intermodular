@@ -79,7 +79,8 @@ useEffect(()=> {
     
 }, [changeWeek])
 
-useEffect(() => {
+useFocusEffect(
+    useCallback(() => {
     
     const getSchedule = async() => {
         try{
@@ -121,7 +122,7 @@ useEffect(() => {
 
     getSchedule()
     
-},[weekStartFormat, weekEndsFormat, focusBtn])
+},[weekStartFormat, weekEndsFormat, focusBtn]))
 
 
 
@@ -179,7 +180,6 @@ return(
                                     style  = {[styles.nextView, focusBtn === "general" && styles.focusedBtn]}
                                     onPress={() => {
                                         setFocusBtn("general")
-                                        console.log(JSON.stringify(schedule))
                                     }}>
                                         <Text 
                                         style = {[styles.nextText, focusBtn === "general" && styles.pastTextFocused]}
@@ -243,10 +243,10 @@ return(
                         <View style = {styles. cardSubView}>
                            {item.turnos.map((t, i) => {
                             return (
-                                <View style={styles.shiftView} key={i}>
+                                <View style={[styles.shiftView, styles.checkIn, t.hora_inicio === "00:00:00" && t.hora_fin === "23:59:00" && styles.restDayView]} key={i}>
                                     <Text style = {styles.tittle}>{t.usuario}</Text>
                                     <View style = {styles.hoursView}>
-                                        <Text style = {styles.checkIn}>De {t.hora_inicio.slice(0, 5)} a {t.hora_fin.slice(0, 5)}</Text>
+                                        <Text style = {[styles.checkIn, t.hora_inicio === "00:00:00" && t.hora_fin === "23:59:00" && styles.restDay]}>{t.hora_inicio === "00:00:00" && t.hora_fin === "23:59:00" ? "Día de Descanso" : `De ${t.hora_inicio.slice(0, 5)} a ${t.hora_fin.slice(0, 5)}`}</Text>
                                             
                                     </View>
                                 </View>
@@ -335,7 +335,7 @@ const styles = StyleSheet.create({
     },
 
     cardSubView:{
-        gap:5
+        gap:5,
     },
      weekDayText:{
         color:colorPalette.azulOscuro,
@@ -442,6 +442,16 @@ const styles = StyleSheet.create({
         fontSize:18,
         color:colorPalette.blanco
     },
+
+    restDay:{
+        fontFamily:"OutfitRegular",
+        color:colorPalette.azulOscuro
+    },
+
+    restDayView:{
+        backgroundColor:"#f4f4f4",
+        borderRadius:10
+    }
 
     
 

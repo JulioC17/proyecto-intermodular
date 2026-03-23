@@ -15,12 +15,13 @@ export default function DashboardAdmins(){
 
     return(
         <ScrollView >
+
                     <DashboardCards
-                    icono = "people-outline"
-                    section= "Trabajadores"
-                    description="Control de trabajadores"
+                    icono = "time-outline"
+                    section= "Fichar"
+                    description="Entrada/Salida"
                     />
-        
+                    
                     <DashboardCards
                     icono = "calendar-outline"
                     section= "Turnos"
@@ -47,6 +48,12 @@ export default function DashboardAdmins(){
                     section= "Control de Jornada"
                     description="Datos del Día"
                     action={() => navigation.navigate("Recipes")}
+                    />
+
+                    <DashboardCards
+                    icono = "people-outline"
+                    section= "Trabajadores"
+                    description="Control de trabajadores"
                     />
         
                 </ScrollView>
