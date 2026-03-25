@@ -1,7 +1,7 @@
-import React, {useContext, useState} from "react";
+import React, {useCallback, useContext, useEffect, useState} from "react";
 import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator} from "react-native";
 import {SafeAreaView} from "react-native-safe-area-context"
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import colorPalette from "../constant/colorPalette";
 import {LinearGradient} from "expo-linear-gradient";
 import { api } from "../services/api";
@@ -14,8 +14,44 @@ import DashboardAdmins from "../components/DashboardAdmins";
 
 
 export default function Dashboard(){
-    const {user, logout} = useContext(AuthContext)
+    const {user, logout, token} = useContext(AuthContext)
     const navigation = useNavigation()
+    const {showModal}= useContext(AlertContext)
+    const [initTime, setInitTime] = useState(null)
+    
+    const [loading, setLoading] = useState(false)
+
+    
+
+    useFocusEffect(
+        useCallback(() => {
+             const getActualTime = async () => {
+            try{
+
+                const response = await api.get("/fichajes/actualTime", {
+                    headers: {Authorization: `Bearer ${token}`}
+                })
+
+                setInitTime(response.data.data)
+                
+
+            }catch(error){
+            const data = error.response?.data
+            if(data?.errors){
+                showModal(data.errors.join("\n"), "error" )
+                        
+            }else if(data?.error){
+                showModal(data.error, "error")
+                        
+            }else{
+                showModal("Error interno del servidor", "error")
+            }
+        }finally{
+            setLoading(false)
+        }
+        }
+    getActualTime()
+    },[]))
 
     const sayHello = () => {
     const now = new Date()
@@ -30,7 +66,7 @@ export default function Dashboard(){
 
     if(now.getHours() > 0)
         return "Buenos Días"
-    }
+    }    
 
 
     return(
@@ -48,7 +84,7 @@ export default function Dashboard(){
                     </LinearGradient>
 
                     <View style = {styles.cardSection}>
-                       { user.rol === "administrador" ? <DashboardAdmins/>:<DashboardWorker/>}
+                       { user.rol === "administrador" ? <DashboardAdmins estado = {initTime}/>:<DashboardWorker estado={initTime}/>}
                         <TouchableOpacity 
                         style={{borderWidth:2, backgroundColor:"#d3d3d3", height:100}}
                         onPress={() => {

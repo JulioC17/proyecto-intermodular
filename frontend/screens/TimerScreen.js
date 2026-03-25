@@ -22,16 +22,21 @@ export default function Timer() {
         const [initTime, setInitTime] = useState(null)
         const [loading, setLoading] = useState(false)
         const [cron, setCron] = useState("00:00:00")
+        const [lastWorked, setLastWorked] = useState([])
 
         useEffect(() => {
             getActualTime()
+            getLastWorkedTime()
+
         }, [])
 
         useEffect(() => {
             if(initTime?.hora_inicio){
                 const interval = showCron(initTime.hora_inicio, initTime.fecha)
+                
                 return () => clearInterval(interval)
             }
+            console.log(JSON.stringify(lastWorked))
         }, [initTime])
 
         const getActualTime = async () => {
@@ -105,6 +110,7 @@ export default function Timer() {
 
                 showModal(response.data.message, "success")
                 setInitTime(null)
+                setCron("00:00:00")
 
             }catch(error){
             const data = error.response?.data
@@ -126,7 +132,7 @@ export default function Timer() {
             try{
 
                 setLoading(true)
-                const response = await api.post("fichajes/checkIn",{}, {
+                const response = await api.post("/fichajes/checkIn",{}, {
                     headers: {Authorization: `Bearer ${token}`}
                 })
 
@@ -149,10 +155,79 @@ export default function Timer() {
         }
         }
 
+        const getLastWorkedTime = async () => {
+            try{
 
-        
+                setLoading(true)
+                const response = await api.get("/fichajes/lastWorkedTime", {
+                    headers: {Authorization: `Bearer ${token}`}
+                })
 
-        return(
+                setLastWorked(simplifyHours(response.data.data))
+
+            }catch(error){
+            const data = error.response?.data
+            if(data?.errors){
+                showModal(data.errors.join("\n"), "error" )
+                        
+            }else if(data?.error){
+                showModal(data.error, "error")
+                        
+            }else{
+                showModal("Error interno del servidor", "error")
+            }
+        }finally{
+            setLoading(false)
+        }
+        }
+
+        const simplifyHours = (workedHours) => {
+            const grouped = workedHours.reduce((acc, hour) => {
+                if(!acc[hour.fecha]){
+                    acc[hour.fecha] = []
+                }
+                acc[hour.fecha].push(hour)
+                return acc
+            }, {})
+
+            return Object.entries(grouped).map(([fecha, hour]) => ({fecha, hour}))
+            
+        }
+
+        const calculateWorkedTime = (objArray, fecha) => {
+            const date = new Date(fecha)
+            const y = date.getFullYear()
+            const m = String(date.getMonth() + 1).padStart(2, "0")
+            const d = String(date.getDate()).padStart(2, "0")
+            const formatedDate = `${y}-${m}-${d}`
+            
+            let sumaDeMilisegundos = 0
+            
+            const hours = objArray.map((obj, ind) => {
+                const inicio = new Date(`${formatedDate}T${obj.hora_inicio}`).getTime()
+                const final = new Date(`${formatedDate}T${obj.hora_fin}`).getTime()
+
+                const restaInicioFinal = final - inicio
+                sumaDeMilisegundos += restaInicioFinal
+            })
+
+            const totalSeconds = Math.floor(sumaDeMilisegundos/1000)
+            
+            const hour = Math.floor(totalSeconds / 3600)
+            const min = Math.floor((totalSeconds % 3600) / 60)
+            const sec = Math.floor(totalSeconds % 60)
+
+            const hh = String(hour).padStart(2, "0")
+            const mm = String(min).padStart(2, "0")
+            const ss = String(sec).padStart(2, "0")
+
+            const formatTime = `${hh}h ${mm}m` 
+
+            return formatTime
+
+}
+
+return(
         <SafeAreaView style = {{flex:1}}>
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -198,7 +273,6 @@ export default function Timer() {
                             
                             if(initTime){
                                 desfichar()
-                                setCron("00:00:00")
                             }else{
                                 fichar()
                             }
@@ -210,16 +284,36 @@ export default function Timer() {
                             <Ionicons name = {initTime ? "stop-outline" : "play-outline"} size = {30} color={colorPalette.blanco}/>
                             <Text style = {styles.ficharText}>{loading ? <ActivityIndicator size="small" color={colorPalette.blanco}/> : (initTime ? "Desfichar" : "Fichar")}</Text>
                         </TouchableOpacity>
-                    </View>
 
-                    <View style = {styles.inHourView}>
+                         <View style = {styles.inHourView}>
                         <Text style = {styles.resumenText}>RESUMEN DEL DÍA</Text>
                         <View style = {styles.inView}>
                             <Text style = {styles.inText}>Hora de Entrada</Text>
                             <Text style = {styles.inHourText}>{initTime ? initTime.hora_inicio.slice(0, 5) : "--:--"}</Text>
                         </View>
+
+                        <View style={styles.historic}>
+                         <Text style = {styles.resumenText}>ÚLTIMOS 5 TURNOS</Text>
+                            {lastWorked.map((item, index) => {
+                                return(
+                                    <View key={index} style = {styles.historicCard}>
+                                        <View style = {styles.historicCardDay}>
+                                        <Text style = {styles.historicCardText}>{new Date(item.fecha).toLocaleDateString("es-ES", {
+                                            weekday:"long",
+                                        }).toUpperCase()}</Text>
+                                         <Text style = {styles.historicCardTextText}>{new Date(item.fecha).toLocaleDateString("es-ES", {
+                                            day:"2-digit",
+                                            month:"short"
+                                        })}</Text>
+                                        </View >
+                                        <Text style = {styles.historicCardHours}>{calculateWorkedTime(item.hour, item.fecha)}</Text>
+                                    </View>
+                                )
+                            })}   
                     </View>
                     </View>
+                    </View>
+                     </View>
                     </View>
                     </KeyboardAvoidingView>
                     </SafeAreaView>
@@ -267,7 +361,7 @@ const styles = StyleSheet.create({
 
     ficharBtn: {
         backgroundColor: colorPalette.azulOscuro,
-        width:320,
+        width:300,
         height:65,
         justifyContent:"center",
         alignItems:"center",
@@ -293,7 +387,7 @@ const styles = StyleSheet.create({
     },
 
     clockView:{
-        marginTop:40,
+        marginTop:20,
         padding:30,
         borderRadius:15,
         justifyContent:"center",
@@ -357,6 +451,8 @@ const styles = StyleSheet.create({
         alignItems:"flex-start",
         marginTop:20,
         padding:40,
+        margin:20,
+        
     },
 
     resumenText:{
@@ -381,9 +477,61 @@ const styles = StyleSheet.create({
         fontFamily:"OutfitBold",
         fontSize:18,
         color:colorPalette.negro
+    },
+
+    historic:{
+        marginTop:10
+    },
+
+    historicCard:{
+        flexDirection:"row",
+        justifyContent:"space-between",
+        width:350,
+        padding:5,
+        alignItems:"center",
+        borderBottomWidth:1,
+        borderColor:colorPalette.gris_transparente
+    },
+
+    historicCardText:{
+        fontFamily:"OutfitBold",
+        fontSize:16,
+        color:colorPalette.negro
+    },
+
+    historicCardTextText:{
+        fontFamily:"OutfitBold",
+        fontSize:16,
+        color:colorPalette.gris
+    },
+
+    historicCardHours:{
+        borderWidth:1,
+        padding:10,
+        borderRadius:10,
+        borderColor:colorPalette.gris_transparente,
+        color:colorPalette.azulOscuro,
+        fontFamily:"OutfitBold",
+        fontSize:16
     }
 
 
-    
-
+   
+   
 })
+
+
+ /*   [{"fecha":"2026-03-23T23:00:00.000Z",
+        "hour":
+            [{"id":"25",
+            "hora_inicio":"09:12:49",
+            "hora_fin":"16:21:09",
+            "fecha":"2026-03-23T23:00:00.000Z",
+            "usuario_id":"24",
+            "empresa_id":"8"}]
+        },
+        {"fecha":"2026-03-22T23:00:00.000Z",
+            "hour":[{"id":"11","hora_inicio":"20:55:17","hora_fin":"21:49:26","fecha":"2026-03-22T23:00:00.000Z","usuario_id":"24","empresa_id":"8"},       {"id":"13","hora_inicio":"23:23:26","hora_fin":"23:23:49","fecha":"2026-03-22T23:00:00.000Z","usuario_id":"24","empresa_id":"8"},
+                {"id":"12","hora_inicio":"21:49:42","hora_fin":"23:11:30","fecha":"2026-03-22T23:00:00.000Z","usuario_id":"24","empresa_id":"8"},
+                    {"id":"14","hora_inicio":"23:24:33","hora_fin":"23:24:43","fecha":"2026-03-22T23:00:00.000Z","usuario_id":"24","empresa_id":"8"}]}]
+                    */

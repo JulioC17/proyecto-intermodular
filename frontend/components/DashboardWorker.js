@@ -10,7 +10,7 @@ import { AuthContext } from "../context/AuthProvider";
 import DashboardCards from "./DashboardCards";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function DashboardWorker(){
+export default function DashboardWorker({estado}){
     const navigation = useNavigation()
 
     return(
@@ -20,6 +20,7 @@ export default function DashboardWorker(){
             section= "Fichar"
             description="Entrada/Salida"
             action={() => navigation.navigate("Timer")}
+            ChangMode={estado}
             />
 
             <DashboardCards

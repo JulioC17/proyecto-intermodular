@@ -9,25 +9,26 @@ import {Ionicons} from "@expo/vector-icons"
 import Button from "../components/Button";
 import { AuthContext } from "../context/AuthProvider";
 
-export default function DashboardCards({icono, section, description, action}){
+export default function DashboardCards({icono, section, description, action, ChangMode}){
     return(
         
             <TouchableOpacity 
-            style = {styles.card}
+            style = {[styles.card, ChangMode && styles.darkCaard]}
             onPress={action}
             >
-                <View style = {styles.iconView}></View>
+                <View style = {[styles.iconView, ChangMode && styles.darkCaard]}></View>
                     <Ionicons 
                     name = {icono}
-                    size={36} color = {colorPalette.azulOscuro} 
-                    backgroundColor = {colorPalette.azulClaroTrasnparente} 
+                    size={36} 
+                    color = { ChangMode ? colorPalette.blanco: colorPalette.azulOscuro} 
+                    backgroundColor = {ChangMode ? colorPalette.azulOscuro : colorPalette.azulClaroTrasnparente} 
                     padding = {10}
                     borderRadius= {15}
                     marginRight = {20}
                     />
                 <View style = {styles.descriptionView}>
-                    <Text style = {styles.sectionText}>{section}</Text>
-                    <Text style = {styles.descriptionSectionText}>{description}</Text>
+                    <Text style = {styles.sectionText}>{ChangMode ? "Desfichar":section}</Text>
+                    <Text style = {styles.descriptionSectionText}>{ChangMode ? "trabajando...":description}</Text>
                 </View>
             </TouchableOpacity>
         
@@ -55,6 +56,11 @@ const styles = StyleSheet.create({
         fontFamily:"OutfitRegular",
         fontSize:18,
         color:colorPalette.gris
+    },
+
+    darkCaard:{
+        backgroundColor:colorPalette.azulClaroTrasnparente,
+        borderColor:colorPalette.azulOscuro
     }
      
 })
