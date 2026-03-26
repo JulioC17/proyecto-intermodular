@@ -46,6 +46,13 @@ export default function DashboardAdmins({estado}){
                     />
 
                     <DashboardCards
+                    icono = "stats-chart-outline"
+                    section= "Mis horas trabajadas"
+                    description="Filtra y revisa tu histórico"
+                    action={() => navigation.navigate("Resumen")}
+                    />   
+
+                    <DashboardCards
                     icono = "clipboard-outline"
                     section= "Control de Jornada"
                     description="Datos del Día"

@@ -23,12 +23,13 @@ export default function Timer() {
         const [loading, setLoading] = useState(false)
         const [cron, setCron] = useState("00:00:00")
         const [lastWorked, setLastWorked] = useState([])
+        const [count, setCount] = useState(true)
 
         useEffect(() => {
             getActualTime()
             getLastWorkedTime()
 
-        }, [])
+        }, [count])
 
         useEffect(() => {
             if(initTime?.hora_inicio){
@@ -36,7 +37,6 @@ export default function Timer() {
                 
                 return () => clearInterval(interval)
             }
-            console.log(JSON.stringify(lastWorked))
         }, [initTime])
 
         const getActualTime = async () => {
@@ -111,6 +111,7 @@ export default function Timer() {
                 showModal(response.data.message, "success")
                 setInitTime(null)
                 setCron("00:00:00")
+                setCount(!count)
 
             }catch(error){
             const data = error.response?.data
@@ -285,6 +286,8 @@ return(
                             <Text style = {styles.ficharText}>{loading ? <ActivityIndicator size="small" color={colorPalette.blanco}/> : (initTime ? "Desfichar" : "Fichar")}</Text>
                         </TouchableOpacity>
 
+                        </View>
+
                          <View style = {styles.inHourView}>
                         <Text style = {styles.resumenText}>RESUMEN DEL DÍA</Text>
                         <View style = {styles.inView}>
@@ -294,6 +297,7 @@ return(
 
                         <View style={styles.historic}>
                          <Text style = {styles.resumenText}>ÚLTIMOS 5 TURNOS</Text>
+                         
                             {lastWorked.map((item, index) => {
                                 return(
                                     <View key={index} style = {styles.historicCard}>
@@ -312,7 +316,7 @@ return(
                             })}   
                     </View>
                     </View>
-                    </View>
+                    
                      </View>
                     </View>
                     </KeyboardAvoidingView>
@@ -413,7 +417,7 @@ const styles = StyleSheet.create({
     cronView:{
         justifyContent:"center",
         alignItems:"center",
-        margin:20,
+        margin:30,
         height:100,
         width:300
     },
@@ -449,8 +453,7 @@ const styles = StyleSheet.create({
     inHourView:{
         justifyContent:"center",
         alignItems:"flex-start",
-        marginTop:20,
-        padding:40,
+        padding:20,
         margin:20,
         
     },
@@ -480,7 +483,7 @@ const styles = StyleSheet.create({
     },
 
     historic:{
-        marginTop:10
+        marginTop:15,
     },
 
     historicCard:{
@@ -513,7 +516,7 @@ const styles = StyleSheet.create({
         color:colorPalette.azulOscuro,
         fontFamily:"OutfitBold",
         fontSize:16
-    }
+    },
 
 
    

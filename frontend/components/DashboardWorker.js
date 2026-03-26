@@ -48,6 +48,7 @@ export default function DashboardWorker({estado}){
             icono = "stats-chart-outline"
             section= "Mis horas trabajadas"
             description="Filtra y revisa tu histórico"
+            action={() => navigation.navigate("Resumen")}
             />      
 
         </ScrollView>

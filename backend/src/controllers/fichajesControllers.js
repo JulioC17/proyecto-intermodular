@@ -91,7 +91,7 @@ const getWorkedTime = async (req, res) =>{
     try{
 
         //variables dinamicas para hacer el GET en base a que vengaan en la request o no
-        let query = "SELECT * FROM fichajes WHERE usuario_id = $1"
+        let query = "SELECT * FROM fichajes WHERE usuario_id = $1 AND hora_fin IS NOT NULL"
         let values = [id]
 
         if(from && to){
@@ -203,7 +203,7 @@ const getLastWorkedTIme = async (req, res) => {
     try{
 
         const consultTime = await pool.query(
-            "SELECT * FROM fichajes WHERE usuario_id = $1 AND hora_fin IS NOT NULL ORDER BY fecha DESC LIMIT 5", 
+            "SELECT * FROM fichajes WHERE usuario_id = $1 AND fecha IN(SELECT DISTINCT fecha FROM fichajes WHERE usuario_id = $1 AND hora_fin IS NOT NULL ORDER BY fecha DESC LIMIT 5) AND hora_fin IS NOT NULL ORDER BY fecha DESC", 
             [id])//consultaa a la bbdd
 
         return res.status(200).json({data: consultTime.rows})//respuesta todo ok

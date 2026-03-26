@@ -23,10 +23,9 @@ import Turnos from "../screens/TurnosScreen";
 import SchedulesConfig from "../screens/SchedulesConfig";
 import CrudShifts from "../screens/CrudShiftsScreen";
 import Timer from "../screens/TimerScreen";
-
+import Resumen from "../screens/ResumenScreen";
 
 const Stack = createNativeStackNavigator()
-
 
 export default function AppNavigator() {
     const {loading, token, user} = useContext(AuthContext)
@@ -38,8 +37,6 @@ export default function AppNavigator() {
             </View>
         )
     }
-
-    
 
     return(
         <NavigationContainer>
@@ -62,6 +59,7 @@ export default function AppNavigator() {
                 <Stack.Screen name = "SchedulesConfig" component = {SchedulesConfig} options = {{headerShown:false}}/>
                 <Stack.Screen name = "CrudShifts" component = {CrudShifts} options = {{headerShown:false}}/>
                 <Stack.Screen name = "Timer" component = {Timer} options = {{headerShown:false}}/>
+                <Stack.Screen name = "Resumen" component = {Resumen} options = {{headerShown:false}}/>
             
             </Stack.Navigator>
 
