@@ -63,6 +63,7 @@ export default function DashboardAdmins({estado}){
                     icono = "people-outline"
                     section= "Trabajadores"
                     description="Control de trabajadores"
+                    action={() => navigation.navigate("AddWorkers")}
                     />
         
                 </ScrollView>

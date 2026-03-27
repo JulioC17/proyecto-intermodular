@@ -24,6 +24,7 @@ import SchedulesConfig from "../screens/SchedulesConfig";
 import CrudShifts from "../screens/CrudShiftsScreen";
 import Timer from "../screens/TimerScreen";
 import Resumen from "../screens/ResumenScreen";
+import AddWorkers from "../screens/AddWorkers";
 
 const Stack = createNativeStackNavigator()
 
@@ -60,6 +61,7 @@ export default function AppNavigator() {
                 <Stack.Screen name = "CrudShifts" component = {CrudShifts} options = {{headerShown:false}}/>
                 <Stack.Screen name = "Timer" component = {Timer} options = {{headerShown:false}}/>
                 <Stack.Screen name = "Resumen" component = {Resumen} options = {{headerShown:false}}/>
+                <Stack.Screen name = "AddWorkers" component = {AddWorkers} options = {{headerShown:false}}/>
             
             </Stack.Navigator>
 
