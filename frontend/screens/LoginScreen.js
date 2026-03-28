@@ -32,6 +32,17 @@ export default function Login (){
                "password": password
             })
 
+            if(response.data.tempToken){
+                showModal(response.data.message, "success")
+                navigation.navigate("FirstLogin", {
+                    tempToken: response.data.tempToken
+                    
+                })
+               console.log("hola")
+                return
+            }
+            
+            
             await login(response.data.token)
             showModal(response.data.message, "success")
             navigation.navigate("Dashboard")
@@ -40,6 +51,7 @@ export default function Login (){
 
         }catch(error){
             const data = error.response?.data
+            console.log(error)
             if(data?.errors){
                 showModal(data.errors.join("\n"), "error")
                 
@@ -50,8 +62,6 @@ export default function Login (){
                 showModal("Error interno del servidor", "error")
             }
         }finally{
-            setEmail("")
-            setPassword("")
             setLoading(false)
         }
     }
@@ -154,7 +164,7 @@ const styles = StyleSheet.create({
     },
 
     welcome:{
-        fontSize:16,
+        fontSize:22,
         fontFamily:"OutfitRegular",
         color:colorPalette.blanco
     },

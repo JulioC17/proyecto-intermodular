@@ -14,7 +14,7 @@ export default function DashboardAdmins({estado}){
     const navigation = useNavigation()
 
     return(
-        <ScrollView >
+        <>
 
                     <DashboardCards
                     icono = "time-outline"
@@ -66,6 +66,6 @@ export default function DashboardAdmins({estado}){
                     action={() => navigation.navigate("AddWorkers")}
                     />
         
-                </ScrollView>
+                </>
     )
 }

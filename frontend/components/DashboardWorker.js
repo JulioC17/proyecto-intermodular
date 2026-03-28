@@ -14,7 +14,7 @@ export default function DashboardWorker({estado}){
     const navigation = useNavigation()
 
     return(
-        <ScrollView >
+        <>
             <DashboardCards
             icono = "time-outline"
             section= "Fichar"
@@ -51,7 +51,7 @@ export default function DashboardWorker({estado}){
             action={() => navigation.navigate("Resumen")}
             />      
 
-        </ScrollView>
+        </>
     )
 }
 

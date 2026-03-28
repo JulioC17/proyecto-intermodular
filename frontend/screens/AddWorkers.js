@@ -55,6 +55,8 @@ export default function AddWorkers(){
         }
     }
 
+    
+
     return(
         <SafeAreaView style = {{flex:1}}>
             <KeyboardAvoidingView
@@ -82,7 +84,7 @@ export default function AddWorkers(){
 
                      <TouchableOpacity 
                     style={styles.btnView} 
-                    onPress={() => navigation.goBack()}>
+                    onPress={() => navigation.navigate("RegisterNewWorker")}>
                         <Ionicons 
                             name = "person-add-outline"
                             size= {26}
@@ -101,7 +103,17 @@ export default function AddWorkers(){
                                     <Text style = {styles.name}>{item.nombre} {item.apellidos}</Text>
                                     {item.rol === "propietario" ? "" : 
                                     <TouchableOpacity
-                                    onPress={() => console.log("hola")}
+                                    onPress={() => navigation.navigate("EditUser", {
+                                        userDescription:{
+                                            "nombre":item.nombre,
+                                            "apellidos": item.apellidos,
+                                            "rol": item.rol,
+                                            "email": item.email,
+                                            "telefono": item.telefono,
+                                            "dni": item.dni,
+                                            "id_usuario":item.id
+                                        }
+                                    })}
                                     >
                                     <Ionicons name = "settings-outline" size = {24} color ={colorPalette.azulOscuro}/>
                                     </TouchableOpacity>}
@@ -259,7 +271,8 @@ const styles = StyleSheet.create({
     },
 
     owner:{
-        borderColor:colorPalette.azulOscuro
+        borderColor:colorPalette.azulOscuro,
+        backgroundColor:"#cbcbcb27"
     }
 
 })

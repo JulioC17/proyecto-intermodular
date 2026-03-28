@@ -25,6 +25,10 @@ import CrudShifts from "../screens/CrudShiftsScreen";
 import Timer from "../screens/TimerScreen";
 import Resumen from "../screens/ResumenScreen";
 import AddWorkers from "../screens/AddWorkers";
+import RegisterNewWorker from "../screens/registerNewWorker";
+import FirstLogin from "../screens/FirstLoginScreen";
+import Profile from "../screens/ProfileScreen";
+import EditUser from "../screens/EditUser";
 
 const Stack = createNativeStackNavigator()
 
@@ -49,7 +53,9 @@ export default function AppNavigator() {
                 <Stack.Screen name = "AddCompany" component={AddCompany} options= {{headerShown:false}}/>
                 <Stack.Screen name = "Verify" component={VerifyEmail} options={{headerShown:false}}/>
                 <Stack.Screen name = "Login" component={LoginScreen} options = {{headerShown:false}}/>
+                <Stack.Screen name = "FirstLogin" component = {FirstLogin} options = {{headerShown:false}}/>
                 <Stack.Screen name = "Dashboard" component={Dashboard} options={{headerShown:false}}/>
+                <Stack.Screen name = "Profile" component = {Profile} options = {{headerShown:false}}/>
                 <Stack.Screen name = "Recipes" component = {Recipes} options = {{headerShown:false}}/>
                 <Stack.Screen name = "RecipeDescription" component = {RecipeDescription} options = {{headerShown:false}}/>
                 <Stack.Screen name = "AddRecipe" component = {AddRecipe} options = {{headerShown:false}}/>
@@ -62,6 +68,8 @@ export default function AppNavigator() {
                 <Stack.Screen name = "Timer" component = {Timer} options = {{headerShown:false}}/>
                 <Stack.Screen name = "Resumen" component = {Resumen} options = {{headerShown:false}}/>
                 <Stack.Screen name = "AddWorkers" component = {AddWorkers} options = {{headerShown:false}}/>
+                <Stack.Screen name = "EditUser" component={EditUser} options={{headerShown:false}}/>
+                <Stack.Screen name = "RegisterNewWorker" component = {RegisterNewWorker} options = {{headerShown:false}}/>
             
             </Stack.Navigator>
 

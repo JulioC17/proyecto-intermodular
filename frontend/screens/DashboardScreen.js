@@ -79,29 +79,23 @@ export default function Dashboard(){
                 <ScrollView contentContainerStyle = {styles.generalView}>
                    
                    <LinearGradient style={styles.brandView} colors = {[colorPalette.azulOscuro, colorPalette.azulClaro]} start = {{x:0, y:0}} end = {{x:1, y:0}}>
+                        <View style={styles.headerView}>
                         <Text style={styles.hostech}>{user?.empresa || "HOSTECH"}</Text>
                         <Text style={styles.welcome}>{`${sayHello()} ${user?.nombre}`}</Text>
+                        </View>
+                        <TouchableOpacity 
+                        style={styles.profileIcon}
+                        onPress={() => navigation.navigate("Profile")}
+                        >
+                            <Ionicons name = "person-circle-outline" color = {colorPalette.blanco} size = {40}/>
+                        </TouchableOpacity>
                     </LinearGradient>
 
                     <View style = {styles.cardSection}>
                        { user.rol === "administrador" ? <DashboardAdmins estado = {initTime}/>:<DashboardWorker estado={initTime}/>}
-                        <TouchableOpacity 
-                        style={{borderWidth:2, backgroundColor:"#d3d3d3", height:100}}
-                        onPress={() => {
-                        logout()
-                        navigation.reset({
-                            index:0,
-                            routes: [{name: "Landing"}]
-                        })
-                    }}
-                    >
-                <Text>Desloguear</Text>
-                </TouchableOpacity>   
                     </View>
 
-                      
-                    
-                    </ScrollView>
+            </ScrollView>
             </KeyboardAvoidingView>
         </SafeAreaView>
     )
@@ -109,10 +103,9 @@ export default function Dashboard(){
 
 const styles = StyleSheet.create({
     generalView: {
-        flex:1,
-        justifyContent:"space-between",
+        flexGrow: 1, 
         alignItems: "center",
-        marginBottom:40
+        paddingBottom: 40 
     },
 
     brandView:{
@@ -120,7 +113,8 @@ const styles = StyleSheet.create({
         justifyContent:"center",
         alignItems:"center",
         height:120,
-        marginBottom:10
+        marginBottom:10,
+        flexDirection:"row"
     },
 
     hostech:{
@@ -130,8 +124,23 @@ const styles = StyleSheet.create({
     },
 
     welcome:{
-        fontSize:20,
-        fontFamily:"OutfitBold",
+        fontSize:22,
+        fontFamily:"OutfitRegular",
         color:colorPalette.blanco
+    },
+
+    profileIcon:{
+        position:"absolute",
+        right:20,
+        top:30
+    },
+
+    headerView:{
+        justifyContent:"center",
+        alignItems:"center"
+    },
+
+    cardSection:{
+        flexGrow:1
     }
 })

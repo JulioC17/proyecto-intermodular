@@ -183,8 +183,8 @@ const styles = StyleSheet.create({
     },
 
     welcome:{
-        fontSize:20,
-        fontFamily:"OutfitBold",
+        fontSize:22,
+        fontFamily:"OutfitRegular",
         color:colorPalette.blanco
     },
     titleAndSection:{

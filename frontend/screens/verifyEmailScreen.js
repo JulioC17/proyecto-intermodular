@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
     },
 
     createAcount:{
-        fontSize:16,
+        fontSize:22,
         fontFamily:"OutfitRegular",
         color:colorPalette.blanco
     },

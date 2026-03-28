@@ -254,7 +254,7 @@ return(
                     </View>
                     </LinearGradient>
 
-                    <View style = {styles.listView}>
+                    <ScrollView style = {styles.listView} contentContainerStyle = {styles.ScrollContent}>
                     <View style = {styles.clockView}>
                        
                        <View style = {[styles.ellipseView, initTime && styles.checkView]}>
@@ -295,7 +295,7 @@ return(
                             <Text style = {styles.inHourText}>{initTime ? initTime.hora_inicio.slice(0, 5) : "--:--"}</Text>
                         </View>
 
-                        <View style={styles.historic}>
+                        <ScrollView style={styles.historic} contentContainerStyle = {styles.ScrollContent}>
                          <Text style = {styles.resumenText}>ÚLTIMOS 5 TURNOS</Text>
                          
                             {lastWorked.map((item, index) => {
@@ -314,10 +314,10 @@ return(
                                     </View>
                                 )
                             })}   
-                    </View>
+                    </ScrollView>
                     </View>
                     
-                     </View>
+                     </ScrollView>
                     </View>
                     </KeyboardAvoidingView>
                     </SafeAreaView>
@@ -387,7 +387,8 @@ const styles = StyleSheet.create({
         
     },
     listView:{
-        flex:1
+        flex:1,
+        width:"100%"
     },
 
     clockView:{
@@ -453,8 +454,8 @@ const styles = StyleSheet.create({
     inHourView:{
         justifyContent:"center",
         alignItems:"flex-start",
-        padding:20,
-        margin:20,
+        padding:10,
+        margin:10,
         
     },
 
@@ -484,6 +485,8 @@ const styles = StyleSheet.create({
 
     historic:{
         marginTop:15,
+        paddingBottom:100,
+        flexGrow:1
     },
 
     historicCard:{
@@ -517,6 +520,10 @@ const styles = StyleSheet.create({
         fontFamily:"OutfitBold",
         fontSize:16
     },
+
+    ScrollContent:{
+        alignItems:"center"
+    }
 
 
    
