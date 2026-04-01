@@ -12,17 +12,19 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function DashboardAdmins({estado}){
     const navigation = useNavigation()
+    const {user} = useContext(AuthContext)
 
     return(
         <>
 
-                    <DashboardCards
+                    {user.rol !== "propietario" && (
+                        <DashboardCards
                     icono = "time-outline"
                     section= "Fichar"
                     description="Entrada/Salida"
                     action={() => navigation.navigate("Timer")}
                     ChangMode={estado}
-                    />
+                    />)}
                     
                     <DashboardCards
                     icono = "calendar-outline"

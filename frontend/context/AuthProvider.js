@@ -12,6 +12,7 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true)
     const [verifyEmail, setVerifyEmail] = useState(null)
     const [recipe, setRecipe] = useState(null)
+    const [activeCompany, setActiveCompany] = useState({})
 
     
 
@@ -26,7 +27,12 @@ export const AuthProvider = ({ children }) => {
             if(storedToken && storedUser){
                     
                     setToken(storedToken)
-                    setUser(JSON.parse(storedUser))
+                    const parsedUser = JSON.parse(storedUser)
+                    setUser(parsedUser)
+
+                    if(parsedUser.rol !== "propietario"){
+                        setActiveCompany({id: parsedUser.empresa_id, empresa: parsedUser.empresa})
+                    }
                 }
                 
             if(pendingEmail){
@@ -57,7 +63,40 @@ export const AuthProvider = ({ children }) => {
 
             response.data.user.nombre[0].toUpperCase()
             
-            setUser(response.data.user)
+            
+            if(response.data.user.rol === "propietario"){
+                try{
+
+                    const responseCompanies = await api.get("/company/viewCompany", {
+                        headers: {Authorization: `Bearer ${userToken}`}
+                    })
+
+                    const copyUser = response.data.user
+                    copyUser.empresa = responseCompanies.data.companys
+                    setUser(copyUser)
+                    setActiveCompany({id:null, empresa:""})
+                    
+                
+                }catch(error){
+                    const data = error.response?.data
+                    if(data?.errors){
+                        showModal(data.errors.join("\n"), "error")
+                
+                    }else if(data?.error){
+                        showModal(data.error, "error")
+                
+                    }else{
+                        showModal("Error interno del servidor", "error")
+                    }
+                }
+            }else{
+                setUser(response.data.user)
+                setActiveCompany({id:response.data.user.empresa_id, empresa: response.data.user.empresa})
+            }
+
+            
+            
+            
             await AsyncStorage.setItem("user", JSON.stringify(response.data.user))
 
         }catch(error){
@@ -82,7 +121,7 @@ export const AuthProvider = ({ children }) => {
 
     return (
 
-        <AuthContext.Provider value={{user, token, login, logout, loading, setLoading, verifyEmail, setVerifyEmail, recipe, setRecipe}}>
+        <AuthContext.Provider value={{user, token, login, logout, loading, setLoading, verifyEmail, setVerifyEmail, recipe, setRecipe, activeCompany, setActiveCompany}}>
             {children}
         </AuthContext.Provider>
     )

@@ -11,10 +11,11 @@ import Button from "../components/Button";
 import { AuthContext } from "../context/AuthProvider";
 import DashboardWorker from "../components/DashboardWorker";
 import DashboardAdmins from "../components/DashboardAdmins";
+import DashboardOwner from "../components/DashboardOwner";
 
 
 export default function Dashboard(){
-    const {user, logout, token} = useContext(AuthContext)
+    const {user, activeCompany, token} = useContext(AuthContext)
     const navigation = useNavigation()
     const {showModal}= useContext(AlertContext)
     const [initTime, setInitTime] = useState(null)
@@ -27,7 +28,8 @@ export default function Dashboard(){
         useCallback(() => {
              const getActualTime = async () => {
             try{
-
+                
+                console.log(user)
                 const response = await api.get("/fichajes/actualTime", {
                     headers: {Authorization: `Bearer ${token}`}
                 })
@@ -80,7 +82,7 @@ export default function Dashboard(){
                    
                    <LinearGradient style={styles.brandView} colors = {[colorPalette.azulOscuro, colorPalette.azulClaro]} start = {{x:0, y:0}} end = {{x:1, y:0}}>
                         <View style={styles.headerView}>
-                        <Text style={styles.hostech}>{user?.empresa || "HOSTECH"}</Text>
+                        <Text style={styles.hostech}>{user.rol === "propietario" ? "HOSTECH" : user.empresa}</Text>
                         <Text style={styles.welcome}>{`${sayHello()} ${user?.nombre}`}</Text>
                         </View>
                         <TouchableOpacity 
@@ -92,7 +94,13 @@ export default function Dashboard(){
                     </LinearGradient>
 
                     <View style = {styles.cardSection}>
-                       { user.rol === "administrador" ? <DashboardAdmins estado = {initTime}/>:<DashboardWorker estado={initTime}/>}
+                       { user.rol === "administrador" ? 
+                       <DashboardAdmins estado = {initTime}/> : 
+                       user.rol === "propietario" ?( 
+                            activeCompany.id ? 
+                            <DashboardAdmins/> :
+                            <DashboardOwner restaurants={user.empresa}/>) : 
+                       <DashboardWorker estado={initTime}/>}
                     </View>
 
             </ScrollView>

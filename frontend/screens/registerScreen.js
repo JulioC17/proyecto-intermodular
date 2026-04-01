@@ -162,7 +162,7 @@ export default function RegisterScreen (){
 
 const styles = StyleSheet.create({
     generalView: {
-        flex:1,
+        flexGrow:1,
         alignItems: "center",
         marginBottom:40
     },

@@ -19,7 +19,13 @@ export default function EditUser({route}){
         const {user, token} = useContext(AuthContext)
         const {showModal} = useContext(AlertContext)
         const navigation = useNavigation()
-        const {nombre, apellidos, email, telefono, dni, sueldo, id, rol} = route.params.userDescription
+        const {nombre, apellidos, email, telefono, dni, sueldo, id, rol, empresa} = route.params.userDescription
+        const [changedEmail, setCHangedEmail] = useState(null)
+        const [changedPhone, setChangedPhone] = useState(null)
+        const [changedCompany, setChangedCompany] = useState(null)
+        const [changedRol, setChangedRol] = useState(null)
+        const [changedSalary, setChangedSalary] = useState(null)
+        const [modalVisible, setModalVisible] = useState(false)
     
         return(
         <SafeAreaView style = {{flex:1}}>
@@ -28,7 +34,7 @@ export default function EditUser({route}){
                 style={{ flex: 1, backgroundColor: "#ffffff"}}
                 keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
             >
-                <View style = {styles.generalView}>
+                <ScrollView contentContainerStyle = {styles.generalView}>
                    
                    <LinearGradient style={styles.brandView} colors = {[colorPalette.azulOscuro, colorPalette.azulClaro]} start = {{x:0, y:0}} end = {{x:1, y:0}}>
                     <TouchableOpacity 
@@ -48,9 +54,72 @@ export default function EditUser({route}){
                     </LinearGradient>
 
                     <View style ={styles.listView}>
+                        
+                        <View style = {styles.infoCards}>
+                            <Text style = {styles.infoCardsTitle}>DATOS DE LA CUENTA</Text>
+                            <View style = {styles.infoCardsContentView}>
+                                <View style = {styles.infoCardsContent}>
+                                    <Text style = {styles.infoCardsContentTextTitle}>Nombre:</Text>
+                                    <Text style = {styles.infoCardsContentTextDescription}>{nombre} {apellidos}</Text>
+                                </View>
+                                <View style = {styles.infoCardsContent}>
+                                    <Text style = {styles.infoCardsContentTextTitle}>Email:</Text>
+                                    <TextInput
+                                    value={changedEmail}
+                                    placeholder={email}
+                                    onChangeText={(text) => setCHangedEmail(text)}
+                                    style = {styles.inputs}
+                                    ></TextInput>
+                                </View>
+                            </View>
+                        </View>
+
+                        <View style = {styles.infoCards}>
+                            <Text style = {styles.infoCardsTitle}>INFORMACIÓN PERSONAL</Text>
+                            <View style = {styles.infoCardsContentView}>
+                                <View style = {styles.infoCardsContent}>
+                                    <Text style = {styles.infoCardsContentTextTitle}>DNI / NIE:</Text>
+                                    <Text style = {styles.infoCardsContentTextDescription}>{dni}</Text>
+                                </View>
+                                <View style = {styles.infoCardsContent}>
+                                    <Text style = {styles.infoCardsContentTextTitle}>Teléfono:</Text>
+                                    <TextInput
+                                    value={changedPhone}
+                                    placeholder={telefono ? telefono : "No registrado"}
+                                    onChangeText={(text) => setChangedPhone(text)}
+                                    style = {styles.inputs}
+                                    ></TextInput>
+                                </View>
+                            </View>
+                        </View>
+
+                        <View style = {styles.infoCards}>
+                            <Text style = {styles.infoCardsTitle}>CONTRATO Y EMPRESA</Text>
+                            <View style = {styles.infoCardsContentView}>
+                                <View style = {styles.infoCardsContent}>
+                                    <Text style = {styles.infoCardsContentTextTitle}>Empresa:</Text>
+                                    { user.rol !== "propietario" ? <Text style = {styles.infoCardsContentTextDescription}>{empresa}</Text> :
+                                        <TouchableOpacity
+                                        onPress={() => setModalVisible(true)}
+                                        >
+                                            <Text>{empresa}</Text>
+                                        </TouchableOpacity>
+                                    }
+                                </View>
+                                <View style = {styles.infoCardsContent}>
+                                    <Text style = {styles.infoCardsContentTextTitle}>Rol:</Text>
+                                    <Text style = {styles.infoCardsContentTextDescription}>{rol}</Text>
+                                </View>
+                        
+                                <View style = {styles.infoCardsContent}>
+                                    <Text style = {styles.infoCardsContentTextTitle}>Sueldo:</Text>
+                                    <Text style = {styles.infoCardsContentTextDescription}>{sueldo ? `${sueldo} €`  : "No disponible"}</Text>
+                                </View>
+                            </View>
+                        </View>
 
                     </View>
-                    </View>
+                    </ScrollView>
                     </KeyboardAvoidingView>
                     </SafeAreaView>
     )
@@ -58,7 +127,7 @@ export default function EditUser({route}){
 
 const styles = StyleSheet.create({
     generalView: {
-        flex:1,
+        flexGrow:1,
         justifyContent:"space-between",
         alignItems: "center",
         marginBottom:40,
@@ -94,4 +163,55 @@ const styles = StyleSheet.create({
         position:"absolute",
         left:20
     },
+
+    listView:{
+        flex:1,
+        marginTop:20,
+        gap:20,
+        alignItems:"center"
+    },
+
+    infoCards:{
+        width:320,
+        justifyContent:"center",
+        gap:10,
+        margin:10
+        
+    },
+
+    infoCardsContentView:{
+        borderRadius:10,
+        borderWidth:1,
+        borderColor:colorPalette.gris_transparente,
+        padding:15,
+        gap:20
+    },
+    infoCardsTitle:{
+        fontFamily:"OutfitBold",
+        fontSize:16,
+        color:colorPalette.azulOscuro
+    },
+
+    infoCardsContent:{
+        flexDirection:"row",
+        justifyContent:"space-between",
+        alignItems:"center"
+    },
+
+    infoCardsContentTextTitle:{
+        fontFamily:"OutfitBold",
+        fontSize:16,
+        color:colorPalette.gris
+    },
+
+    infoCardsContentTextDescription:{
+        fontFamily:"OutfitBold",
+        fontSize:16,
+    },
+
+    inputs: {
+        fontFamily:"OutfitRegular",
+        fontSize:16,
+        color:colorPalette.azulOscuro
+    }
 })

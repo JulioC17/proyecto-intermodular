@@ -111,7 +111,9 @@ export default function AddWorkers(){
                                             "email": item.email,
                                             "telefono": item.telefono,
                                             "dni": item.dni,
-                                            "id_usuario":item.id
+                                            "id_usuario":item.id,
+                                            "empresa": item.empresa,
+                                            "sueldo": item.sueldo
                                         }
                                     })}
                                     >

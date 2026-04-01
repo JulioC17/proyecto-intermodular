@@ -111,7 +111,7 @@ export default function Profile() {
                             <View style = {styles.infoCardsContentView}>
                                 <View style = {styles.infoCardsContent}>
                                     <Text style = {styles.infoCardsContentTextTitle}>Empresa:</Text>
-                                    <Text style = {styles.infoCardsContentTextDescription}>{user.empresa}</Text>
+                                    <Text style = {styles.infoCardsContentTextDescription}>{user.rol === "propietario" ? "Multiempresa" : user.empresa}</Text>
                                 </View>
                                 <View style = {styles.infoCardsContent}>
                                     <Text style = {styles.infoCardsContentTextTitle}>Rol:</Text>

@@ -150,7 +150,7 @@ export default function AddCompany (){
 
 const styles = StyleSheet.create({
     generalView: {
-        flex:1,
+        flexGrow:1,
         alignItems: "center",
         marginBottom:40
     },
@@ -174,10 +174,10 @@ const styles = StyleSheet.create({
     },
     formView:{
         gap:35,
-        margin:20,        
-        justifyContent:"center",
+        margin:20,
+        marginTop:70,        
         alignItems:"center",
-        flex:4
+        flex:1
     },
 
     input:{

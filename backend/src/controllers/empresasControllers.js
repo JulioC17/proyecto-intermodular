@@ -52,7 +52,10 @@ const viewCompany = async (req, res) => {
     try{
        
         const companys = await pool.query(//obtenemos las empresas que son propiedad el usuario que hace la peticion
-            "SELECT empresas.nombre, empresas.id FROM empresas JOIN usuarios_empresas ON usuarios_empresas.empresa_id = empresas.id WHERE usuarios_empresas.usuario_id = $1",
+            /*"SELECT empresas.nombre, empresas.id FROM empresas JOIN usuarios_empresas ON usuarios_empresas.empresa_id = empresas.id WHERE usuarios_empresas.usuario_id = $1",
+            [id]*/
+
+            "SELECT e.nombre AS empresa, e.id, COUNT(ue2.usuario_id) AS num_trabajadores FROM empresas e JOIN usuarios_empresas ue ON e.id = ue.empresa_id LEFT JOIN usuarios_empresas ue2 ON ue2.empresa_id = e.id AND ue2.usuario_id <> $1 WHERE ue.usuario_id = $1 GROUP BY e.id, e.nombre", 
             [id]
         )
 
