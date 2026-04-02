@@ -122,4 +122,15 @@ const deleteUserParams = Joi.object({
     })
 })
 
-module.exports = {createUserSchema, firstLoginSchema, updateUsersSchema, updateUsersSchemaParams, deleteUserParams}
+const ownerAndAdminsViewSchemaParams = Joi.object({
+     empresa_id: Joi.number()
+    .integer()
+    .required()
+    .messages({
+        "number.empty":"Debes seleccionar una empresa",
+        "number.integer": "El id de la empresa debe ser un numero entero",
+        "any.required": "Debes seleccionar una empresa"
+    })
+})
+
+module.exports = {createUserSchema, firstLoginSchema, updateUsersSchema, updateUsersSchemaParams, deleteUserParams, ownerAndAdminsViewSchemaParams}

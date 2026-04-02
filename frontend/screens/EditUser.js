@@ -16,7 +16,7 @@ import {Picker, picker} from "@react-native-picker/picker"
 
 
 export default function EditUser({route}){
-        const {user, token} = useContext(AuthContext)
+        const {user, token, activeCompany} = useContext(AuthContext)
         const {showModal} = useContext(AlertContext)
         const navigation = useNavigation()
         const {nombre, apellidos, email, telefono, dni, sueldo, id, rol, empresa} = route.params.userDescription

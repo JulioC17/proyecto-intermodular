@@ -15,7 +15,7 @@ import DateTimePicker from "@react-native-community/datetimepicker"
 import {Picker, picker} from "@react-native-picker/picker"
 
 export default function AddWorkers(){
-    const {user, token} = useContext(AuthContext)
+    const {user, token, activeCompany} = useContext(AuthContext)
     const {showModal} = useContext(AlertContext)
     const navigation = useNavigation()
 
@@ -32,7 +32,7 @@ export default function AddWorkers(){
             
             setLoading(true)
 
-            const response = await api.get("/users/getAll", {
+            const response = await api.get(`/users/getAll/${activeCompany.id}`, {
                 headers: {Authorization: `Bearer ${token}`}
             })
 
@@ -79,7 +79,7 @@ export default function AddWorkers(){
 
                     <View style ={styles.titleAndSection}>
                         <Text style={styles.hostech}>{"HOSTECH"}</Text>
-                        <Text style={styles.welcome}>Equipo {user.empresa}</Text>
+                        <Text style={styles.welcome}>Equipo {activeCompany.empresa}</Text>
                     </View>
 
                      <TouchableOpacity 

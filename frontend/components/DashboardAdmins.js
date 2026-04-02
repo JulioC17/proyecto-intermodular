@@ -47,12 +47,12 @@ export default function DashboardAdmins({estado}){
                     action={() => navigation.navigate("Recipes")}
                     />
 
-                    <DashboardCards
+                    { user.rol !== "propietario" && <DashboardCards
                     icono = "stats-chart-outline"
                     section= "Mis horas trabajadas"
                     description="Filtra y revisa tu histórico"
                     action={() => navigation.navigate("Resumen")}
-                    />   
+                    /> }  
 
                     <DashboardCards
                     icono = "clipboard-outline"

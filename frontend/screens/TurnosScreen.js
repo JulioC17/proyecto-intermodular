@@ -15,7 +15,7 @@ import DateTimePicker from "@react-native-community/datetimepicker"
 
 export default function Turnos(){
     const navigation = useNavigation()
-    const {user, token} = useContext(AuthContext)
+    const {user, token, activeCompany} = useContext(AuthContext)
     const {showModal} = useContext(AlertContext)
     
     const [loading, setLoading] = useState(false)
@@ -97,7 +97,7 @@ useFocusEffect(
                 setSchedule(simplifySchedule(response.data.schedule))
             
             }else if(focusBtn === "general"){
-                const response = await api.get(`/turnos/scheduleWeek/${user.empresa_id}?weekStart=${weekStartFormat}&weekEnds=${weekEndsFormat}`, {
+                const response = await api.get(`/turnos/scheduleWeek/${activeCompany.id}?weekStart=${weekStartFormat}&weekEnds=${weekEndsFormat}`, {
                     headers : {Authorization: `Bearer ${token}`}
                 })
                 

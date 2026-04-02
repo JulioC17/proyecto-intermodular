@@ -12,7 +12,7 @@ import DashboardWorker from "../components/DashboardWorker";
 import Button from "../components/Button";
 
 export default function EditRecipe(){
-    const {user, token} = useContext(AuthContext)
+    const {user, token, activeCompany} = useContext(AuthContext)
     const {showModal} = useContext(AlertContext)
     const route = useRoute() 
     const baseRecipe = route.params?.receta
@@ -38,7 +38,7 @@ export default function EditRecipe(){
 
         setLoading(true)
 
-        const response = await api.put(`recetas/updateRecipe/${Number(user.empresa_id)}/${baseRecipe.id}`,{
+        const response = await api.put(`recetas/updateRecipe/${Number(activeCompany.id)}/${baseRecipe.id}`,{
             "nombre":nombre,
             "ingredientes": ingredientes,
             "elaboracion": elaboracion,
@@ -93,7 +93,7 @@ export default function EditRecipe(){
                     </TouchableOpacity>
 
                     <View style ={styles.titleAndSection}>
-                        <Text style={styles.hostech}>{user.empresa}</Text>
+                        <Text style={styles.hostech}>{activeCompany.empresa}</Text>
                         <Text style={styles.welcome}>Editar Receta</Text>
                     </View>
                 </LinearGradient>

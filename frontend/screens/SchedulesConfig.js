@@ -15,7 +15,7 @@ import DateTimePicker from "@react-native-community/datetimepicker"
 import {Picker, picker} from "@react-native-picker/picker"
 
 export default function SchedulesConfig(){
-    const {user, token} = useContext(AuthContext)
+    const {user, token, activeCompany} = useContext(AuthContext)
     const {showModal} = useContext(AlertContext)
     const navigation = useNavigation()
 
@@ -80,7 +80,7 @@ useEffect(() => {
         try{
 
             setLoading(true)
-            const response = await api.get("/users/getAll",{
+            const response = await api.get(`/users/getAll/${activeCompany.id}`,{
                 headers: {Authorization: `Bearer ${token}`}
             })
 
@@ -118,7 +118,7 @@ useEffect(() => {
                 setLoading(true)
                 setDistributionSchedule([])
                 
-                const response = await api.get(`/turnos/scheduleWeek/${user.empresa_id}?weekStart=${weekStartFormat}&weekEnds=${weekEndsFormat}`, {
+                const response = await api.get(`/turnos/scheduleWeek/${activeCompany.id}?weekStart=${weekStartFormat}&weekEnds=${weekEndsFormat}`, {
                         headers : {Authorization: `Bearer ${token}`}
                     })
                     
@@ -179,7 +179,7 @@ const getShifts = async () => {
             try{
                 setLoading(true)
 
-                const response = await api.get(`/turnos/getShifts/${Number(user.empresa_id)}`,{
+                const response = await api.get(`/turnos/getShifts/${Number(activeCompany.id)}`,{
                     headers: {Authorization: `Bearer ${token}`}
                 })
 
@@ -225,7 +225,7 @@ const setSchedule = async () => {
 
         setLoading(true)
 
-        const response = await api.post(`/turnos/assign/${Number(user.empresa_id)}/${selectedShift}`,{
+        const response = await api.post(`/turnos/assign/${Number(activeCompany.id)}/${selectedShift}`,{
             usuario_id:Number(selectedWorker),
             fecha: selectWeekDayModal.toISOString().split("T")[0]
         },{
@@ -267,7 +267,7 @@ const desasignShift = async (turno_id, usuario_id, fecha) => {
     try{
         setLoading(true)
 
-        const response = await api.delete(`/turnos/remove/${user.empresa_id}/${turno_id}/${usuario_id}/${fecha}`, {
+        const response = await api.delete(`/turnos/remove/${activeCompany.id}/${turno_id}/${usuario_id}/${fecha}`, {
             headers: {Authorization: `Bearer ${token}`}
         })
 

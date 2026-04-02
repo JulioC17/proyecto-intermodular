@@ -12,7 +12,7 @@ import DashboardWorker from "../components/DashboardWorker";
 import Button from "../components/Button";
 
 export default function AddRecipe(){
-    const {user, token} = useContext(AuthContext)
+    const {user, token, activeCompany} = useContext(AuthContext)
     const {showModal} = useContext(AlertContext) 
     const navigation = useNavigation()
     const [nombre, setNombre] = useState("")
@@ -27,7 +27,7 @@ export default function AddRecipe(){
 
             setLoading(true)
 
-            const response = await api.post(`/recetas/createRecipe/${Number(user.empresa_id)}`,{
+            const response = await api.post(`/recetas/createRecipe/${Number(activeCompany.id)}`,{
                 "nombre": nombre,
                 "ingredientes": ingredientes,
                 "elaboracion": elaboracion,
@@ -95,7 +95,7 @@ export default function AddRecipe(){
                     </TouchableOpacity>
 
                     <View style ={styles.titleAndSection}>
-                        <Text style={styles.hostech}>{user.empresa}</Text>
+                        <Text style={styles.hostech}>{activeCompany.empresa}</Text>
                         <Text style={styles.welcome}>Agrega una Receta</Text>
                     </View>
                 </LinearGradient>

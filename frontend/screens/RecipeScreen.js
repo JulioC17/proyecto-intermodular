@@ -12,7 +12,7 @@ import {Ionicons} from "@expo/vector-icons"
 
 export default function Recipes(){
     const [recipes, setRecipes] = useState([])
-    const {user, token} = useContext(AuthContext)
+    const {user, token, activeCompany} = useContext(AuthContext)
     const {setRecipe, recipe} = useContext(AuthContext)
     const {showModal} = useContext(AlertContext)
     const navigation = useNavigation()
@@ -28,7 +28,7 @@ export default function Recipes(){
 
                 setLoading(true)
 
-                let find = `/recetas/getRecipes/${Number(user.empresa_id)}`
+                let find = `/recetas/getRecipes/${Number(activeCompany.id)}`
 
                 if(search.trim()){
                     find+=`?words=${encodeURIComponent(search)}`
@@ -78,7 +78,7 @@ export default function Recipes(){
 
             setLoading(true)
 
-            const response = await api.delete(`recetas/deleteRecipe/${Number(user.empresa_id)}/${id}`,{
+            const response = await api.delete(`recetas/deleteRecipe/${Number(activeCompany.id)}/${id}`,{
                 headers: {Authorization: `Bearer ${token}`}
             }
         )
@@ -145,7 +145,7 @@ export default function Recipes(){
                     </TouchableOpacity>
 
                     <View style ={styles.titleAndSection}>
-                        <Text style={styles.hostech}>{user.empresa}</Text>
+                        <Text style={styles.hostech}>{activeCompany.empresa}</Text>
                         <Text style={styles.welcome}>Recetas</Text>
                     </View>
 

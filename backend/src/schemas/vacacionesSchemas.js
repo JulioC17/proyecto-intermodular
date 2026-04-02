@@ -39,6 +39,4 @@ const handdleHollidaysSchema = Joi.object({
     })
 })
 
-
-
 module.exports = {createRequestofHollidaysSchema, handdleHollidaysParamsSchema, handdleHollidaysSchema}

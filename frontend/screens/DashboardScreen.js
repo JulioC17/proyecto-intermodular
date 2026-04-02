@@ -15,7 +15,7 @@ import DashboardOwner from "../components/DashboardOwner";
 
 
 export default function Dashboard(){
-    const {user, activeCompany, token} = useContext(AuthContext)
+    const {user, activeCompany, setActiveCompany, token} = useContext(AuthContext)
     const navigation = useNavigation()
     const {showModal}= useContext(AlertContext)
     const [initTime, setInitTime] = useState(null)
@@ -29,7 +29,7 @@ export default function Dashboard(){
              const getActualTime = async () => {
             try{
                 
-                console.log(user)
+                console.log(activeCompany)
                 const response = await api.get("/fichajes/actualTime", {
                     headers: {Authorization: `Bearer ${token}`}
                 })
@@ -81,8 +81,19 @@ export default function Dashboard(){
                 <ScrollView contentContainerStyle = {styles.generalView}>
                    
                    <LinearGradient style={styles.brandView} colors = {[colorPalette.azulOscuro, colorPalette.azulClaro]} start = {{x:0, y:0}} end = {{x:1, y:0}}>
+
+                    { user.rol === "propietario" && activeCompany.empresa && <TouchableOpacity 
+                    style={styles.btnView} 
+                    onPress={() => setActiveCompany({id: null, empresa: ""})}>
+                        <Ionicons 
+                            name = "arrow-back"
+                            size= {26}
+                            color = {colorPalette.blanco}
+                        /> 
+                    </TouchableOpacity>}
+
                         <View style={styles.headerView}>
-                        <Text style={styles.hostech}>{user.rol === "propietario" ? "HOSTECH" : user.empresa}</Text>
+                        <Text style={styles.hostech}>{activeCompany.empresa ? activeCompany.empresa : "HOSTECH"}</Text>
                         <Text style={styles.welcome}>{`${sayHello()} ${user?.nombre}`}</Text>
                         </View>
                         <TouchableOpacity 
@@ -150,5 +161,9 @@ const styles = StyleSheet.create({
 
     cardSection:{
         flexGrow:1
-    }
+    },
+    btnView:{
+        position:"absolute",
+        left:20
+    },
 })

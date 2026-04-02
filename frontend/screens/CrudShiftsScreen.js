@@ -15,7 +15,7 @@ import DateTimePicker from "@react-native-community/datetimepicker"
 import Checkbox from "expo-checkbox"
 
 export default function CrudShifts(){
-    const {user, token} = useContext(AuthContext)
+    const {user, token, activeCompany} = useContext(AuthContext)
     const {showModal} = useContext(AlertContext)
     const navigation = useNavigation()
 
@@ -39,7 +39,7 @@ export default function CrudShifts(){
             try{
                 setLoading(true)
 
-                const response = await api.get(`/turnos/getShifts/${Number(user.empresa_id)}`,{
+                const response = await api.get(`/turnos/getShifts/${Number(activeCompany.id)}`,{
                     headers: {Authorization: `Bearer ${token}`}
                 })
 
@@ -95,7 +95,7 @@ export default function CrudShifts(){
                 "nombre":shiftName,
                 "hora_inicio": restDay ? "00:00:00" : inHour,
                 "hora_fin": restDay ? "23:59:00" : outHour,
-                "empresa_id": Number(user.empresa_id)
+                "empresa_id": Number(activeCompany.id)
             },{headers: {Authorization: `Bearer ${token}`}})
 
             showModal(response.data.message, "success")
