@@ -16,16 +16,87 @@ import {Picker, picker} from "@react-native-picker/picker"
 
 
 export default function EditUser({route}){
-        const {user, token, activeCompany} = useContext(AuthContext)
+        const {user, token, activeCompany, refresh} = useContext(AuthContext)
         const {showModal} = useContext(AlertContext)
         const navigation = useNavigation()
-        const {nombre, apellidos, email, telefono, dni, sueldo, id, rol, empresa} = route.params.userDescription
+        const {nombre, apellidos, email, telefono, dni, sueldo, id_usuario, rol, empresa} = route.params.userDescription
         const [changedEmail, setCHangedEmail] = useState(null)
         const [changedPhone, setChangedPhone] = useState(null)
         const [changedCompany, setChangedCompany] = useState(null)
         const [changedRol, setChangedRol] = useState(null)
         const [changedSalary, setChangedSalary] = useState(null)
         const [modalVisible, setModalVisible] = useState(false)
+        const [loading, setLoading] = useState(false)
+        const [companys, setCompanys] = useState([])
+        const [selectedCompany, setSelectedCompany] = useState({})
+
+        const getAllCompanys = async () => {
+
+            try{
+
+                const response = await api.get("/company/viewCompany", {
+                    headers: {Authorization: `Bearer ${token}`}
+                })
+
+                setCompanys(response.data.companys)
+
+            }catch(error){
+            const data = error.response?.data
+            if(data?.errors){
+                console.log(data.errors.join("\n"), "error" )
+                        
+            }else if(data?.error){
+                showModal(data.error, "error")
+                        
+            }else{
+                showModal("Error interno del servidor", "error")
+            }
+        }
+        }
+
+        useEffect(() => {
+            getAllCompanys()
+        }, [])
+
+        const updateUser = async () => {
+
+            try{
+
+                setLoading(true)
+
+                const response = await api.put(`/users/updateUser/${Number(id_usuario)}`, {
+                    "telefono": changedPhone || telefono,
+                    "email": changedEmail || email,
+                    "sueldo": changedSalary || sueldo
+                }, {headers: {Authorization: `Bearer ${token}`}})
+
+                if(selectedCompany.id){
+                    const responseCompany = await api.put(`/company/changeCompany/${Number(id_usuario)}/company`, {
+                    "companyTargetId": selectedCompany.id
+                    }, {headers:{Authorization: `Bearer ${token}`}})
+
+                    await refresh()
+                    showModal(responseCompany.data.message, "success")
+                }
+
+                showModal(response.data.message, "success")
+                navigation.goBack()
+
+            }catch(error){
+            const data = error.response?.data
+            if(data?.errors){
+                showModal(data.errors.join("\n"), "error" )
+                        
+            }else if(data?.error){
+                showModal(data.error, "error")
+                        
+            }else{
+                showModal("Error interno del servidor", "error")
+            }
+        }finally{
+            setLoading(false)
+        }
+        }
     
         return(
         <SafeAreaView style = {{flex:1}}>
@@ -100,9 +171,10 @@ export default function EditUser({route}){
                                     <Text style = {styles.infoCardsContentTextTitle}>Empresa:</Text>
                                     { user.rol !== "propietario" ? <Text style = {styles.infoCardsContentTextDescription}>{empresa}</Text> :
                                         <TouchableOpacity
-                                        onPress={() => setModalVisible(true)}
+                                        onPress={() => {setModalVisible(true)
+                                        }}
                                         >
-                                            <Text>{empresa}</Text>
+                                            <Text style = {styles.infoCardsContentTextDescription}>{selectedCompany.empresa ? selectedCompany.empresa : empresa}</Text>
                                         </TouchableOpacity>
                                     }
                                 </View>
@@ -113,13 +185,77 @@ export default function EditUser({route}){
                         
                                 <View style = {styles.infoCardsContent}>
                                     <Text style = {styles.infoCardsContentTextTitle}>Sueldo:</Text>
-                                    <Text style = {styles.infoCardsContentTextDescription}>{sueldo ? `${sueldo} €`  : "No disponible"}</Text>
+                                    <TextInput
+                                    value={changedSalary}
+                                    placeholder={sueldo ? sueldo : "No disponible"}
+                                    onChangeText={(text) => setChangedSalary(text)}
+                                    style = {styles.inputs}
+                                    ></TextInput>
                                 </View>
                             </View>
                         </View>
 
+                        <Button
+                            backgroundColor={colorPalette.azulOscuro}
+                            width={280}
+                            height={60}
+                            text={loading ? <ActivityIndicator size= "small" color={colorPalette.blanco}/> : "Actualizar"}
+                            fontSize={20}
+                            colorText={colorPalette.blanco}
+                            borderColor={colorPalette.azulOscuro}
+                            action={() => {
+                                updateUser()}}
+                        />
+
                     </View>
                     </ScrollView>
+                    {modalVisible && 
+                        <Modal
+                            animationType="slide"
+                            visible = {modalVisible}
+                            onRequestClose={() => setModalVisible(false)}
+                        >
+                            <View style = {styles.modalView}>
+                                <TouchableOpacity
+                                style = {styles.closeBtn}
+                                onPress={() => setModalVisible(false)}
+                                >
+                                <Ionicons name = "close-outline" color ={colorPalette.gris} size={30}/>
+                                </TouchableOpacity>
+                                <View style = {styles.infoTextView}>
+                                <Text style = {styles.infoTitle}>Seleccione Empresa</Text>
+                                <Text style = {styles.infoExtraTitle}>empresa de destino a la que será cambiado el usuario</Text>
+                                </View>
+                                <View style = {styles.PickerView}>
+                                    <Picker
+                                    selectedValue={selectedCompany}
+                                    onValueChange={(value) => setSelectedCompany(value)}
+                                    >
+                                        <Picker.Item label = "Selecciona une empresa" value = ""/>
+                                        {companys.map((c, i) => {
+                                            return(
+                                                <Picker.Item label = {c.empresa} value = {{empresa: c.empresa, id: c.id}}/>
+                                            )
+                                        })}
+
+
+                                    </Picker>
+                                </View>
+
+                                <Button
+                                    backgroundColor={colorPalette.azulOscuro}
+                                    width={280}
+                                    height={60}
+                                    text={"Guardar"}
+                                    fontSize={20}
+                                    colorText={colorPalette.blanco}
+                                    borderColor={colorPalette.azulOscuro}
+                                    action={() => setModalVisible(false)}
+                                    />
+                            </View>
+
+                        </Modal>
+                    }
                     </KeyboardAvoidingView>
                     </SafeAreaView>
     )
@@ -213,5 +349,40 @@ const styles = StyleSheet.create({
         fontFamily:"OutfitRegular",
         fontSize:16,
         color:colorPalette.azulOscuro
-    }
+    },
+
+    modalView:{
+        flex:1,
+        alignItems:"center"
+    },
+
+    closeBtn:{
+        padding:10,
+        width:"100%",
+        alignItems:"flex-end"
+    },
+
+    infoTextView:{
+        padding:10,
+    },
+
+    infoTitle:{
+        fontFamily:"OutfitBold",
+        fontSize:24
+    },
+
+    infoExtraTitle:{
+        fontFamily:"OutfitRegular",
+        fontSize:18,
+        color:colorPalette.azulOscuro
+    },
+
+    PickerView:{
+        padding:10,
+        borderWidth:1,
+        margin:20,
+        borderRadius:10,
+        borderColor:colorPalette.gris_transparente,
+        width:280,
+    },
 })

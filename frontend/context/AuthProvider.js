@@ -119,9 +119,36 @@ export const AuthProvider = ({ children }) => {
         await AsyncStorage.removeItem("user")
     }
 
+    const refresh = async() => {
+        if(user.rol === "propietario"){
+            try {
+
+                const responseCompanies = await api.get("/company/viewCompany", {
+                        headers: {Authorization: `Bearer ${token}`}
+                    })
+
+                    const updateUser = {...user, empresa: responseCompanies.data.companys}
+                    setUser(updateUser)
+                    await AsyncStorage.setItem("user", JSON.stringify(updateUser))
+
+            }catch(error){
+            const data = error.response?.data
+            if(data?.errors){
+                showModal(data.errors.join("\n"), "error")
+                
+            }else if(data?.error){
+                showModal(data.error, "error")
+                
+            }else{
+                showModal("Error interno del servidor", "error")
+            }
+    }
+        }
+    }
+
     return (
 
-        <AuthContext.Provider value={{user, token, login, logout, loading, setLoading, verifyEmail, setVerifyEmail, recipe, setRecipe, activeCompany, setActiveCompany}}>
+        <AuthContext.Provider value={{user, token, login, logout, loading, setLoading, verifyEmail, setVerifyEmail, recipe, setRecipe, activeCompany, setActiveCompany, refresh}}>
             {children}
         </AuthContext.Provider>
     )
