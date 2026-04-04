@@ -295,7 +295,7 @@ const deleteUser = async (req, res) => {
     const {id, rol_id} = req.user//treamos datos del token
     const {id_usuario} = req.params//traemos datos de la URL
 
-    if(!id || Number(rol_id) === ROLES.TRABAJADOR){
+    if(!id || Number(rol_id) !== ROLES.PROPIETARIO){
         return res.status(403).json({error:"No tienes permisos"})//comprobacion de permisos
     }
 

@@ -93,7 +93,7 @@ const updateUsersSchema = Joi.object({
     }),
 
     telefono:Joi.string()
-    .optional(),
+    .optional().allow(null, ""),
 
     sueldo:Joi.number()
     .optional()

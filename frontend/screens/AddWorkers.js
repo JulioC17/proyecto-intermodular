@@ -15,7 +15,7 @@ import DateTimePicker from "@react-native-community/datetimepicker"
 import {Picker, picker} from "@react-native-picker/picker"
 
 export default function AddWorkers(){
-    const {user, token, activeCompany} = useContext(AuthContext)
+    const {user, token, activeCompany, refresh} = useContext(AuthContext)
     const {showModal} = useContext(AlertContext)
     const navigation = useNavigation()
 
@@ -38,6 +38,35 @@ export default function AddWorkers(){
 
             setWorkers(response.data.data)
 
+
+        }catch(error){
+            const data = error.response?.data
+            if(data?.errors){
+                console.log(data.errors.join("\n"), "error" )
+                        
+            }else if(data?.error){
+                showModal(data.error, "error")
+                        
+            }else{
+                showModal("Error interno del servidor", "error")
+            }
+        }finally{
+            setLoading(false)
+        }
+    }
+
+    const deleteUser = async(id) => {
+
+        try{
+
+            setLoading(true)
+            const response = await api.delete(`/users/deleteUser/${Number(id)}`, {
+                headers: {Authorization: `Bearer ${token}`}
+            })
+
+            showModal(response.data.message, "success")
+            await getAllWorkers()
+            refresh()
 
         }catch(error){
             const data = error.response?.data
@@ -101,6 +130,8 @@ export default function AddWorkers(){
                             <View style = {[styles.cardView, item.rol === "propietario" && styles.owner]}>
                                 <View style = {styles.header}>
                                     <Text style = {styles.name}>{item.nombre} {item.apellidos}</Text>
+                                    
+                                    <View style = {styles.headerBtns}>
                                     {item.rol === "propietario" ? "" : 
                                     <TouchableOpacity
                                     onPress={() => navigation.navigate("EditUser", {
@@ -119,6 +150,27 @@ export default function AddWorkers(){
                                     >
                                     <Ionicons name = "settings-outline" size = {24} color ={colorPalette.azulOscuro}/>
                                     </TouchableOpacity>}
+                                    {user.rol === "propietario" && item.rol !== "propietario" &&
+                                        <TouchableOpacity
+                                            onPress={() => {
+                                                Alert.alert(
+                                                    "Eliminar Empleado",
+                                                    "¿Seguro que quieres eliminar este empleado? Sus datos e información no podrán ser recuperados",
+                                                    [{text: "Cancelar", style: "cancel"},
+                                                        {text: "Aceptar",
+                                                            onPress: () => {deleteUser(item.id)}
+                                                        }
+                                                    ]
+                                                )
+                                            
+                                            }}
+                                        >
+                                            <Ionicons name = "trash-outline" size = {24} color = "#dd0000"/>
+                                        </TouchableOpacity>
+                                    }
+
+                                    </View>
+
                                 </View>
                                 <View style = {styles.roleAndMoney}>
                                     <Text style = {styles.rol}>{item.rol}</Text>
@@ -275,6 +327,11 @@ const styles = StyleSheet.create({
     owner:{
         borderColor:colorPalette.azulOscuro,
         backgroundColor:"#cbcbcb27"
+    },
+
+    headerBtns:{
+        flexDirection:"row",
+        gap:10
     }
 
 })

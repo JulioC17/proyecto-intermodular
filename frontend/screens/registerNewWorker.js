@@ -15,7 +15,7 @@ import DateTimePicker from "@react-native-community/datetimepicker"
 import {Picker, picker} from "@react-native-picker/picker"
 
 export default function RegisterNewWorker(){
-    const {user, token, activeCompany} = useContext(AuthContext)
+    const {user, token, activeCompany, refresh} = useContext(AuthContext)
     const {showModal} = useContext(AlertContext)
     const navigation = useNavigation()
 
@@ -44,6 +44,7 @@ export default function RegisterNewWorker(){
                 },{headers: {Authorization: `Bearer ${token}`}})
 
                 showModal(response.data.message, "success")
+                refresh()
                 navigation.goBack()
             
             }catch(error){

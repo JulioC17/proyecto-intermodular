@@ -26,9 +26,11 @@ export default function EditUser({route}){
         const [changedRol, setChangedRol] = useState(null)
         const [changedSalary, setChangedSalary] = useState(null)
         const [modalVisible, setModalVisible] = useState(false)
+        const [modalRolVisible, setModalRolVisible] = useState(false)
         const [loading, setLoading] = useState(false)
         const [companys, setCompanys] = useState([])
         const [selectedCompany, setSelectedCompany] = useState({})
+        const [selectedRol, setSelectedRol] = useState({})
 
         const getAllCompanys = async () => {
 
@@ -55,7 +57,10 @@ export default function EditUser({route}){
         }
 
         useEffect(() => {
-            getAllCompanys()
+            if(user.rol === "propietario"){
+                getAllCompanys()
+                    
+                }
         }, [])
 
         const updateUser = async () => {
@@ -65,7 +70,7 @@ export default function EditUser({route}){
                 setLoading(true)
 
                 const response = await api.put(`/users/updateUser/${Number(id_usuario)}`, {
-                    "telefono": changedPhone || telefono,
+                    "telefono": changedPhone || telefono ,
                     "email": changedEmail || email,
                     "sueldo": changedSalary || sueldo
                 }, {headers: {Authorization: `Bearer ${token}`}})
@@ -78,6 +83,15 @@ export default function EditUser({route}){
                     await refresh()
                     showModal(responseCompany.data.message, "success")
                 }
+
+                if(selectedRol.id){
+                    const responseRol = await api.put(`/roles/changeRole/${Number(id_usuario)}`, {
+                        "newRole": selectedRol.id
+                    }, {headers: {Authorization: `Bearer ${token}`}})
+
+                    showModal(responseRol.data.message, "success")
+                }
+                
 
                 showModal(response.data.message, "success")
                 navigation.goBack()
@@ -180,7 +194,13 @@ export default function EditUser({route}){
                                 </View>
                                 <View style = {styles.infoCardsContent}>
                                     <Text style = {styles.infoCardsContentTextTitle}>Rol:</Text>
-                                    <Text style = {styles.infoCardsContentTextDescription}>{rol}</Text>
+                                    {user.rol !== "propietario" ? <Text style = {styles.infoCardsContentTextDescription}>{rol}</Text> : 
+                                        <TouchableOpacity
+                                        onPress={() => setModalRolVisible(true)}
+                                        >
+                                            <Text style = {styles.infoCardsContentTextDescription}> {selectedRol.rol ? selectedRol.rol : rol}</Text>
+                                        </TouchableOpacity>
+                                    }
                                 </View>
                         
                                 <View style = {styles.infoCardsContent}>
@@ -231,7 +251,7 @@ export default function EditUser({route}){
                                     selectedValue={selectedCompany}
                                     onValueChange={(value) => setSelectedCompany(value)}
                                     >
-                                        <Picker.Item label = "Selecciona une empresa" value = ""/>
+                                        <Picker.Item label = "Selecciona una empresa" value = ""/>
                                         {companys.map((c, i) => {
                                             return(
                                                 <Picker.Item label = {c.empresa} value = {{empresa: c.empresa, id: c.id}}/>
@@ -256,6 +276,49 @@ export default function EditUser({route}){
 
                         </Modal>
                     }
+
+                    {modalRolVisible && 
+                    <Modal
+                            animationType="slide"
+                            visible = {modalRolVisible}
+                            onRequestClose={() => setModalRolVisible(false)}
+                        >
+                            <View style = {styles.modalView}>
+                                <TouchableOpacity
+                                style = {styles.closeBtn}
+                                onPress={() => setModalRolVisible(false)}
+                                >
+                                <Ionicons name = "close-outline" color ={colorPalette.gris} size={30}/>
+                                </TouchableOpacity>
+                                <View style = {styles.infoTextView}>
+                                <Text style = {styles.infoTitle}>Seleccione  Rol</Text>
+                                <Text style = {styles.infoExtraTitle}>Nuevo Rol que desempeñará el empleado</Text>
+                                </View>
+                                <View style = {styles.PickerView}>
+                                    <Picker
+                                    selectedValue={selectedRol}
+                                    onValueChange={(value) => setSelectedRol(value)}
+                                    >
+                                        <Picker.Item label = "Selecciona un rol" value = ""/>
+                                        <Picker.Item label = "Administrador" value = {{rol: "Administrador", id: 2}}/>
+                                        <Picker.Item label = "Trabajador" value = {{rol: "Trabajador", id: 3}}/>
+                                    </Picker>
+                                </View>
+
+                                <Button
+                                    backgroundColor={colorPalette.azulOscuro}
+                                    width={280}
+                                    height={60}
+                                    text={"Guardar"}
+                                    fontSize={20}
+                                    colorText={colorPalette.blanco}
+                                    borderColor={colorPalette.azulOscuro}
+                                    action={() => setModalRolVisible(false)}
+                                    />
+                            </View>
+
+                        </Modal>
+                    }
                     </KeyboardAvoidingView>
                     </SafeAreaView>
     )
@@ -267,6 +330,7 @@ const styles = StyleSheet.create({
         justifyContent:"space-between",
         alignItems: "center",
         marginBottom:40,
+        paddingBottom:70
     },
 
     brandView:{
@@ -302,7 +366,7 @@ const styles = StyleSheet.create({
 
     listView:{
         flex:1,
-        marginTop:20,
+        marginTop:5,
         gap:20,
         alignItems:"center"
     },
