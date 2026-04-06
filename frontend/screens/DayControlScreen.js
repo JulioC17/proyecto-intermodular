@@ -22,14 +22,13 @@ export default function DayControl(){
     const [loading, setLoading] = useState(false)
     const [checkinUsers, setCheckingUsers] = useState([])
     const [planingToday, setPlanningToday] = useState([])
-    const [actives, setActives] = useState(0)
-    const [pending, setPending] = useState(0)
-    const [complete, setComplete] = useState(0)
 
 
     useEffect(() => {
         getUserChecksIn()
         getScheduleToday()
+        console.log(planingToday)
+        console.log(checkinUsers)
     }, [])
     
     const getUserChecksIn = async() => {
@@ -105,7 +104,10 @@ export default function DayControl(){
     const formaatedHour = `${h}:${m}:${s}`
 
     const pendientes = planingToday.filter(p => 
-        !checkinUsers.find(c => c.usuario_id === p.usuario_id)
+        !checkinUsers.find(c => c.usuario_id === p.usuario_id && 
+            c.hora_inicio >= p.hora_inicio &&
+            c.hora_inicio <= p.hora_fin
+        )
     ).length
     
     return(
@@ -159,58 +161,48 @@ export default function DayControl(){
                         </View>
 
                         <Text style = {styles.InfoDayDetailsTitle}>REGISTRO DEL DÍA</Text>
-                        {checkinUsers.map((element, index) => {
+                            {planingToday.filter((e) => e.hora_inicio !== "00:00:00" && e.hora_fin !== "23:59:00").map((element, index) => {
+                                const chekUser = checkinUsers.find((e) => e.usuario_id === element.usuario_id && 
+                                e.hora_inicio >= element.hora_inicio &&
+                                e.hora_inicio <= element.hora_fin
+                            )
+                
+                                let estado = ""
+                                let horaDeEntrada = ""
+                                
+                                if(chekUser){
+                                    if(chekUser.hora_fin){
+                                        estado = "Finalizado"
+                                        horaDeEntrada = chekUser.hora_inicio
+                                    }else{
+                                         estado = "Fichado"
+                                         horaDeEntrada = chekUser.hora_inicio
+                                    }
+                                }else{
+                                    if(element.hora_inicio < formaatedHour){
+                                        estado = "Retraso"
+                                    }else{
+                                        estado = "Pendiente"
+                                        
+                                    }
+                                }
+
+                              
+                                
                             return(
-                                <View style = {styles.InfoDayDetailsList} key={index}>
-                                <View style = {styles.InfoDayDetailsCard}>
-                                    <Text style = {styles.InfoDayDetailsName}>{element.nombre} {element.apellidos}</Text>
-                                    <Text style = {[element.hora_inicio && element.hora_fin ? styles.stateCompleted : styles.stateActive]}>{element.hora_inicio && element.hora_fin ? "Complet." : "Activo"}</Text>
+                                    <View style = {styles.InfoDayDetailsList} key={index}>
+                                     <View style = {styles.InfoDayDetailsCard}>
+                                    <Text style = {styles.InfoDayDetailsName}>{element.usuario} {element.apellidos}</Text>
+                                    <Text style = {[estado === "Finalizado" && styles.finalizado, estado === "Fichado" && styles.fichado, estado === "Retraso" && styles.retraso, estado === "Pendiente" && styles.pendiente,]}>{estado}</Text>
                                 </View>
 
                                 <View style = {styles.InfoDayDetailsViewHours}>
                                     <Text style = {styles.InfoDayDetailsCheckin}>Entrada: {element.hora_inicio}</Text>
                                     <Text style = {styles.InfoDayDetailsCheckout}>{element.hora_fin ? `Salida: ${element.hora_fin}` : "--:--"}</Text>
-                                </View>
-                               </View>
-                            )
-                        })}
-                            
-                                
-                            <Text style = {styles.InfoDayDetailsTitle}>HORARIO DEL DÍA</Text>
-                            {planingToday.filter((e) => e.hora_inicio !== "00:00:00" && e.hora_fin !== "23:59:00").map((element, index) => {
-                                const chekUser = checkinUsers.find((e) => e.usuario_id === element.usuario_id)
-                                let estado = ""
-                                
-                                if(chekUser){
-                                    if(chekUser.hora_inicio && chekUser.hora_fin){
-                                        estado = "Finaliz."
-                                    }else if( chekUser.hora_inicio && ! chekUser.hora_fin){
-                                         estado = "Fichado"
-                                    }
-                                }
-
-                                if(!chekUser){
-                                    if(element.hora_inicio < formaatedHour){
-                                        
-                                         estado = "Retraso"
-                                    }else if(element.hora_inicio > formaatedHour){
-                                        
-                                         estado = "Pendiente"
-
-                                    }
-                                }
-                                
-                            return(
-                                    <View style = {styles.InfoDayDetailsList} key={index}>
-                                     <View style = {styles.InfoDayDetailsCard}>
-                                    <Text style = {styles.InfoDayDetailsName}>{element.usuario}</Text>
-                                    <Text style = {styles.turno}>{element.nombre}</Text>
+                                    
                                 </View>
 
-                                <View style = {styles.InfoDayDetailsViewHours}>
-                                    <Text style = {styles.InfoDayDetailsCheckin}>{estado}</Text>
-                                    <Text style = {styles.InfoDayDetailsCheckout}>{element.hora_fin ? `Salida: ${element.hora_fin}` : "--:--"}</Text>
-                                </View>
+                                <Text style = {styles.outTimeAndPending}>{horaDeEntrada ? `Fichó a: ${horaDeEntrada}` : "Aún no han fichado"}</Text>
                                </View>
                                 )
                             })}
@@ -380,20 +372,51 @@ const styles = StyleSheet.create({
         fontFamily:"OutfitBold",
         fontSize:16,
         color:colorPalette.azulOscuro
+    },
+
+    finalizado:{
+        fontFamily:"OutfitBold",
+        fontSize:16,
+        color: "#0dca00",
+        backgroundColor:"#e1ffdf",
+        padding:5,
+        borderRadius:15
+    },
+
+    fichado:{
+        fontFamily:"OutfitBold",
+        fontSize:16,
+        color:colorPalette.azulOscuro,
+        backgroundColor:colorPalette.azulClaroTrasnparente,
+        padding:5,
+        borderRadius:15
+    },
+
+    retraso:{
+        fontFamily:"OutfitBold",
+        fontSize:16,
+        color:"#dd0000",
+        backgroundColor:"#ffd9d9",
+        padding:5,
+        borderRadius:15
+    },
+
+    pendiente:{
+        fontFamily:"OutfitBold",
+        fontSize:16,
+        color:"#ffa200",
+        backgroundColor:"#ffeac6",
+        padding:5,
+        borderRadius:15
+    },
+
+    outTimeAndPending:{
+        fontFamily:"OutfitBold",
+        fontSize:16,
+        color: colorPalette.azulOscuro
+
     }
 })
 
 
-/**
-  <View style = {styles.InfoDayDetailsList}>
-                                <View style = {styles.InfoDayDetailsCard}>
-                                    <Text style = {styles.InfoDayDetailsName}>{item.nombre} {item.apellidos}</Text>
-                                    <Text style = {[item.hora_inicio && item.hora_fin ? styles.stateCompleted : styles.stateActive]}>{item.hora_inicio && item.hora_fin ? "Complet." : "Activo"}</Text>
-                                </View>
-
-                                <View style = {styles.InfoDayDetailsViewHours}>
-                                    <Text style = {styles.InfoDayDetailsCheckin}>Entrada: {item.hora_inicio}</Text>
-                                    <Text style = {styles.InfoDayDetailsCheckout}>{item.hora_fin ? `Salida: ${item.hora_fin}` : "--:--"}</Text>
-                                </View>
-                               </View>
- */
+//cambiar los colores de los estados #dd0000
