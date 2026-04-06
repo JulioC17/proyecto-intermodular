@@ -29,6 +29,7 @@ import RegisterNewWorker from "../screens/registerNewWorker";
 import FirstLogin from "../screens/FirstLoginScreen";
 import Profile from "../screens/ProfileScreen";
 import EditUser from "../screens/EditUser";
+import DayControl from "../screens/DayControlScreen";
 
 const Stack = createNativeStackNavigator()
 
@@ -70,6 +71,7 @@ export default function AppNavigator() {
                 <Stack.Screen name = "AddWorkers" component = {AddWorkers} options = {{headerShown:false}}/>
                 <Stack.Screen name = "EditUser" component={EditUser} options={{headerShown:false}}/>
                 <Stack.Screen name = "RegisterNewWorker" component = {RegisterNewWorker} options = {{headerShown:false}}/>
+                <Stack.Screen name = "DayControl" component = {DayControl} options = {{headerShown:false}}/>
             
             </Stack.Navigator>
 

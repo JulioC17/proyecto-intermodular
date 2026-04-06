@@ -133,7 +133,7 @@ const getAllWorkedTime = async (req, res) => {
         const companyArray = getCompanys.rows.map(c => c.empresa_id)//bucle para aislar IDs si el requester tiene mas de una empresa
         
         //manejo de las queries dinamicas en caso de que vengan proporcionadas en la request
-        let query = "SELECT * FROM fichajes"
+        let query = "SELECT f.*, u.nombre, u.apellidos FROM fichajes f JOIN usuarios u ON f.usuario_id = u.id"
         let values = [companyArray]
         let countPlaceholders = 1
         
@@ -148,21 +148,22 @@ const getAllWorkedTime = async (req, res) => {
                 return res.status(403).json({error: "No puedes ver datos de esta empresa"})
             }
 
-            query += ` WHERE empresa_id = $${countPlaceholders}`
+            query += ` WHERE f.empresa_id = $${countPlaceholders}`
             values = []
             values.push(id_empresa)
             countPlaceholders++
         }else{
-            query += ` WHERE empresa_id = ANY($${countPlaceholders})`
+            query += ` WHERE f.empresa_id = ANY($${countPlaceholders})`
+            countPlaceholders++ 
         }
 
         if(from && to){
-            query += ` AND fecha BETWEEN $${countPlaceholders} AND $${countPlaceholders + 1}`
+            query += ` AND f.fecha BETWEEN $${countPlaceholders} AND $${countPlaceholders + 1}`
             values.push(from, to)
             countPlaceholders +=2
         }
 
-        query += " ORDER BY fecha DESC"
+        query += " ORDER BY f.fecha DESC"
 
         const getWorkedTimeForWorkers = await pool.query(query, values)//insercion en bbdd
 

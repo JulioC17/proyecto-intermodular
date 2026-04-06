@@ -58,7 +58,7 @@ export default function DashboardAdmins({estado}){
                     icono = "clipboard-outline"
                     section= "Control de Jornada"
                     description="Datos del Día"
-                    action={() => navigation.navigate("Recipes")}
+                    action={() => navigation.navigate("DayControl")}
                     />
 
                     <DashboardCards
