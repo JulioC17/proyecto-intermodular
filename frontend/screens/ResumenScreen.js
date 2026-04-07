@@ -110,8 +110,12 @@ const getWorkedTime =  async () => {
     
             
             const bucle = item.description.map((obj, indice) => {
-                const newInitDate = new Date(`${formatedDate}T${obj.hora_inicio}`).getTime()
-                const newFinalDate = new Date(`${formatedDate}T${obj.hora_fin}`).getTime()
+                const newInitDate = new Date(`${formatedDate}T${obj.hora_inicio}Z`).getTime()
+                let newFinalDate = new Date(`${formatedDate}T${obj.hora_fin}Z`).getTime()
+
+                if(newFinalDate < newInitDate){
+                    newFinalDate = newFinalDate + (24*60*60*1000)
+                }
         
                 const diference = newFinalDate - newInitDate
                 sumSec += diference
@@ -162,8 +166,12 @@ const sumHours = (description, fecha) => {
         let sumSec = 0
 
     const getHours = description.map((obj, ind) => {
-        const newInitDate = new Date(`${formatedDate}T${obj.hora_inicio}`).getTime()
-        const newFinalDate = new Date(`${formatedDate}T${obj.hora_fin}`).getTime()
+        const newInitDate = new Date(`${formatedDate}T${obj.hora_inicio}Z`).getTime()
+        let newFinalDate = new Date(`${formatedDate}T${obj.hora_fin}Z`).getTime()
+
+        if(newFinalDate < newInitDate){
+            newFinalDate = newFinalDate + (24*60*60*1000)
+        }
         
         const diference = newFinalDate - newInitDate
         sumSec += diference

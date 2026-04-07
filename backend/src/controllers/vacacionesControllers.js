@@ -62,26 +62,27 @@ const getProfileHollidays = async (req, res) => {
 //controlador paara ver todas las solicitudes de vacaciones de los trabajdores
 const getHollidaysForAdminsAndOwners = async (req, res) => {
     const {id, rol_id} = req.user//obtencion de daatos del token
+    const {empresa_id} = req.params
 
     if(Number(rol_id) === ROLES.TRABAJADOR){
         return res.status(403).json({error: "No tienes permisos"})//comprobacion de permisos
     }
 
     try{
-        const companysRows = await pool.query(
-            "SELECT empresa_id FROM usuarios_empresas WHERE usuario_id = $1",//comprobacion de que el requester pertence a alguna empresa
-            [id]
+        
+
+        const checkCompany = await pool.query(
+            "SELECT 1 FROM usuarios_empresas WHERE empresa_id = $1 AND usuario_id = $2",
+            [empresa_id, id]
         )
 
-        if(companysRows.rows.length === 0){
-            return res.status(403).json({error: "No tienes o perteneces a ninguna empresa de que el usuario"})
+        if(checkCompany.rows.length === 0){
+            return res.status(403).json({error: "No perteneces a esta empresa"})
         }
 
-        const companysID = companysRows.rows.map(ci => ci.empresa_id)//manejo de vaarias empresas mediante un bucle
-
         const getAllHollidays = await pool.query(
-            "SELECT v.id, v.fecha_inicio, v.fecha_fin, v.estado, v.fecha_solicitud, u.nombre, u.apellidos, e.nombre AS empresa FROM vacaciones v JOIN usuarios u ON u.id = v.usuario_id JOIN usuarios_empresas ue ON ue.usuario_id = u.id JOIN empresas e ON e.id = ue.empresa_id WHERE e.id = ANY($1) ORDER by v.fecha_inicio",//consulta en la bbdd
-            [companysID]
+            "SELECT v.id, v.fecha_inicio, v.fecha_fin, v.estado, v.fecha_solicitud, u.nombre, u.apellidos, e.nombre AS empresa FROM vacaciones v JOIN usuarios u ON u.id = v.usuario_id JOIN usuarios_empresas ue ON ue.usuario_id = u.id JOIN empresas e ON e.id = ue.empresa_id WHERE e.id = $1 ORDER by v.fecha_inicio",//consulta en la bbdd
+            [empresa_id]
         )
 
         return res.status(200).json({

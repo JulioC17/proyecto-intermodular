@@ -39,4 +39,15 @@ const handdleHollidaysSchema = Joi.object({
     })
 })
 
-module.exports = {createRequestofHollidaysSchema, handdleHollidaysParamsSchema, handdleHollidaysSchema}
+const getHollidaysForAdminsAndOwnersParams = Joi.object({
+    empresa_id: Joi.number()
+    .integer()
+    .required()
+    .messages({
+        "any.required": "El id de la empresa es obligatorio",
+        "number.integer": "El id debe ser un numero entero",
+        "number.base": "El id debe ser un numero"
+    })
+})
+
+module.exports = {createRequestofHollidaysSchema, handdleHollidaysParamsSchema, handdleHollidaysSchema, getHollidaysForAdminsAndOwnersParams}

@@ -14,7 +14,7 @@ import DashboardAdmins from "../components/DashboardAdmins";
 import DateTimePicker from "@react-native-community/datetimepicker"
 
 export default function Vacaciones(){
-    const {user, token} = useContext(AuthContext)
+    const {user, token, activeCompany} = useContext(AuthContext)
     const {showModal} = useContext(AlertContext)
     const navigation = useNavigation()
 
@@ -49,7 +49,9 @@ export default function Vacaciones(){
                 
 
             }else{
-                const response = await api.get(`/hollidays/getAllHollidays`,{
+                const idToFind = user.rol === "propietario" ? Number(activeCompany?.id): Number(user.empresa_id)
+
+                const response = await api.get(`/hollidays/getAllHollidays/${idToFind}`,{
                 headers: {Authorization: `Bearer ${token}`}
                 })
                 
@@ -217,6 +219,7 @@ return(
                                         <Text style = {styles.solicitud}>Mi Solicitud</Text> :
                                         <Text style = {styles.nombre}>{`${item.nombre} ${item.apellidos}`}</Text>
                                         }
+                                        {user.rol === "propietario" && <Text style = {styles.empresaVacaciones}>Empresa: {item.empresa}</Text>}
                                         <Text style = {styles.fecha}>{`${new Date(item.fecha_inicio).toLocaleDateString("es-ES",{
                                                 day: "2-digit",
                                                 month: "short",

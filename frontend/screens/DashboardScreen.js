@@ -29,7 +29,6 @@ export default function Dashboard(){
              const getActualTime = async () => {
             try{
                 
-                console.log(activeCompany)
                 const response = await api.get("/fichajes/actualTime", {
                     headers: {Authorization: `Bearer ${token}`}
                 })

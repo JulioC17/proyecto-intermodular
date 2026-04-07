@@ -13,7 +13,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 export default function DashboardOwner({restaurants}){
     const navigation = useNavigation()
     const {setActiveCompany} = useContext(AuthContext)
-    console.log(restaurants)
     return(
         <>
             

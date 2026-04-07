@@ -72,7 +72,7 @@ export default function Timer() {
             const d = String(date.getDate()).padStart(2, "0")
 
             const formatDate = `${y}-${m}-${d}`
-            const isoDate = `${formatDate}T${time}`
+            const isoDate = `${formatDate}T${time}Z`
 
             const pastTime = new Date(isoDate).getTime()
             
@@ -205,8 +205,12 @@ export default function Timer() {
             let sumaDeMilisegundos = 0
             
             const hours = objArray.map((obj, ind) => {
-                const inicio = new Date(`${formatedDate}T${obj.hora_inicio}`).getTime()
-                const final = new Date(`${formatedDate}T${obj.hora_fin}`).getTime()
+                const inicio = new Date(`${formatedDate}T${obj.hora_inicio}Z`).getTime()
+                let final = new Date(`${formatedDate}T${obj.hora_fin}Z`).getTime()
+
+                if(final < inicio){
+                    final = final + (24*60*60*1000)
+                }
 
                 const restaInicioFinal = final - inicio
                 sumaDeMilisegundos += restaInicioFinal
@@ -227,6 +231,18 @@ export default function Timer() {
             return formatTime
 
 }
+
+        const formatearHoraLocal = (fechaString, horaString) => {
+            if(!fechaString || !horaString) return "--:--"
+            const date = new Date(fechaString)
+            const y  = date.getFullYear()
+            const m = String(date.getMonth() + 1).padStart(2, "0")
+            const d = String(date.getDate()).padStart(2, "0")
+
+            const utcDate = new Date(`${y}-${m}-${d}T${horaString}Z`)
+
+            return utcDate.toLocaleTimeString("es-ES", {hour: "2-digit", minute: "2-digit"})
+        }
 
 return(
         <SafeAreaView style = {{flex:1}}>
@@ -292,7 +308,7 @@ return(
                         <Text style = {styles.resumenText}>RESUMEN DEL DÍA</Text>
                         <View style = {styles.inView}>
                             <Text style = {styles.inText}>Hora de Entrada</Text>
-                            <Text style = {styles.inHourText}>{initTime ? initTime.hora_inicio.slice(0, 5) : "--:--"}</Text>
+                            <Text style = {styles.inHourText}>{initTime ? formatearHoraLocal(initTime.fecha, initTime.hora_inicio) : "--:--"}</Text>
                         </View>
 
                         <ScrollView style={styles.historic} contentContainerStyle = {styles.ScrollContent}>
