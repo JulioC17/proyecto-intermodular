@@ -219,7 +219,7 @@ return(
                                         <Text style = {styles.solicitud}>Mi Solicitud</Text> :
                                         <Text style = {styles.nombre}>{`${item.nombre} ${item.apellidos}`}</Text>
                                         }
-                                        {user.rol === "propietario" && <Text style = {styles.empresaVacaciones}>Empresa: {item.empresa}</Text>}
+                                    
                                         <Text style = {styles.fecha}>{`${new Date(item.fecha_inicio).toLocaleDateString("es-ES",{
                                                 day: "2-digit",
                                                 month: "short",

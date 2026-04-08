@@ -30,6 +30,8 @@ import FirstLogin from "../screens/FirstLoginScreen";
 import Profile from "../screens/ProfileScreen";
 import EditUser from "../screens/EditUser";
 import DayControl from "../screens/DayControlScreen";
+import RecoveryPassword1 from "../screens/RecoveryPassword1";
+import RecoveryPassword2 from "../screens/RecoveryPassword2";
 
 const Stack = createNativeStackNavigator()
 
@@ -72,6 +74,8 @@ export default function AppNavigator() {
                 <Stack.Screen name = "EditUser" component={EditUser} options={{headerShown:false}}/>
                 <Stack.Screen name = "RegisterNewWorker" component = {RegisterNewWorker} options = {{headerShown:false}}/>
                 <Stack.Screen name = "DayControl" component = {DayControl} options = {{headerShown:false}}/>
+                <Stack.Screen name = "RecoveryPassword1" component={RecoveryPassword1} options={{headerShown:false}}/>
+                <Stack.Screen name = "RecoveryPassword2" component={RecoveryPassword2} options={{headerShown:false}}/>
             
             </Stack.Navigator>
 

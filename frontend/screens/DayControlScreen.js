@@ -45,7 +45,21 @@ export default function DayControl(){
                 headers: {Authorization: `Bearer ${token}`}
             })
 
-            setCheckingUsers(response.data.data)
+            const dataToLocal = response.data.data.map(checkin => {
+                if(checkin.hora_inicio){
+                    const localInit = new Date(`${formatedDate}T${checkin.hora_inicio}Z`)
+                    checkin.hora_inicio = `${String(localInit.getHours()).padStart(2, "0")}:${String(localInit.getMinutes()).padStart(2, "0")}:${String(localInit.getSeconds()).padStart(2, "0")}`
+                }
+
+                if(checkin.hora_fin){
+                    const localFInal = new Date(`${formatedDate}T${checkin.hora_fin}Z`)
+                    checkin.hora_fin = `${String(localFInal.getHours()).padStart(2, "0")}:${String(localFInal.getMinutes()).padStart(2, "0")}:${String(localFInal.getSeconds()).padStart(2, "0")}`
+                }
+
+                return checkin
+            })
+
+            setCheckingUsers(dataToLocal)
 
         }catch(error){
             
@@ -103,10 +117,17 @@ export default function DayControl(){
     const s = String(ahora.getSeconds()).padStart(2, "0")
     const formaatedHour = `${h}:${m}:${s}`
 
+    const checkUserInMargin = (checkinReal, shiftInicio, Shiftfin) => {
+        const real = new Date(`1970-01-01T${checkinReal}Z`).getTime()
+        const inicio = new Date(`1970-01-01T${shiftInicio}Z`).getTime() - (60*60*1000)
+        const fin = new Date(`1970-01-01T${Shiftfin}Z`).getTime()
+
+        return real >= inicio && real <= fin
+    }
+
     const pendientes = planingToday.filter(p => 
         !checkinUsers.find(c => c.usuario_id === p.usuario_id && 
-            c.hora_inicio >= p.hora_inicio &&
-            c.hora_inicio <= p.hora_fin
+            checkUserInMargin(c.hora_inicio, p.hora_inicio, p.hora_fin)
         )
     ).length
     
@@ -163,8 +184,7 @@ export default function DayControl(){
                         <Text style = {styles.InfoDayDetailsTitle}>REGISTRO DEL DÍA</Text>
                             {planingToday.filter((e) => e.hora_inicio !== "00:00:00" && e.hora_fin !== "23:59:00").map((element, index) => {
                                 const chekUser = checkinUsers.find((e) => e.usuario_id === element.usuario_id && 
-                                e.hora_inicio >= element.hora_inicio &&
-                                e.hora_inicio <= element.hora_fin
+                                checkUserInMargin(e.hora_inicio, element.hora_inicio, element.hora_fin)
                             )
                 
                                 let estado = ""

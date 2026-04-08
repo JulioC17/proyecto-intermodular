@@ -1,7 +1,7 @@
 import React, {useContext, useState} from "react";
 import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator} from "react-native";
 import {SafeAreaView} from "react-native-safe-area-context"
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import colorPalette from "../constant/colorPalette";
 import {LinearGradient} from "expo-linear-gradient";
 import { api } from "../services/api";
@@ -10,48 +10,36 @@ import {Ionicons} from "@expo/vector-icons"
 import Button from "../components/Button";
 import { AuthContext } from "../context/AuthProvider";
 
-
-export default function Login (){
+export default function RecoveryPassword2(){
     const navigation = useNavigation()
     const {showModal} = useContext(AlertContext)
-    const {login} = useContext(AuthContext)
+    const route = useRoute()
+    const baseEmail = route.params?.email
 
     const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
-    const [focusedInput, setFocusedInput] = useState(null)
-    const [showPassword, setShowPassword] = useState(false)
     const [loading, setLoading] = useState(false)
+    const [focusedInput, setFocusedInput] = useState(null)
+    const [password, setPassword] = useState("")
+    const [showPassword, setShowPassword] = useState(false)
+    const [verificationCode, setVerificationCode] = useState("")
 
-    const handleLogin = async (email, password) => {
+     const handleRecoveryPassword = async() => {
+        try{
 
-        try {
             setLoading(true)
-
-            const response = await api.post("/auth/login", {
-               "email": email,
-               "password": password
+            const response = await api.post(`/auth/resetPassword`, {
+                "email": baseEmail.email,
+                "newPassword": password,
+                "recoveryCode": verificationCode
             })
 
-            if(response.data.tempToken){
-                showModal(response.data.message, "success")
-                navigation.navigate("FirstLogin", {
-                    tempToken: response.data.tempToken
-                    
-                })
-               console.log("hola")
-                return
-            }
-            
-            
-            await login(response.data.token)
             showModal(response.data.message, "success")
-            navigation.navigate("Dashboard")
-
-
+            navigation.navigate("Login")
+            
 
         }catch(error){
+            
             const data = error.response?.data
-            console.log(error)
             if(data?.errors){
                 showModal(data.errors.join("\n"), "error")
                 
@@ -64,9 +52,10 @@ export default function Login (){
         }finally{
             setLoading(false)
         }
-    }
-
+     }
+    
     return(
+
         <SafeAreaView style = {{flex:1}}>
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -80,40 +69,42 @@ export default function Login (){
                         style={styles.hostech}
                         onPress={() => navigation.navigate("Landing")}
                         >HOSTECH</Text>
-                        <Text style={styles.welcome}>Bienvenido de nuevo</Text>
+                        <Text style={styles.welcome}>{baseEmail.email}</Text>
                     </LinearGradient>
 
                     <View style = {styles.formView}>
-                        <TextInput 
-                            placeholder="email" 
-                            value={email}
-                            onFocus={() => setFocusedInput("email")}
+
+                        <TextInput
+                            keyboardType="numeric"
+                            placeholder="Número de verificación" 
+                            value={verificationCode}
+                            onFocus={() => setFocusedInput("VerificationCode")}
                             onBlur={() => setFocusedInput(null)}
                             style = {[
                             styles.input,
-                            focusedInput === "email" && styles.inputFocused    
-                                    ]} 
-                            onChangeText={ text => setEmail(text)}>
+                            focusedInput === "VerificationCode" && styles.inputFocused    
+                            ]} 
+                            onChangeText={ text => setVerificationCode(text)}>
                         </TextInput>
 
-                     <View style = {[styles.passwordView, focusedInput === "password" && styles.passwordViewFocused]}>
-                        <TextInput 
-                            placeholder="Password"
-                            value={password} 
-                            secureTextEntry={!showPassword ? true : false}
-                            onFocus={() => setFocusedInput("password")}
-                            onBlur={() => setFocusedInput(null)}
-                            style = {styles.passwordInput}  
-                            onChangeText={ text => setPassword(text)}>
-                        </TextInput>
+                        <View style = {[styles.passwordView, focusedInput === "password" && styles.passwordViewFocused]}>
+                            <TextInput 
+                                placeholder="Nueva Contraseña"
+                                value={password} 
+                                secureTextEntry={!showPassword ? true : false}
+                                onFocus={() => setFocusedInput("password")}
+                                onBlur={() => setFocusedInput(null)}
+                                style = {styles.passwordInput}  
+                                onChangeText={ text => setPassword(text)}>
+                            </TextInput>
                             <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                                 <Ionicons name = {showPassword ? "eye-off" : "eye"} size={22} color = "#666"/>
                             </TouchableOpacity>
-                    </View>  
+                            </View>
 
-                    <Button
+                        <Button
                     text={
-                        loading ? <ActivityIndicator color = "#fff"/> : <Text>Iniciar Sesión</Text>
+                        loading ? <ActivityIndicator color = "#fff"/> : <Text>Reestablecer Contraseña</Text>
                         }
                         backgroundColor={colorPalette.azulOscuro}
                         width={320}
@@ -121,21 +112,14 @@ export default function Login (){
                         colorText={colorPalette.blanco}
                         fontSize={20}
                         disabled={loading}
-                        action={() => handleLogin(email, password)}
+                        action={() => handleRecoveryPassword()}
                         />
+                    </View>
+                    </ScrollView>
+                    </KeyboardAvoidingView>
+                    </SafeAreaView>
 
-                        <Text style={styles.inicio}>¿No tienes una cuenta?
-                            <Text style={styles.registerText} onPress={() => navigation.navigate("Register")}> Regístrate</Text>
-                        </Text>
-                        <Text style={styles.registerText} onPress={() => navigation.navigate("RecoveryPassword1")}>He olvidado mi contraseña</Text>
-                </View>
 
-                
-
-                </ScrollView>
-            </KeyboardAvoidingView>
-        </SafeAreaView>
-        
     )
 }
 
@@ -165,15 +149,7 @@ const styles = StyleSheet.create({
         fontFamily:"OutfitRegular",
         color:colorPalette.blanco
     },
-    formView:{
-        gap:25,
-        margin:10,        
-        justifyContent:"flex-start",
-        alignItems:"center",
-        flex:1,
-        marginTop:100
-    },
-    input:{
+     input:{
         borderWidth:2,
         width:320,
         padding:10,
@@ -188,6 +164,28 @@ const styles = StyleSheet.create({
         borderColor:colorPalette.azulOscuro
 
     },
+
+    formView:{
+        gap:25,
+        margin:10,        
+        justifyContent:"flex-start",
+        alignItems:"center",
+        flex:1,
+        marginTop:50
+    },
+    inputDisabled:{
+        borderWidth:2,
+        width:320,
+        padding:10,
+        borderRadius:10,
+        height:50,
+        borderColor:colorPalette.gris,
+        fontFamily:"OutfitBold",
+        fontSize:16,
+        backgroundColor:colorPalette.gris_transparente,
+        textAlign:"center"
+    },
+
     passwordView: {
         flexDirection:"row",
         alignItems: "center",
@@ -211,35 +209,4 @@ const styles = StyleSheet.create({
         borderWidth:2,
         borderColor:colorPalette.azulOscuro
     },
-    btnFooter:{
-        justifyContent:"center",
-        alignItems:"center",
-        gap:20,
-        flex:1
-    },
-     inicio:{
-        fontFamily:"OutfitBold",
-        fontSize:16,
-        color:colorPalette.gris
-    },
-    registerText:{
-         fontFamily:"OutfitBold",
-        fontSize:18,
-        color:colorPalette.azulOscuro
-    },
-    footerView:{
-      borderTopWidth:1,
-      borderColor:colorPalette.gris_transparente,
-      width:350,
-      padding:5,
-      
-     },
-
-     footer:{
-      fontFamily:"OutfitBold",
-      color:colorPalette.gris,
-      textAlign:"center"
-     }
-
-    
 })
