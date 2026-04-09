@@ -1,5 +1,5 @@
 import React, {useCallback, useContext, useEffect, useState} from "react";
-import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator, FlatList, Alert, Modal, TouchableWithoutFeedback, Keyboard} from "react-native";
+import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator, FlatList, Alert, Modal, TouchableWithoutFeedback, Keyboard, Dimensions} from "react-native";
 import {SafeAreaView} from "react-native-safe-area-context"
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import colorPalette from "../constant/colorPalette";
@@ -125,9 +125,16 @@ export default function CrudShifts(){
                 style={{ flex: 1, backgroundColor: "#ffffff"}}
                 keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
             >
-                <View style = {styles.generalView}>
-                   
-                   <LinearGradient style={styles.brandView} colors = {[colorPalette.azulOscuro, colorPalette.azulClaro]} start = {{x:0, y:0}} end = {{x:1, y:0}}>
+                
+            {loading && <View style = {styles.spinnerView}><ActivityIndicator size="large" color={colorPalette.azulOscuro}/></View>}
+                {!loading && 
+                <View style = {{flex:1, width: Dimensions.get("window").width}}>
+                <FlatList
+                data={shifts}
+                keyExtractor={(item, index) => index.toString()}
+                ListHeaderComponent={
+                <>
+                <LinearGradient style={styles.brandView} colors = {[colorPalette.azulOscuro, colorPalette.azulClaro]} start = {{x:0, y:0}} end = {{x:1, y:0}}>
                     <TouchableOpacity 
                     style={styles.btnViewAlter} 
                     onPress={() => navigation.goBack()}>
@@ -144,7 +151,7 @@ export default function CrudShifts(){
                     </View>
             </LinearGradient>
             
-            <View style = {styles.listView}>
+            
                 <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <View style = {styles.editShifts}>
                     <View style = {styles.newShiftName}>
@@ -212,14 +219,11 @@ export default function CrudShifts(){
 
                         />
                 </View>
-                </TouchableWithoutFeedback>        
-                
-                {loading && <View style = {styles.spinnerView}><ActivityIndicator size="large" color={colorPalette.azulOscuro}/></View>}
-                {!loading && <FlatList
-                
-                data={shifts}
-                keyExtractor={(item, index) => index.toString()}
-                ListHeaderComponent={<Text style= {styles.Shifts}>Turnos Configurados</Text>}
+                </TouchableWithoutFeedback>
+
+                <Text style= {styles.Shifts}>Turnos Configurados</Text>
+                </>
+                }
                 renderItem={({item}) => (
                     <View>
                         <View style = {[styles.shiftCard]}>
@@ -258,13 +262,15 @@ export default function CrudShifts(){
                     </View>
                     </View>
                 )}
-                contentContainerStyle={{flexGrow:1}}
+                contentContainerStyle={{ flexGrow:1, paddingBottom:40}}
                 ListEmptyComponent={<View style = {styles.empty}>
                     <Text style = {styles.emptyText}>No hay turnos creados aún</Text>
                 </View>}
-                />}
-            </View>
-            </View>
+                />
+                </View>
+                }
+            
+            
             {showPicker && (
                 <DateTimePicker
                     mode = "time"
@@ -292,12 +298,6 @@ export default function CrudShifts(){
 }
 
 const styles = StyleSheet.create({
-    generalView: {
-        flex:1,
-        justifyContent:"space-between",
-        alignItems: "center",
-        marginBottom:40,
-    },
 
     brandView:{
         width:"100%",
@@ -305,7 +305,8 @@ const styles = StyleSheet.create({
         alignItems:"center",
         height:120,
         flexDirection:"row",
-        gap:30
+        gap:30,
+        paddingHorizontal:10
     },
     
     hostech:{
@@ -336,7 +337,8 @@ const styles = StyleSheet.create({
         borderBottomWidth:1,
         borderColor:colorPalette.gris_transparente,
         padding:5,
-        width:350
+        width:350,
+        alignSelf:"center"
     },
     btnView:{
         flexDirection:"row",
@@ -353,7 +355,9 @@ const styles = StyleSheet.create({
         fontSize:20,
         color:colorPalette.azulOscuro,
         justifyContent:"center",
-        alignItems:"center"
+        alignItems:"center",
+        textAlign:"center",
+        paddingVertical:10
     },
 
     shiftName:{
@@ -389,6 +393,8 @@ const styles = StyleSheet.create({
         justifyContent:"center",
         alignItems:"center",
         margin:20,
+        alignSelf:"center",
+        marginVertical:10
     },
 
     newShiftName:{

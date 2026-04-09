@@ -61,6 +61,13 @@ export default function DashboardAdmins({estado}){
                     action={() => navigation.navigate("DayControl")}
                     />
 
+                   {user.rol === "propietario" &&  <DashboardCards
+                    icono = "documents-outline"
+                    section= "Histórico Global"
+                    description="Reporte Mensual de horas"
+                    action={() => navigation.navigate("GlobalReport")}
+                    />}
+
                     <DashboardCards
                     icono = "people-outline"
                     section= "Trabajadores"

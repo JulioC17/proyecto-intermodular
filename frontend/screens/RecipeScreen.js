@@ -1,5 +1,5 @@
 import React, {useCallback, useContext, useEffect, useState} from "react";
-import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform,FlatList, Alert, ActivityIndicator} from "react-native";
+import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform,FlatList, Alert, ActivityIndicator, Dimensions} from "react-native";
 import {SafeAreaView} from "react-native-safe-area-context"
 import { useNavigation , useFocusEffect} from "@react-navigation/native";
 import colorPalette from "../constant/colorPalette";
@@ -123,9 +123,13 @@ export default function Recipes(){
             style={{ flex: 1, backgroundColor: "#ffffff"}}
             keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
             >
-                <View contentContainerStyle = {styles.generalView}>
+                <View style = {styles.generalView}>
 
-                <LinearGradient 
+                <FlatList
+                data={recipes}
+                ListHeaderComponent={
+                                <>
+                                    <LinearGradient 
                 style={styles.brandView} 
                 colors = {[colorPalette.azulOscuro, colorPalette.azulClaro]} 
                 start = {{x:0, y:0}} 
@@ -161,8 +165,8 @@ export default function Recipes(){
                     </TouchableOpacity>}
                         
                 </LinearGradient>
-                    
-                <View style={styles.searchView}>
+
+                 <View style={styles.searchView}>
                         <TextInput
                         style={[
                             styles.inputSearch, focusedInput === "input" && styles.focusedInput]}
@@ -173,10 +177,8 @@ export default function Recipes(){
                         onBlur={() => setFocusedInput(null)}
                         />
                     </View>
-                    
-                    <View style={styles.listView}>
-                        <FlatList
-                        data={recipes}
+                                </>
+                        }
                         keyExtractor={(item, index) => index.toString()}
                         renderItem={({item}) => (
 
@@ -244,7 +246,7 @@ export default function Recipes(){
                             
                         )}
                         />
-                    </View>
+                    
                     
                 </View>
             
@@ -261,12 +263,11 @@ const styles = StyleSheet.create({
     generalView: {
         flex:1,
         justifyContent:"space-between",
-        alignItems: "center",
         marginBottom:40,
     },
 
     brandView:{
-        width:"100%",
+        width:Dimensions.get("window").width,
         justifyContent:"space-around",
         alignItems:"center",
         height:120,
@@ -296,12 +297,6 @@ const styles = StyleSheet.create({
         left:20
     },
 
-    listView:{
-        justifyContent:"center",
-        alignItems:"center",
-        
-    },
-
     listBtn:{
         width:350,
         margin:10,
@@ -323,7 +318,9 @@ const styles = StyleSheet.create({
     searchView:{
         padding:5,
         borderBottomWidth:1,
-        borderColor:colorPalette.gris_transparente
+        borderColor:colorPalette.gris_transparente,
+        alignItems:"center",
+        width:"100%"
     },
 
     inputSearch:{
@@ -332,7 +329,8 @@ const styles = StyleSheet.create({
         margin:10,
         fontFamily:"OutfitRegular",
         fontSize:16,
-        padding:5
+        padding:10,
+        width:320
     },
     focusedInput:{
         borderWidth:1,

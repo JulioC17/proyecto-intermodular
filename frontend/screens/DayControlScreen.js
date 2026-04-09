@@ -27,8 +27,6 @@ export default function DayControl(){
     useEffect(() => {
         getUserChecksIn()
         getScheduleToday()
-        console.log(planingToday)
-        console.log(checkinUsers)
     }, [])
     
     const getUserChecksIn = async() => {
@@ -65,10 +63,10 @@ export default function DayControl(){
             
             const data = error.response?.data
             if(data?.errors){
-                showModal(data.errors.join("\n"), "error")
+                console.log(data.errors.join("\n"), "error")
                 
             }else if(data?.error){
-                showModal(data.error, "error")
+                console.log(data.error, "error")
                 
             }else{
                 showModal("Error interno del servidor", "error")
@@ -98,10 +96,10 @@ export default function DayControl(){
             
             const data = error.response?.data
             if(data?.errors){
-                showModal(data.errors.join("\n"), "error")
+                console.log(data.errors.join("\n"), "error")
                 
             }else if(data?.error){
-                showModal(data.error, "error")
+                console.log(data.error, "error")
                 
             }else{
                 showModal("Error interno del servidor", "error")
@@ -181,7 +179,7 @@ export default function DayControl(){
                             </View>
                         </View>
 
-                        <Text style = {styles.InfoDayDetailsTitle}>REGISTRO DEL DÍA</Text>
+                        <Text style = {styles.InfoDayDetailsTitle}>{planingToday.length === 0 ? "No hay horarios asignados hoy" : "Registros del Día"}</Text>
                             {planingToday.filter((e) => e.hora_inicio !== "00:00:00" && e.hora_fin !== "23:59:00").map((element, index) => {
                                 const chekUser = checkinUsers.find((e) => e.usuario_id === element.usuario_id && 
                                 checkUserInMargin(e.hora_inicio, element.hora_inicio, element.hora_fin)

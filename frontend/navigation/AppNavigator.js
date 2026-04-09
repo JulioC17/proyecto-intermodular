@@ -32,6 +32,8 @@ import EditUser from "../screens/EditUser";
 import DayControl from "../screens/DayControlScreen";
 import RecoveryPassword1 from "../screens/RecoveryPassword1";
 import RecoveryPassword2 from "../screens/RecoveryPassword2";
+import GlobalReport from "../screens/GlobalReport";
+import WorkerMonthResumen from "../screens/WorkerMonthResumen";
 
 const Stack = createNativeStackNavigator()
 
@@ -76,6 +78,8 @@ export default function AppNavigator() {
                 <Stack.Screen name = "DayControl" component = {DayControl} options = {{headerShown:false}}/>
                 <Stack.Screen name = "RecoveryPassword1" component={RecoveryPassword1} options={{headerShown:false}}/>
                 <Stack.Screen name = "RecoveryPassword2" component={RecoveryPassword2} options={{headerShown:false}}/>
+                <Stack.Screen name = "GlobalReport" component={GlobalReport} options={{headerShown:false}}/>
+                <Stack.Screen name = "WorkerMonthResumen" component={WorkerMonthResumen} options={{headerShown:false}}/>
             
             </Stack.Navigator>
 
