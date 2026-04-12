@@ -34,6 +34,7 @@ import RecoveryPassword1 from "../screens/RecoveryPassword1";
 import RecoveryPassword2 from "../screens/RecoveryPassword2";
 import GlobalReport from "../screens/GlobalReport";
 import WorkerMonthResumen from "../screens/WorkerMonthResumen";
+import CompanyManagement from "../screens/CompanyManagement";
 
 const Stack = createNativeStackNavigator()
 
@@ -80,6 +81,7 @@ export default function AppNavigator() {
                 <Stack.Screen name = "RecoveryPassword2" component={RecoveryPassword2} options={{headerShown:false}}/>
                 <Stack.Screen name = "GlobalReport" component={GlobalReport} options={{headerShown:false}}/>
                 <Stack.Screen name = "WorkerMonthResumen" component={WorkerMonthResumen} options={{headerShown:false}}/>
+                <Stack.Screen name = "CompanyManagement" component={CompanyManagement} options={{headerShown:false}}/>
             
             </Stack.Navigator>
 

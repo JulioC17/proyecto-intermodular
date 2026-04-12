@@ -111,7 +111,13 @@ export default function Profile() {
                             <View style = {styles.infoCardsContentView}>
                                 <View style = {styles.infoCardsContent}>
                                     <Text style = {styles.infoCardsContentTextTitle}>Empresa:</Text>
-                                    <Text style = {styles.infoCardsContentTextDescription}>{user.rol === "propietario" ? "Multiempresa" : user.empresa}</Text>
+                                    <Text style = {styles.infoCardsContentTextDescription}>{user.rol === "propietario" ? 
+                                    <TouchableOpacity 
+                                    onPress={() => navigation.navigate("CompanyManagement")}
+                                    style = {styles.companyBtn}>
+                                        <Text style = {styles.companyText}>Mis Empresas</Text>
+                                    </TouchableOpacity>
+                                    : user.empresa}</Text>
                                 </View>
                                 <View style = {styles.infoCardsContent}>
                                     <Text style = {styles.infoCardsContentTextTitle}>Rol:</Text>
@@ -230,6 +236,12 @@ const styles = StyleSheet.create({
     infoCardsContentTextDescription:{
         fontFamily:"OutfitBold",
         fontSize:16,
+    },
+
+    companyText:{
+        fontFamily:"OutfitBold",
+        fontSize:16,
+        color:colorPalette.azulOscuro
     }
 
 })

@@ -46,9 +46,10 @@ export default function WorkerMonthResumen(){
                         <Text style={styles.welcome}>{baseUser.nombre} {baseUser.apellidos}</Text>
                     </View>
                     </LinearGradient>
+                    <ScrollView contentContainerStyle = {{paddingBottom:40, alignItems:"center"}}>
                     <View style= {styles.listView}>
                         {baseUser.desgloce.map((e, i) => (
-                            <View style= {styles.desgloceCards}>
+                            <View style= {styles.desgloceCards} key={i}>
                                 <Text style= {styles.desgloceDate}>{new Date(e.fecha).toLocaleDateString("es-ES", {
                                     month:"long",
                                     day:"2-digit",
@@ -62,6 +63,7 @@ export default function WorkerMonthResumen(){
                             </View>
                         ))}
                     </View>
+                    </ScrollView>
                     </View>
                     </KeyboardAvoidingView>
                     </SafeAreaView>
@@ -71,7 +73,6 @@ export default function WorkerMonthResumen(){
 const styles = StyleSheet.create({
     generalView: {
         flex:1,
-        justifyContent:"space-between",
         alignItems: "center",
         marginBottom:40,
     },
