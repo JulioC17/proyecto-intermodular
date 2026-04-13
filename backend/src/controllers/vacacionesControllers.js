@@ -72,7 +72,7 @@ const getHollidaysForAdminsAndOwners = async (req, res) => {
         
 
         const checkCompany = await pool.query(
-            "SELECT 1 FROM usuarios_empresas WHERE empresa_id = $1 AND usuario_id = $2",
+             "SELECT 1 FROM usuarios_empresas ue JOIN empresas e ON ue.empresa_id = e.id WHERE ue.empresa_id = $1 AND ue.usuario_id = $2 AND e.is_active = true",
             [empresa_id, id]
         )
 
@@ -81,7 +81,7 @@ const getHollidaysForAdminsAndOwners = async (req, res) => {
         }
 
         const getAllHollidays = await pool.query(
-            "SELECT v.id, v.fecha_inicio, v.fecha_fin, v.estado, v.fecha_solicitud, u.nombre, u.apellidos, e.nombre AS empresa FROM vacaciones v JOIN usuarios u ON u.id = v.usuario_id JOIN usuarios_empresas ue ON ue.usuario_id = u.id JOIN empresas e ON e.id = ue.empresa_id WHERE e.id = $1 ORDER by v.fecha_inicio",//consulta en la bbdd
+            "SELECT v.id, v.fecha_inicio, v.fecha_fin, v.estado, v.fecha_solicitud, u.nombre, u.apellidos, e.nombre AS empresa FROM vacaciones v JOIN usuarios u ON u.id = v.usuario_id JOIN usuarios_empresas ue ON ue.usuario_id = u.id JOIN empresas e ON e.id = ue.empresa_id WHERE e.id = $1 AND e.is_active = true ORDER by v.fecha_inicio",//consulta en la bbdd
             [empresa_id]
         )
 
@@ -109,7 +109,7 @@ const handdleHollidays = async (req, res) => {
     try{
 
         const companysRows = await pool.query(
-            "SELECT empresa_id FROM usuarios_empresas WHERE usuario_id = $1",//extraccion de todas las empresas del requester
+            "SELECT ue.empresa_id FROM usuarios_empresas ue JOIN empresas e ON ue.empresa_id = e.id WHERE ue.usuario_id = $1 AND e.is_active = true",//extraccion de todas las empresas del requester
             [id]
         )
 
@@ -120,7 +120,7 @@ const handdleHollidays = async (req, res) => {
         const companysID = companysRows.rows.map(ci => ci.empresa_id)//bucle para aislar las empresas del requester en caso de ser mas de 1
 
         const checkOwnerWorkersParty = await pool.query(
-            "SELECT 1 FROM usuarios_empresas JOIN usuarios ON usuarios_empresas.usuario_id = usuarios.id JOIN vacaciones ON vacaciones.usuario_id = usuarios.id WHERE usuarios_empresas.empresa_id = ANY($1) AND vacaciones.id = $2 AND vacaciones.estado IS NULL",
+            "SELECT 1 FROM usuarios_empresas ue JOIN empresas e ON ue.empresa_id = e.id JOIN usuarios u ON ue.usuario_id = u.id JOIN vacaciones v ON v.usuario_id = u.id WHERE ue.empresa_id = ANY($1) AND v.id = $2 AND v.estado IS NULL AND e.is_active = true",
             [companysID, vacaciones_id]//extraccion del id de las vacaciones en base a las empresas del requester y en base a su estado
         )
 

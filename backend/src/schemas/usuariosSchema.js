@@ -133,4 +133,6 @@ const ownerAndAdminsViewSchemaParams = Joi.object({
     })
 })
 
+
+
 module.exports = {createUserSchema, firstLoginSchema, updateUsersSchema, updateUsersSchemaParams, deleteUserParams, ownerAndAdminsViewSchemaParams}

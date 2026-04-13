@@ -13,7 +13,7 @@ const createShift = async (req, res) => {
 
      try{
         const getCompanysOfRequester = await pool.query(
-        "SELECT 1 FROM usuarios_empresas WHERE usuario_id = $1 AND empresa_id = $2",//comprobacion de que el requester pertence a la empresa de destino
+        "SELECT 1 FROM usuarios_empresas ue JOIN empresas e ON ue.empresa_id = e.id WHERE ue.usuario_id = $1 AND ue.empresa_id = $2 AND e.is_active = true",//comprobacion de que el requester pertence a la empresa de destino
         [id, empresa_id]
         )
 
@@ -48,7 +48,7 @@ const getShifts = async (req, res) => {
     try{
 
         const getCompanysOfRequester = await pool.query(
-        "SELECT 1 FROM usuarios_empresas WHERE usuario_id = $1 AND empresa_id = $2",//comprobacion de que el requester pertence a la empresa
+        "SELECT 1 FROM usuarios_empresas ue JOIN empresas e ON ue.empresa_id = e.id WHERE ue.usuario_id = $1 AND ue.empresa_id = $2 AND e.is_active = true",//comprobacion de que el requester pertence a la empresa
         [id, Number(empresa_id)]
         )
 
@@ -57,7 +57,7 @@ const getShifts = async (req, res) => {
         }
 
         const shifts = await pool.query(//consulta de turnos en la bbdd
-            "SELECT t.id, t.nombre, t.hora_inicio, t.hora_fin, e.nombre AS empresa, e.id AS empresa_id FROM turnos t JOIN empresas e ON e.id = t.empresa_id WHERE t.empresa_id = $1 AND t.active = TRUE",
+            "SELECT t.id, t.nombre, t.hora_inicio, t.hora_fin, e.nombre AS empresa, e.id AS empresa_id FROM turnos t JOIN empresas e ON e.id = t.empresa_id WHERE t.empresa_id = $1 AND t.active = TRUE AND e.is_active = true",
             [Number(empresa_id)]
         )
 
@@ -105,7 +105,7 @@ const updateShift = async (req, res) => {
         }
 
         const getCompanysOfRequester = await pool.query(
-        "SELECT 1 FROM usuarios_empresas WHERE usuario_id = $1 AND empresa_id = $2",//comprobacion de pertenencia del usuario y la empresa
+        "SELECT 1 FROM usuarios_empresas ue JOIN empresas e ON ue.empresa_id = e.id WHERE ue.usuario_id = $1 AND ue.empresa_id = $2 AND e.is_active = true",//comprobacion de pertenencia del usuario y la empresa
         [id, Number(empresa_id)]
         )
 
@@ -168,7 +168,7 @@ const deleteShift = async (req, res) => {
         }
 
         const getCompanysOfRequester = await pool.query(
-        "SELECT 1 FROM usuarios_empresas WHERE usuario_id = $1 AND empresa_id = $2",//comprobacion de que el requester pertence a la empresa
+        "SELECT 1 FROM usuarios_empresas ue JOIN empresas e ON ue.empresa_id = e.id WHERE ue.usuario_id = $1 AND ue.empresa_id = $2 AND e.is_active = true",//comprobacion de que el requester pertence a la empresa
         [id, Number(empresa_id)]
         )
 
@@ -214,7 +214,7 @@ const assignShiftToUser = async(req, res) => {
         }
 
          const getCompanysOfRequester = await pool.query(
-        "SELECT 1 FROM usuarios_empresas WHERE usuario_id = $1 AND empresa_id = $2",//comprobacion de pertencencia entree el requester y la empresa
+        "SELECT 1 FROM usuarios_empresas ue JOIN empresas e ON ue.empresa_id = e.id WHERE ue.usuario_id = $1 AND ue.empresa_id = $2 AND e.is_active = true",//comprobacion de pertencencia entree el requester y la empresa
         [id, Number(empresa_id)]
         )
 
@@ -277,7 +277,7 @@ const removeShiftFromUser = async(req, res) => {
         }
 
          const getCompanysOfRequester = await pool.query(
-        "SELECT 1 FROM usuarios_empresas WHERE usuario_id = $1 AND empresa_id = $2",//comprobacion de relacion entre el requester y la empresa
+        "SELECT 1 FROM usuarios_empresas ue JOIN empresas e ON ue.empresa_id = e.id WHERE ue.usuario_id = $1 AND ue.empresa_id = $2 AND e.is_active = true",//comprobacion de relacion entre el requester y la empresa
         [id, Number(empresa_id)]
         )
 
@@ -348,7 +348,7 @@ const getShiftsForAdmins = async (req, res) => {
     try{
 
         const getCompanysOfRequester = await pool.query(
-        "SELECT 1 FROM usuarios_empresas WHERE usuario_id = $1 AND empresa_id = $2",//comprobacion de pertencencia entree el requester y la empresa
+        "SELECT 1 FROM usuarios_empresas ue JOIN empresas e ON ue.empresa_id = e.id WHERE ue.usuario_id = $1 AND ue.empresa_id = $2 AND e.is_active = true",//comprobacion de pertencencia entree el requester y la empresa
         [id, Number(empresa_id)]
         )
 

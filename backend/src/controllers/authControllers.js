@@ -162,6 +162,16 @@ const login = async(req, res) => {//extraemos email y password de la peticion
             })
         }
 
+         if (user.rows[0].rol_id === 3) {
+            const companyCheck = await pool.query(
+                "SELECT e.is_active FROM empresas e JOIN usuarios_empresas ue ON e.id = ue.empresa_id WHERE ue.usuario_id = $1",
+                [user.rows[0].id]
+            );
+            if (companyCheck.rows.length === 0 || companyCheck.rows[0].is_active === false) {
+                return res.status(403).json({ error: "Tu empresa no está activa. Contacta con tu administrador." });
+            }
+        }
+
         const token = jwt.sign(
             {
                 id:user.rows[0].id, 

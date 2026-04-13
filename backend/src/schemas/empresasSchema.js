@@ -71,4 +71,10 @@ const changeCompanySchema = Joi.object({
     })
 })
 
-module.exports = {createCompanySchema, updateCompanySchema, updateCompanySchemaParams, deleteCompanySchemaParams, changeCompanySchemaParams, changeCompanySchema}
+const viewCompanySchemaQuery = Joi.object({
+    active: Joi.string().valid("true", "false").optional().messages({
+        "any.only": "El parametro active debe ser true o false"
+    })
+})
+
+module.exports = {createCompanySchema, updateCompanySchema, updateCompanySchemaParams, deleteCompanySchemaParams, changeCompanySchemaParams, changeCompanySchema, viewCompanySchemaQuery}

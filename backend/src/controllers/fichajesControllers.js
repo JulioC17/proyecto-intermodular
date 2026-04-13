@@ -12,7 +12,7 @@ const createCheckIn = async (req, res) => {
     try{
 
         const selectCompany = await pool.query(
-            "SELECT empresa_id FROM usuarios_empresas WHERE usuario_id = $1",//comprobacion que el usuario pertence a la empresa en la que quiere fichar
+            "SELECT ue.empresa_id FROM usuarios_empresas ue JOIN empresas e ON ue.empresa_id = e.id WHERE ue.usuario_id = $1 AND e.is_active = true",//comprobacion que el usuario pertence a la empresa en la que quiere fichar
             [id]
         )
 
@@ -122,7 +122,7 @@ const getAllWorkedTime = async (req, res) => {
     try{
 
         const getCompanys = await pool.query(
-            "SELECT empresa_id FROM usuarios_empresas WHERE usuario_id = $1",//comprobacion de que el requester pertenece a la empresa de la que quiere obtener la info
+            "SELECT ue.empresa_id FROM usuarios_empresas ue JOIN empresas e ON ue.empresa_id = e.id WHERE ue.usuario_id = $1 AND e.is_active = true",//comprobacion de que el requester pertenece a la empresa de la que quiere obtener la info
             [id]
         )
 
@@ -140,7 +140,7 @@ const getAllWorkedTime = async (req, res) => {
         if(id_empresa){ 
 
             const checkCompany = await pool.query(
-                "SELECT 1 FROM usuarios_empresas WHERE usuario_id = $1 AND empresa_id = $2",
+               "SELECT 1 FROM usuarios_empresas ue JOIN empresas e ON ue.empresa_id = e.id WHERE ue.usuario_id = $1 AND ue.empresa_id = $2 AND e.is_active = true",
                 [id, id_empresa]
             )
 

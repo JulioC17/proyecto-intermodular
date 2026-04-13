@@ -44,6 +44,8 @@ const createCompany = async(req, res) => {
 //controlador para ver las empresas de un propietario
 const viewCompany = async (req, res) => {
     const {id, rol_id} = req.user//obtenemos el id y el rol del usuario que esta intentando hacer esta peticion
+    const {active} = req.query
+    const isActive = active === "false" ? false : true
 
     if(!id || Number(rol_id) !== ROLES.PROPIETARIO){
         return res.status(403).json({error: "No tienes permisos"})//comprobamos que el usuario tenga permisos pera ver las empresas
@@ -55,8 +57,8 @@ const viewCompany = async (req, res) => {
             /*"SELECT empresas.nombre, empresas.id FROM empresas JOIN usuarios_empresas ON usuarios_empresas.empresa_id = empresas.id WHERE usuarios_empresas.usuario_id = $1",
             [id]*/
 
-            "SELECT e.nombre AS empresa, e.email, e.id, COUNT(ue2.usuario_id) AS num_trabajadores FROM empresas e JOIN usuarios_empresas ue ON e.id = ue.empresa_id LEFT JOIN usuarios_empresas ue2 ON ue2.empresa_id = e.id AND ue2.usuario_id <> $1 WHERE ue.usuario_id = $1 GROUP BY e.id, e.nombre", 
-            [id]
+            "SELECT e.nombre AS empresa, e.email, e.id, COUNT(ue2.usuario_id) AS num_trabajadores FROM empresas e JOIN usuarios_empresas ue ON e.id = ue.empresa_id LEFT JOIN usuarios_empresas ue2 ON ue2.empresa_id = e.id AND ue2.usuario_id <> $1 WHERE ue.usuario_id = $1 AND e.is_active = $2 GROUP BY e.id, e.nombre", 
+            [id, isActive]
         )
 
         return res.status(200).json({//devolvemos las empresas obtenidas en la consulta
@@ -153,7 +155,7 @@ const deleteCompany = async(req, res) => {
         }
 
         const deletedCompany = await pool.query(
-            "DELETE FROM empresas WHERE id = $1 RETURNING *",//consulta para eliminar la empresa definida
+            "UPDATE empresas SET is_active = false WHERE id = $1 RETURNING *",//consulta para eliminar la empresa definida
             [Number(id_empresa)]
         )
 

@@ -43,7 +43,7 @@ const createUser = async(req, res) => {
         }
 
     const checkOwnerCompany = await pool.query(
-        "SELECT id FROM usuarios_empresas WHERE usuario_id = $1 AND empresa_id = $2",
+        "SELECT 1 FROM usuarios_empresas ue JOIN empresas e ON ue.empresa_id = e.id WHERE ue.usuario_id = $1 AND ue.empresa_id = $2 AND e.is_active = true",
         [id, id_empresa]
     )
 
@@ -210,7 +210,7 @@ const ownersAndAdminsView = async (req, res) => {
 
     try{
         const checkOwnership = await pool.query(
-            "SELECT 1 from usuarios_empresas WHERE usuario_id = $1 AND empresa_id = $2",
+            "SELECT 1 FROM usuarios_empresas ue JOIN empresas e ON ue.empresa_id = e.id WHERE ue.usuario_id = $1 AND ue.empresa_id = $2 AND e.is_active = true",
             [Number(id), Number(empresa_id)]
         )
 
@@ -249,7 +249,7 @@ const updateUsers = async(req, res) => {
     try{
 
         const chekOwner = await pool.query(
-            "SELECT empresa_id FROM usuarios_empresas WHERE usuario_id = $1",
+           "SELECT ue.empresa_id FROM usuarios_empresas ue JOIN empresas e ON ue.empresa_id = e.id WHERE ue.usuario_id = $1 AND e.is_active = true",
             [id]
         )
 
