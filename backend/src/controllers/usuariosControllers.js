@@ -1,9 +1,22 @@
 const pool = require("../database/conection")
 const generator = require("generate-password")
 const bcrypt = require("bcryptjs")
-const sgMail = require("@sendgrid/mail")
+//const sgMail = require("@sendgrid/mail")
 const { checkOwnerCompany } = require("../utils/functions")
 const {ROLES} = require("../utils/roles")
+
+const nodemailer = require("nodemailer")
+
+
+const transporter = nodemailer.createTransport({
+host: process.env.SMTP_HOST,
+port: process.env.SMTP_PORT,
+secure: false,
+auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS
+}
+}) 
 
 
 //controldor para crear usuario nuevo que no sea PROPIETARIO
@@ -63,27 +76,50 @@ const createUser = async(req, res) => {
             [newUser.rows[0].id, id_empresa, date]
         )
 
+        const workerHtml = `
+<div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f9f9f9; padding: 40px 20px; color: #333; line-height: 1.6;">
+    <div style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+        
+        <div style="padding: 40px;">
+            <h1 style="color: #0072FF; font-size: 24px; margin-bottom: 20px;">¡Bienvenido/a al equipo! 🤝</h1>
+            
+            <p style="font-size: 16px; color: #555;">
+                Hola <strong>${nombre}</strong>, se ha creado tu cuenta de acceso para la plataforma de gestión <strong>HOSTECH</strong>.
+            </p>
+            <div style="margin: 30px 0; padding: 25px; background-color: #f0f7ff; border-radius: 8px; border-left: 5px solid #0072FF;">
+                <p style="margin: 0 0 10px 0; font-size: 14px; color: #555;">Tus credenciales de acceso:</p>
+                <p style="margin: 5px 0; font-size: 16px;"><strong>Email:</strong> ${emailNormalized}</p>
+                <p style="margin: 5px 0; font-size: 16px;"><strong>Contraseña Temporal:</strong> <span style="color: #0072FF; font-family: monospace; font-size: 18px;">${randomPassword}</span></p>
+            </div>
+            <p style="font-size: 14px; color: #888; background-color: #fff9e6; padding: 10px; border-radius: 4px; border: 1px solid #ffeeba;">
+                ⚠️ <strong>Importante:</strong> Tendrás que restablecer esta contraseña en tu primer acceso a la plataforma por motivos de seguridad.
+            </p>
+        </div>
+        <div style="background: linear-gradient(135deg, #0072FF 0%, #00C6FF 100%); padding: 30px; text-align: center;">
+            <p style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 900; letter-spacing: 3px; font-family: 'Arial Black', sans-serif;">HOSTECH</p>
+            <p style="margin: 5px 0 0; color: rgba(255,255,255,0.8); font-size: 12px; letter-spacing: 1px;">Gestión Inteligente de Hostelería</p>
+        </div>
+    </div>
+</div>
+`
+
         const msg = {//creamos email con credenciales del usuario 
                 to:email,
-                from: "julio.cesar.santos.reyes@students.thepower.education",
-                subject: "Credenciales de acceso a HosTech",
-                text: `Bienvenido a HosTech. Su correo de acceso es ${emailNormalized} y su contraseña temporal es ${randomPassword}. Por favor reestablezca su contraseña en su primer acceso a la plataforma`,
-                html: `<p>Bienvenido a HosTech.</p><p>Su correo: <b>${emailNormalized}</b></p><p>Contraseña temporal: <b>${randomPassword}</b></p><p>Por favor reestablezca su contraseña en su primer acceso.</p>`,
-                replyTo: "julio.cesar.santos.reyes@students.thepower.education"
+                from: "juliocsreyes94@gmail.com",
+                subject: "Sus Credenciales Temporales de acceso a HosTech",
+                html: workerHtml
             }
 
         //este correo es solo para ver yo la contraasenia y poder hacer pruebas se eliminraa aal lanzar la app
         const msgParaMisTest = {
                 to:"juliocsreyes94@gmail.com",
-                from: "julio.cesar.santos.reyes@students.thepower.education",
-                subject: "Credenciales de acceso a HosTech",
-                text: `Bienvenido a HosTech. Su correo de acceso es ${emailNormalized} y su contraseña temporal es ${randomPassword}. Por favor reestablezca su contraseña en su primer acceso a la plataforma`,
-                html: `<p>Bienvenido a HosTech.</p><p>Su correo: <b>${emailNormalized}</b></p><p>Contraseña temporal: <b>${randomPassword}</b></p><p>Por favor reestablezca su contraseña en su primer acceso.</p>`,
-                replyTo: "julio.cesar.santos.reyes@students.thepower.education"
+                from: "juliocsreyes94@gmail.com",
+                subject: "Credenciales de acceso para mi",
+                html: workerHtml
         }
         
-        await sgMail.send(msg)//enviamos email
-        await sgMail.send(msgParaMisTest)
+        await transporter.sendMail(msg)//enviamos email
+        await transporter.sendMail(msgParaMisTest)
 
         return res.status(200).json({//todo OK
                 message: "Usuario creado correctamente, se ha enviado una contraseña temporal al correo personal del empleado",

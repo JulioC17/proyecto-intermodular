@@ -1,9 +1,20 @@
 const pool = require("../database/conection")
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
-const sgMail = require("@sendgrid/mail")
+const nodemailer = require("nodemailer")
+//const sgMail = require("@sendgrid/mail")
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY)//api key de servicio de mensajeria
+const transporter = nodemailer.createTransport({
+host: process.env.SMTP_HOST,
+port: process.env.SMTP_PORT,
+secure: false,
+auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS
+}
+}) 
+
+//sgMail.setApiKey(process.env.SENDGRID_API_KEY)//api key de servicio de mensajeria
 
 //controlador para el registro de usuarios, el registro solo sera para "propietarios"
 const register = async(req, res) => {
@@ -49,16 +60,51 @@ const register = async(req, res) => {
 
     await pool.query("COMMIT")
 
+    const emailHtml = `
+<div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f9f9f9; padding: 40px 20px; color: #333; line-height: 1.6;">
+    <div style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+        
+        <!-- Contenido principal -->
+        <div style="padding: 40px;">
+            <h1 style="color: #0072FF; font-size: 24px; margin-bottom: 20px;">¡Bienvenido a la familia, ${nombre}!</h1>
+            
+            <p style="font-size: 16px; color: #555;">
+                Estamos encantados de tenerte con nosotros. Tu empresa <strong>"${empresaNombre}"</strong> ya está casi lista para empezar a optimizar sus turnos y fichajes.
+            </p>
+            <div style="margin: 35px 0; padding: 25px; background-color: #f0f7ff; border-radius: 8px; text-align: center; border: 1px dashed #0072FF;">
+                <p style="margin: 0; font-size: 14px; color: #0072FF; text-transform: uppercase; letter-spacing: 1px; font-weight: bold;">Tu código de verificación</p>
+                <h2 style="margin: 10px 0 0; font-size: 42px; color: #333; letter-spacing: 5px;">${verificationCode}</h2>
+            </div>
+            <p style="font-size: 14px; color: #888; text-align: center;">
+                Introduce este código en la aplicación para activar tu cuenta de propietario.
+            </p>
+        </div>
+        <!-- Footer estilizado tipo Header (Azul Degradado) -->
+        <div style="background: linear-gradient(135deg, #0072FF 0%, #00C6FF 100%); padding: 30px; text-align: center;">
+            <p style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 900; letter-spacing: 3px; font-family: 'Arial Black', sans-serif;">HOSTECH</p>
+            <p style="margin: 5px 0 0; color: rgba(255,255,255,0.8); font-size: 12px; letter-spacing: 1px;">Innovando en la gestión hostelera</p>
+        </div>
+    </div>
+    
+    <div style="text-align: center; margin-top: 20px; font-size: 12px; color: #aaa;">
+        © 2026 Hostech. Todos los derechos reservados.
+    </div>
+</div>
+`
+
     const msg = {//creamos email con codigo de verificacion
         to:normalizedEmail,
-        from: "julio.cesar.santos.reyes@students.thepower.education",
-        subject: "Código de Verificación",
-        text: `Tu codigo de verificación es: ${verificationCode}`,
-        html: `<strong>Tu codigo de verificación es: ${verificationCode}</strong>`,
-        replyTo: "julio.cesar.santos.reyes@students.thepower.education"
+        from: "juliocsreyes94@gmail.com",
+        subject: "Activa tu cuenta HOSTECH",
+        html: emailHtml,
     }
 
-    await sgMail.send(msg)//enviamos email con el codigo
+    try {
+        await transporter.sendMail(msg)//enviamos email con el codigo
+    } catch (mailError) {
+        console.error("Error al enviar el email de verificación:", mailError.response?.body || mailError);
+        // No lanzamos el error para que el registro de la DB se mantenga
+    }
 
     return res.status(201).json({message:"Usuario creado correctamente, revise su email para verificar"})//confirmamos que todo salio ok
 
@@ -210,16 +256,39 @@ const resendEmail = async (req, res) => {
             [verificationCode, expiry, normalizedEmail]
         )
 
+        const resendHtml = `
+<div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f9f9f9; padding: 40px 20px; color: #333; line-height: 1.6;">
+    <div style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+        
+        <div style="padding: 40px;">
+            <h1 style="color: #0072FF; font-size: 24px; margin-bottom: 20px;">Tu nuevo código de acceso</h1>
+            
+            <p style="font-size: 16px; color: #555;">
+                Hola de nuevo. Has solicitado un nuevo código de verificación para tu cuenta en <strong>HOSTECH</strong>.
+            </p>
+            <div style="margin: 35px 0; padding: 25px; background-color: #f0f7ff; border-radius: 8px; text-align: center; border: 1px dashed #0072FF;">
+                <p style="margin: 0; font-size: 14px; color: #0072FF; text-transform: uppercase; letter-spacing: 1px; font-weight: bold;">Código de Verificación Actualizado</p>
+                <h2 style="margin: 10px 0 0; font-size: 42px; color: #333; letter-spacing: 5px;">${verificationCode}</h2>
+            </div>
+            <p style="font-size: 14px; color: #888; text-align: center;">
+                Recuerda que este código caduca en 15 minutos por motivos de seguridad. 🛡️
+            </p>
+        </div>
+        <div style="background: linear-gradient(135deg, #0072FF 0%, #00C6FF 100%); padding: 30px; text-align: center;">
+            <p style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 900; letter-spacing: 3px; font-family: 'Arial Black', sans-serif;">HOSTECH</p>
+        </div>
+    </div>
+</div>
+`
+
         const msg = {//creamos email con el nuevo codigo de verificacion
         to:normalizedEmail,
-        from: "julio.cesar.santos.reyes@students.thepower.education",
-        subject: "Código de Verificación",
-        text: `Tu codigo de verificación es: ${verificationCode}`,
-        html: `<strong>Tu codigo de verificación es: ${verificationCode}</strong>`,
-        replyTo: "julio.cesar.santos.reyes@students.thepower.education"
+        from: "juliocsreyes94@gmail.com",
+        subject: "Su Nuevo Código de Verificación",
+        html: resendHtml
     }
 
-        await sgMail.send(msg)//reenviamos email con el codigo
+        await transporter.sendMail(msg)//reenviamos email con el codigo
 
         return res.status(200).json({message: "Ha sido enviado un nuevo codigo de verificacion"})//todo ok 
         
@@ -257,16 +326,40 @@ const requestPasswordReset = async (req, res) => {
             [verificationCode, expiry, normalizedEmail]
         )
 
+        const resetHtml = `
+<div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f9f9f9; padding: 40px 20px; color: #333; line-height: 1.6;">
+    <div style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+        
+        <div style="padding: 40px;">
+            <h1 style="color: #FF4B2B; font-size: 24px; margin-bottom: 20px;">Recuperación de Contraseña</h1>
+            
+            <p style="font-size: 16px; color: #555;">
+                Hemos recibido una solicitud para restablecer la contraseña de tu cuenta en <strong>HOSTECH</strong>.
+            </p>
+            <div style="margin: 35px 0; padding: 25px; background-color: #fff5f2; border-radius: 8px; text-align: center; border: 1px dashed #FF4B2B;">
+                <p style="margin: 0; font-size: 14px; color: #FF4B2B; text-transform: uppercase; letter-spacing: 1px; font-weight: bold;">Tu Código de Recuperación</p>
+                <h2 style="margin: 10px 0 0; font-size: 42px; color: #333; letter-spacing: 5px;">${verificationCode}</h2>
+            </div>
+            <p style="font-size: 14px; color: #888; text-align: center;">
+                Si no has solicitado este cambio, puedes ignorar este correo con total seguridad.
+            </p>
+        </div>
+        <div style="background: linear-gradient(135deg, #FF4B2B 0%, #FF8C00 100%); padding: 30px; text-align: center;">
+            <p style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 900; letter-spacing: 3px; font-family: 'Arial Black', sans-serif;">HOSTECH</p>
+        </div>
+    </div>
+</div>
+`
+
         const msg = {//creamos email con el  codigo de recuperacion
         to:normalizedEmail,
-        from: "julio.cesar.santos.reyes@students.thepower.education",
-        subject: "Código de Recuperación",
-        text: `Tu codigo de recuperación es: ${verificationCode}`,
-        html: `<strong>Tu codigo de recuperación es: ${verificationCode}</strong>`,
-        replyTo: "julio.cesar.santos.reyes@students.thepower.education"
+        from: "juliocsreyes94@gmail.com",
+        subject: "Su Código de Recuperación",
+        html: resetHtml
+        
         }
 
-        await sgMail.send(msg)//enviamos email con el codigo
+        await transporter.sendMail(msg)//enviamos email con el codigo
 
         return res.status(200).json({message: "Mensaje de recuperacion enviado"})//todo ok
 
