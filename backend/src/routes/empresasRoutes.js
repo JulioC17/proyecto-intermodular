@@ -1,5 +1,5 @@
 const express = require("express")
-const {createCompany, viewCompany, updateCompany, deleteCompany, changeCompany} = require("../controllers/empresasControllers")
+const {createCompany, viewCompany, updateCompany, deleteCompany, changeCompany, restoreCompany} = require("../controllers/empresasControllers")
 const isAuth = require("../middleware/isAuth")
 const validateSchema = require("../middleware/validateSchema")
 const {createCompanySchema, updateCompanySchema, updateCompanySchemaParams, deleteCompanySchemaParams, changeCompanySchema, changeCompanySchemaParams, viewCompanySchemaQuery} = require("../schemas/empresasSchema")
@@ -13,7 +13,8 @@ router.get("/viewCompany", isAuth, validateSchema(viewCompanySchemaQuery, "query
 router.put("/updateCompany/:id_empresa", isAuth, validateSchema(updateCompanySchemaParams, "params"),validateSchema(updateCompanySchema),updateCompany)//ruta para la modificacion de empresas
 router.put("/changeCompany/:id_usuario/company", isAuth, validateSchema(changeCompanySchemaParams, "params"), validateSchema(changeCompanySchema), changeCompany)
 
-router.delete("/deleteCompany/:id_empresa", isAuth, validateSchema(deleteCompanySchemaParams, "params"),deleteCompany)//ruta para la eliminacion de empresas
+router.put("/deleteCompany/:id_empresa", isAuth, validateSchema(deleteCompanySchemaParams, "params"),deleteCompany)//ruta para la eliminacion de empresas
+router.put("/restoreCompany/:id_empresa", isAuth, validateSchema(deleteCompanySchemaParams, "params"), restoreCompany)
 
 
 

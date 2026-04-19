@@ -57,7 +57,7 @@ const viewCompany = async (req, res) => {
             /*"SELECT empresas.nombre, empresas.id FROM empresas JOIN usuarios_empresas ON usuarios_empresas.empresa_id = empresas.id WHERE usuarios_empresas.usuario_id = $1",
             [id]*/
 
-            "SELECT e.nombre AS empresa, e.email, e.id, COUNT(ue2.usuario_id) AS num_trabajadores FROM empresas e JOIN usuarios_empresas ue ON e.id = ue.empresa_id LEFT JOIN usuarios_empresas ue2 ON ue2.empresa_id = e.id AND ue2.usuario_id <> $1 WHERE ue.usuario_id = $1 AND e.is_active = $2 GROUP BY e.id, e.nombre", 
+            "SELECT e.nombre AS empresa, e.email, e.id, COUNT(ue2.usuario_id) AS num_trabajadores, e.is_active FROM empresas e JOIN usuarios_empresas ue ON e.id = ue.empresa_id LEFT JOIN usuarios_empresas ue2 ON ue2.empresa_id = e.id AND ue2.usuario_id <> $1 WHERE ue.usuario_id = $1 AND e.is_active = $2 GROUP BY e.id, e.nombre", 
             [id, isActive]
         )
 
@@ -239,5 +239,41 @@ const changeCompany = async (req, res) => {
     }
 }
 
+const restoreCompany = async(req, res) => {
+    const {id, rol_id} = req.user
+    const {id_empresa} = req.params
 
-module.exports = {createCompany, viewCompany, updateCompany, deleteCompany, changeCompany}
+    if(!id || Number(rol_id) !== ROLES.PROPIETARIO){
+        return res.status(403).json({error: "No tienes permisos"})
+    }
+    
+    try {
+        // Comprobar propiedad igual que en delete
+        const checkOwner = await pool.query(
+            "SELECT * FROM usuarios_empresas WHERE usuario_id = $1 AND empresa_id = $2",
+            [id, id_empresa]
+        )
+
+        if(checkOwner.rows.length === 0){
+            return res.status(403).json({error: "No puedes restaurar esta empresa"})
+        }
+
+        const restoredCompany = await pool.query(
+            "UPDATE empresas SET is_active = true WHERE id = $1 RETURNING *",
+            [Number(id_empresa)]
+        )
+
+        return res.status(200).json({
+            message:"Empresa restaurada correctamente",
+            empresa: restoredCompany.rows[0]
+        })
+
+    } catch(error) {
+        console.error(error)
+        return res.status(500).json({error: "Error del servidor"})
+    }
+}
+
+
+
+module.exports = {createCompany, viewCompany, updateCompany, deleteCompany, changeCompany, restoreCompany}

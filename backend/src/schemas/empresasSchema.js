@@ -9,6 +9,8 @@ const createCompanySchema = Joi.object({
 
     email: Joi.string()
     .optional()
+    .empty("")
+    .allow(null)
     .email()
     .messages({
         "string.email": "El email debe tener el formato correcto"
@@ -20,8 +22,10 @@ const updateCompanySchema = Joi.object({
     .optional(),
 
     email: Joi.string()
-    .optional()
     .email()
+    .empty("")
+    .allow(null)
+    .optional()
     .messages({
         "string.email": "El email debe tener el formato correcto"
     })
