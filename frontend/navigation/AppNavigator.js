@@ -7,7 +7,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { View, StyleSheet, ActivityIndicator } from "react-native";
 import colorPalette from "../constant/colorPalette";
 
-import Landing from "../screens/landing";
+import Landing from "../screens/Landing";
 import RegisterScreen from "../screens/registerScreen";
 import LoginScreen from "../screens/LoginScreen";
 import VerifyEmail from "../screens/verifyEmailScreen";
