@@ -1,23 +1,32 @@
 const pool = require("../database/conection")
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
-const nodemailer = require("nodemailer")
-//const sgMail = require("@sendgrid/mail")
 
-const transporter = nodemailer.createTransport({
-host: process.env.SMTP_HOST,
-port: process.env.SMTP_PORT,
-secure: false,
-requireTLS: true,
-logger: true,
-debug:true,
-auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS
+const transporter = {
+    sendMail: async (msg) => {
+        const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+            method: "POST",
+            headers: {
+                "accept": "application/json",
+                "api-key": process.env.BREVO_API_KEY,
+                "content-type": "application/json"
+            },
+            body: JSON.stringify({
+                sender: {email: msg.from, name: "HOSTECH"},
+                to: [{email: msg.to}],
+                subject: msg.subject,
+                htmlContent:msg.html
+            })
+        })
+        if(!response.ok){
+            const errorText = await response.text()
+            console.error("Error de la Api Brevo", errorText)
+            throw new Error("No se pudo enviar el correo")
+        }
+
+        return true
+    }
 }
-}) 
-
-//sgMail.setApiKey(process.env.SENDGRID_API_KEY)//api key de servicio de mensajeria
 
 //controlador para el registro de usuarios, el registro solo sera para "propietarios"
 const register = async(req, res) => {

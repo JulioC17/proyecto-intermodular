@@ -5,21 +5,31 @@ const bcrypt = require("bcryptjs")
 const { checkOwnerCompany } = require("../utils/functions")
 const {ROLES} = require("../utils/roles")
 
-const nodemailer = require("nodemailer")
+const transporter = {
+    sendMail: async (msg) => {
+        const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+            method: "POST",
+            headers: {
+                "accept": "application/json",
+                "api-key": process.env.BREVO_API_KEY,
+                "content-type": "application/json"
+            },
+            body: JSON.stringify({
+                sender: {email: msg.from, name: "HOSTECH"},
+                to: [{email: msg.to}],
+                subject: msg.subject,
+                htmlContent:msg.html
+            })
+        })
+        if(!response.ok){
+            const errorText = await response.text()
+            console.error("Error de la Api Brevo", errorText)
+            throw new Error("No se pudo enviar el correo")
+        }
 
-
-const transporter = nodemailer.createTransport({
-host: process.env.SMTP_HOST,
-port: process.env.SMTP_PORT,
-secure: false,
-requireTLS: true,
-logger: true,
-debug:true,
-auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS
+        return true
+    }
 }
-}) 
 
 
 //controldor para crear usuario nuevo que no sea PROPIETARIO
