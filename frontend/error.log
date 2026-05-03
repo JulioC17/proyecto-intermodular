@@ -1,0 +1,30 @@
+Starting Metro Bundler
+
+Android Bundling failed 459ms index.js (601 modules)
+Error: Unable to resolve module ../screens/landing from /Users/julioc.santosreyes/Documents/Proyecto intermodular/codigo-proyecto/frontend/navigation/AppNavigator.js: 
+
+None of these files exist:
+  * screens/landing(.android.ts|.native.ts|.ts|.android.tsx|.native.tsx|.tsx|.android.mjs|.native.mjs|.mjs|.android.js|.native.js|.js|.android.jsx|.native.jsx|.jsx|.android.json|.native.json|.json|.android.cjs|.native.cjs|.cjs|.android.scss|.native.scss|.scss|.android.sass|.native.sass|.sass|.android.css|.native.css|.css)
+  * screens/landing
+[0m [90m  8 |[39m [36mimport[39m colorPalette [36mfrom[39m [32m"../constant/colorPalette"[39m[33m;[39m
+ [90m  9 |[39m
+[31m[1m>[22m[39m[90m 10 |[39m [36mimport[39m [33mLanding[39m [36mfrom[39m [32m"../screens/landing"[39m[33m;[39m
+ [90m    |[39m                      [31m[1m^[22m[39m
+ [90m 11 |[39m [36mimport[39m [33mRegisterScreen[39m [36mfrom[39m [32m"../screens/registerScreen"[39m[33m;[39m
+ [90m 12 |[39m [36mimport[39m [33mLoginScreen[39m [36mfrom[39m [32m"../screens/LoginScreen"[39m[33m;[39m
+ [90m 13 |[39m [36mimport[39m [33mVerifyEmail[39m [36mfrom[39m [32m"../screens/verifyEmailScreen"[39m[33m;[39m[0m
+
+Import stack:
+
+ navigation/AppNavigator.js
+ | import "../screens/landing"
+
+ App.js
+ | import "./navigation/AppNavigator"
+
+ index.js
+ | import "./App"
+
+ 
+ | import "./index.js"
+

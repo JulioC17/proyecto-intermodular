@@ -412,7 +412,10 @@ const styles = StyleSheet.create({
     inputs: {
         fontFamily:"OutfitRegular",
         fontSize:16,
-        color:colorPalette.azulOscuro
+        color:colorPalette.azulOscuro,
+        flex:1,
+        textAlign:"right",
+        marginLeft:10
     },
 
     modalView:{

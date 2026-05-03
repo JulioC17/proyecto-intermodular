@@ -248,7 +248,10 @@ export default function CompanyManagement(){
                         <View key={i} style = {styles.cardView}>
                             <View style = {styles.infoView}>
                                 <Text style = {styles.companyName}>Empresa: {e.empresa}</Text>
-                                <Text style = {styles.comapanyEmail}>Email: {e.email === null ? "No registrado" : e.email}</Text>
+                                <Text 
+                                numberOfLines={1}
+                                ellipsizeMode="tail"
+                                style = {styles.comapanyEmail}>Email: {e.email === null ? "No registrado" : e.email}</Text>
                                 <Text style = {styles.companyWorkers}>Trabajadores: {e.num_trabajadores}</Text>
                             </View>
                             <View style = {styles.btnsView}>
@@ -260,6 +263,7 @@ export default function CompanyManagement(){
                                 setModalEditVisible(true)
                                 setEditName(e.empresa)
                                 setEditEmail(e.email)
+                                setEditCompany(e.id)
                             }}
                                >
                                     <Ionicons name = "settings-outline" size = {28}  color = {colorPalette.azulOscuro}/>
@@ -484,7 +488,8 @@ const styles = StyleSheet.create({
     },
 
     infoView:{
-        gap:5
+        gap:5,
+        maxWidth:"65%"
     },
 
     companyName:{

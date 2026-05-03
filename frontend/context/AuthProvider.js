@@ -1,18 +1,38 @@
-import React, {createContext, useState, useEffect} from "react"
+import React, {createContext, useState, useEffect, useContext} from "react"
 import AsyncStorage from "@react-native-async-storage/async-storage"
-import {showModal} from "./AlertProvider"
 import { api } from "../services/api"
+import { AlertContext } from "../context/AlertProvider";
 
 
 export const AuthContext = createContext()
 
+
 export const AuthProvider = ({ children }) => {
+    const {showModal} = useContext(AlertContext)
+
     const [user, setUser] = useState(null)
     const [token, setToken] = useState(null)
     const [loading, setLoading] = useState(true)
     const [verifyEmail, setVerifyEmail] = useState(null)
     const [recipe, setRecipe] = useState(null)
     const [activeCompany, setActiveCompany] = useState({})
+
+    useEffect(()=> {
+        const interceptor = api.interceptors.response.use(
+            (response) => response,
+            async(error) => {
+                if(error.response && error.response.status === 401 && !error.config.url.includes("/auth/login")){
+                    showModal("Tu sesión ha caducado. Inicie Sesión de nuevo", "error")
+                    await logout()
+                    return new Promise(() => {})
+                }
+                return Promise.reject(error)
+            }
+        )
+        return () => {
+            api.interceptors.response.eject(interceptor)
+        }
+    }, [])
 
     
 

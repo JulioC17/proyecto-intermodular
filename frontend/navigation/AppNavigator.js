@@ -53,35 +53,42 @@ export default function AppNavigator() {
         <NavigationContainer>
 
             <Stack.Navigator>
+                {user ? (
+                 <>
+                    <Stack.Screen name = "Dashboard" component={Dashboard} options={{headerShown:false}}/>
+                    <Stack.Screen name = "Profile" component = {Profile} options = {{headerShown:false}}/>
+                    <Stack.Screen name = "Recipes" component = {Recipes} options = {{headerShown:false}}/>
+                    <Stack.Screen name = "RecipeDescription" component = {RecipeDescription} options = {{headerShown:false}}/>
+                    <Stack.Screen name = "AddRecipe" component = {AddRecipe} options = {{headerShown:false}}/>
+                    <Stack.Screen name = "EditRecipe" component = {EditRecipe} options = {{headerShown:false}}/>
+                    <Stack.Screen name = "Vacaciones" component = {Vacaciones} options = {{headerShown:false}}/>
+                    <Stack.Screen name = "RequestForHollidays" component = {RequestForHollidays} options = {{headerShown:false}}/>
+                    <Stack.Screen name = "Turnos" component = {Turnos} options = {{headerShown:false}}/>
+                    <Stack.Screen name = "SchedulesConfig" component = {SchedulesConfig} options = {{headerShown:false}}/>
+                    <Stack.Screen name = "CrudShifts" component = {CrudShifts} options = {{headerShown:false}}/>
+                    <Stack.Screen name = "Timer" component = {Timer} options = {{headerShown:false}}/>
+                    <Stack.Screen name = "Resumen" component = {Resumen} options = {{headerShown:false}}/>
+                    <Stack.Screen name = "AddWorkers" component = {AddWorkers} options = {{headerShown:false}}/>
+                    <Stack.Screen name = "EditUser" component={EditUser} options={{headerShown:false}}/>
+                    <Stack.Screen name = "RegisterNewWorker" component = {RegisterNewWorker} options = {{headerShown:false}}/>
+                    <Stack.Screen name = "DayControl" component = {DayControl} options = {{headerShown:false}}/>
+                    <Stack.Screen name = "GlobalReport" component={GlobalReport} options={{headerShown:false}}/>
+                    <Stack.Screen name = "WorkerMonthResumen" component={WorkerMonthResumen} options={{headerShown:false}}/>
+                    <Stack.Screen name = "CompanyManagement" component={CompanyManagement} options={{headerShown:false}}/>
+                 </>   
+                ):(
+                    <>
+                    <Stack.Screen name = "Landing" component={Landing} options={{headerShown:false}}/>
+                    <Stack.Screen name = "Login" component={LoginScreen} options = {{headerShown:false}}/>
+                    <Stack.Screen name = "Register" component={RegisterScreen} options= {{headerShown:false}}/>
+                    <Stack.Screen name = "AddCompany" component={AddCompany} options= {{headerShown:false}}/>
+                    <Stack.Screen name = "Verify" component={VerifyEmail} options={{headerShown:false}}/>
+                    <Stack.Screen name = "FirstLogin" component = {FirstLogin} options = {{headerShown:false}}/>
+                    <Stack.Screen name = "RecoveryPassword1" component={RecoveryPassword1} options={{headerShown:false}}/>
+                    <Stack.Screen name = "RecoveryPassword2" component={RecoveryPassword2} options={{headerShown:false}}/>
+                    </>
+                )}
                 
-                <Stack.Screen name = "Landing" component={Landing} options={{headerShown:false}}/>
-                <Stack.Screen name = "Register" component={RegisterScreen} options= {{headerShown:false}}/>
-                <Stack.Screen name = "AddCompany" component={AddCompany} options= {{headerShown:false}}/>
-                <Stack.Screen name = "Verify" component={VerifyEmail} options={{headerShown:false}}/>
-                <Stack.Screen name = "Login" component={LoginScreen} options = {{headerShown:false}}/>
-                <Stack.Screen name = "FirstLogin" component = {FirstLogin} options = {{headerShown:false}}/>
-                <Stack.Screen name = "Dashboard" component={Dashboard} options={{headerShown:false}}/>
-                <Stack.Screen name = "Profile" component = {Profile} options = {{headerShown:false}}/>
-                <Stack.Screen name = "Recipes" component = {Recipes} options = {{headerShown:false}}/>
-                <Stack.Screen name = "RecipeDescription" component = {RecipeDescription} options = {{headerShown:false}}/>
-                <Stack.Screen name = "AddRecipe" component = {AddRecipe} options = {{headerShown:false}}/>
-                <Stack.Screen name = "EditRecipe" component = {EditRecipe} options = {{headerShown:false}}/>
-                <Stack.Screen name = "Vacaciones" component = {Vacaciones} options = {{headerShown:false}}/>
-                <Stack.Screen name = "RequestForHollidays" component = {RequestForHollidays} options = {{headerShown:false}}/>
-                <Stack.Screen name = "Turnos" component = {Turnos} options = {{headerShown:false}}/>
-                <Stack.Screen name = "SchedulesConfig" component = {SchedulesConfig} options = {{headerShown:false}}/>
-                <Stack.Screen name = "CrudShifts" component = {CrudShifts} options = {{headerShown:false}}/>
-                <Stack.Screen name = "Timer" component = {Timer} options = {{headerShown:false}}/>
-                <Stack.Screen name = "Resumen" component = {Resumen} options = {{headerShown:false}}/>
-                <Stack.Screen name = "AddWorkers" component = {AddWorkers} options = {{headerShown:false}}/>
-                <Stack.Screen name = "EditUser" component={EditUser} options={{headerShown:false}}/>
-                <Stack.Screen name = "RegisterNewWorker" component = {RegisterNewWorker} options = {{headerShown:false}}/>
-                <Stack.Screen name = "DayControl" component = {DayControl} options = {{headerShown:false}}/>
-                <Stack.Screen name = "RecoveryPassword1" component={RecoveryPassword1} options={{headerShown:false}}/>
-                <Stack.Screen name = "RecoveryPassword2" component={RecoveryPassword2} options={{headerShown:false}}/>
-                <Stack.Screen name = "GlobalReport" component={GlobalReport} options={{headerShown:false}}/>
-                <Stack.Screen name = "WorkerMonthResumen" component={WorkerMonthResumen} options={{headerShown:false}}/>
-                <Stack.Screen name = "CompanyManagement" component={CompanyManagement} options={{headerShown:false}}/>
             
             </Stack.Navigator>
 
@@ -116,5 +123,14 @@ const styles = StyleSheet.create({
     },
 })
 
-//
+/**
+ * 
+                
+                
+                
+                
+                
+                
+                
+ */
 

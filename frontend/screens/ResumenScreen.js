@@ -262,7 +262,7 @@ const sumHours = (description, fecha) => {
                           {!loading && <FlatList
                             style = {{flexGrow:1}}
                             data={workedTime}
-                            ListHeaderComponent={<Text style = {styles.listTitle}>{workedTime.length > 0 ? "DESGLOCE DEL MES" : "NO HAY DATOS AUN"}</Text>}
+                            ListHeaderComponent={<Text style = {styles.listTitle}>{workedTime.length > 0 ? "DESGLOSE DEL MES" : "NO HAY DATOS AUN"}</Text>}
                             keyExtractor={(item, index) => index.toString()}
                             renderItem={({item}) => (
                                 <View style = {styles.card}>

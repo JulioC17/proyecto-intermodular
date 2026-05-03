@@ -81,7 +81,7 @@ export default function Dashboard(){
                    
                    <LinearGradient style={styles.brandView} colors = {[colorPalette.azulOscuro, colorPalette.azulClaro]} start = {{x:0, y:0}} end = {{x:1, y:0}}>
 
-                    { user.rol === "propietario" && activeCompany.empresa && <TouchableOpacity 
+                    { user?.rol === "propietario" && activeCompany.empresa && <TouchableOpacity 
                     style={styles.btnView} 
                     onPress={() => setActiveCompany({id: null, empresa: ""})}>
                         <Ionicons 
@@ -104,9 +104,9 @@ export default function Dashboard(){
                     </LinearGradient>
 
                     <View style = {styles.cardSection}>
-                       { user.rol === "administrador" ? 
+                       { user?.rol === "administrador" ? 
                        <DashboardAdmins estado = {initTime}/> : 
-                       user.rol === "propietario" ?( 
+                       user?.rol === "propietario" ?( 
                             activeCompany.id ? 
                             <DashboardAdmins/> :
                             <DashboardOwner restaurants={user.empresa}/>) : 

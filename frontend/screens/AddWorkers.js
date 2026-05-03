@@ -178,7 +178,10 @@ export default function AddWorkers(){
                                 </View>
                                 <View style = {styles.emailView}>
                                     <Ionicons name = "mail-outline" size = {24} color = {colorPalette.azulOscuro}/>
-                                    <Text style = {styles.email}>  {item.email}</Text>
+                                    <Text 
+                                    numberOfLines={1}
+                                    ellipsizeMode="tail"
+                                    style = {styles.email}>  {item.email}</Text>
                                 </View>
                                 
                                 <View style = {styles.phoneAndId}>
@@ -290,7 +293,8 @@ const styles = StyleSheet.create({
     emailView:{
         flexDirection:"row",
         alignItems:"center",
-        padding:5
+        padding:5,
+        maxWidth:"90%"
     },
 
     email:{

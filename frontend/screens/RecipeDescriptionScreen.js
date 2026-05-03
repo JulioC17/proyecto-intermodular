@@ -36,7 +36,11 @@ export default function RecipeDescription(){
                         <Text 
                         style={styles.hostech}
                         >HOSTECH</Text>
-                        <Text style={styles.welcome}>{recipe.nombre}</Text>
+                        <Text 
+                        style={styles.welcome}
+                        numberOfLines={1}
+                        ellipsizeMode="tail"
+                        >{recipe.nombre}</Text>
                     </LinearGradient>
                     
                     <View style = {styles.description}>

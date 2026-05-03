@@ -87,7 +87,10 @@ export default function Profile() {
                                 </View>
                                 <View style = {styles.infoCardsContent}>
                                     <Text style = {styles.infoCardsContentTextTitle}>Email:</Text>
-                                    <Text style = {styles.infoCardsContentTextDescription}>{user.email}</Text>
+                                    <Text 
+                                    numberOfLines={1}
+                                    ellipsizeMode="tail"
+                                    style = {styles.textEmail}> {user.email}</Text>
                                 </View>
                             </View>
                         </View>
@@ -142,10 +145,7 @@ export default function Profile() {
                         disabled={loading}
                         action={() => {
                         logout()
-                        navigation.reset({
-                            index:0,
-                            routes: [{name: "Landing"}]
-                        })
+            
                     }}
                         />
 
@@ -224,7 +224,8 @@ const styles = StyleSheet.create({
 
     infoCardsContent:{
         flexDirection:"row",
-        justifyContent:"space-between"
+        justifyContent:"space-between",
+        
     },
 
     infoCardsContentTextTitle:{
@@ -242,6 +243,12 @@ const styles = StyleSheet.create({
         fontFamily:"OutfitBold",
         fontSize:16,
         color:colorPalette.azulOscuro
+    },
+
+    textEmail:{
+        maxWidth:"85%",
+        fontFamily:"OutfitBold",
+        fontSize:16,
     }
 
 })
