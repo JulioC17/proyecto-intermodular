@@ -126,7 +126,10 @@ SENDGRID_API_KEY=SG.tu_api_key_de_sendgrid
 2. **Setup Backend:**
    - Acceder en la terminal a la carpeta `/backend`: `cd backend`
    - Ejecutar la instalación de los paquetes: `npm install`
+   - Configurar base de datos siguiendo las consultas de "schema.sql"
    - Configurar archivo `.env` según indicaciones.
+   - Ejecutar npm run initRoles para establecer la jerarquía de la base de datos
+   - Ejecutar npm run seed para insertar datos de prueba(opcional)
 3. **Setup Frontend:**
    - Acceder en la terminal a la carpeta `/frontend`: `cd frontend`
    - Ejecutar la instalación de los paquetes: `npm install`
